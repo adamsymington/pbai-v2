@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
+  Radar, 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  ResponsiveContainer 
+} from 'recharts';
+import { 
   Search, 
   FileText, 
   CheckCircle2, 
@@ -21,6 +29,8 @@ import {
   Target,
   Zap,
   Upload,
+  Home,
+  GraduationCap,
   FileSearch,
   FileSpreadsheet,
   FileCode,
@@ -30,9 +40,16 @@ import {
   Gauge,
   History,
   Coins,
-  Link
+  Link,
+  Brain,
+  Filter,
+  SortAsc,
+  Check,
+  ThumbsUp,
+  HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Toaster, toast } from 'sonner';
 import { 
   analyzeDocument, 
   createCoachChat, 
@@ -40,7 +57,10 @@ import {
   generateQASP, 
   generatePWST,
   getTokenLogs,
-  clearTokenLogs
+  clearTokenLogs,
+  runDirectedAnalysis,
+  learnFromCorrection,
+  getLearningStore
 } from './services/gemini';
 import { 
   AnalysisResult, 
@@ -52,10 +72,13 @@ import {
   TokenRunSummary,
   TokenUsage,
   QaspItem,
-  PwstItem
+  PwstItem,
+  ConsistencyResult,
+  LearningEntry
 } from './types';
 import { 
   exportAnalysisReport, 
+  exportComprehensiveExcelReport,
   exportQaspData, 
   exportPwstData 
 } from './services/export';
@@ -73,23 +96,38 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function App() {
-  const [content, setContent] = useState('');
-  const [docType, setDocType] = useState<DocumentType>('PWS');
+  const [content, setContent] = useState(() => localStorage.getItem('pws_content') || '');
+  const [docType, setDocType] = useState<DocumentType>(() => (localStorage.getItem('pws_doctype') as DocumentType) || 'PWS');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState<string>('');
   const [analysisStatus, setAnalysisStatus] = useState<'not_started' | 'in_progress' | 'complete' | 'failed'>('not_started');
   const [qaspStatus, setQaspStatus] = useState<'not_started' | 'in_progress' | 'complete' | 'failed'>('not_started');
   const [pwstStatus, setPwstStatus] = useState<'not_started' | 'in_progress' | 'complete' | 'failed'>('not_started');
-  const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [activeTab, setActiveTab] = useState<'analysis' | 'requirements' | 'excluded' | 'qasp' | 'pwst'>('analysis');
+  const [result, setResult] = useState<AnalysisResult | null>(() => {
+    const saved = localStorage.getItem('pws_result');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [activeTab, setActiveTab] = useState<'analysis' | 'requirements' | 'excluded' | 'qasp' | 'pwst'>(() => {
+    return localStorage.getItem('pws_result') ? 'analysis' : 'analysis';
+  });
   const [selectedReq, setSelectedReq] = useState<Requirement | null>(null);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [isCheckingConsistency, setIsCheckingConsistency] = useState(false);
-  const [consistencyResult, setConsistencyResult] = useState<{ issues: string[], confidence_score: number } | null>(null);
-  const [qasp, setQasp] = useState<QaspItem[] | null>(null);
-  const [pwst, setPwst] = useState<PwstItem[] | null>(null);
+  const [consistencyResult, setConsistencyResult] = useState<{ issues: string[], confidence_score: number } | null>(() => {
+    const saved = localStorage.getItem('pws_consistency');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [qasp, setQasp] = useState<QaspItem[] | null>(() => {
+    const saved = localStorage.getItem('pws_qasp');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [pwst, setPwst] = useState<PwstItem[] | null>(() => {
+    const saved = localStorage.getItem('pws_pwst');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [isGeneratingQASP, setIsGeneratingQASP] = useState(false);
   const [isGeneratingPWST, setIsGeneratingPWST] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -98,14 +136,70 @@ export default function App() {
   const [qaspRefinement, setQaspRefinement] = useState('');
   const [showQaspPrompt, setShowQaspPrompt] = useState(false);
   const [showTokenInspector, setShowTokenInspector] = useState(false);
+  const [showLearningModal, setShowLearningModal] = useState(false);
+  const [learningEntries, setLearningEntries] = useState<LearningEntry[]>([]);
+  const [isLearning, setIsLearning] = useState(false);
+  const [isTrainingMode, setIsTrainingMode] = useState(false);
   const [showInsightsModal, setShowInsightsModal] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [tokenLogs, setTokenLogs] = useState<TokenLogEntry[]>([]);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+  const [filterCriticality, setFilterCriticality] = useState<string>('all');
+  const [filterClassification, setFilterClassification] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'score-asc' | 'score-desc' | 'id'>('id');
+  const [resolvedReqIds, setResolvedReqIds] = useState<Set<string>>(() => {
+    const saved = localStorage.getItem('pws_resolved_reqs');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const coachChatRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (result) setAnalysisStatus('complete');
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('pws_content', content);
+  }, [content]);
+
+  useEffect(() => {
+    localStorage.setItem('pws_doctype', docType);
+  }, [docType]);
+
+  useEffect(() => {
+    if (result) {
+      localStorage.setItem('pws_result', JSON.stringify(result));
+    } else {
+      localStorage.removeItem('pws_result');
+    }
+  }, [result]);
+
+  useEffect(() => {
+    if (consistencyResult) {
+      localStorage.setItem('pws_consistency', JSON.stringify(consistencyResult));
+    } else {
+      localStorage.removeItem('pws_consistency');
+    }
+  }, [consistencyResult]);
+
+  useEffect(() => {
+    if (qasp) {
+      localStorage.setItem('pws_qasp', JSON.stringify(qasp));
+    } else {
+      localStorage.removeItem('pws_qasp');
+    }
+  }, [qasp]);
+
+  useEffect(() => {
+    if (pwst) {
+      localStorage.setItem('pws_pwst', JSON.stringify(pwst));
+    } else {
+      localStorage.removeItem('pws_pwst');
+    }
+  }, [pwst]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -113,7 +207,12 @@ export default function App() {
 
   useEffect(() => {
     setTokenLogs(getTokenLogs());
+    setLearningEntries(getLearningStore());
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('pws_resolved_reqs', JSON.stringify(Array.from(resolvedReqIds)));
+  }, [resolvedReqIds]);
 
   const resetReports = () => {
     setAnalysisStatus('not_started');
@@ -149,11 +248,11 @@ export default function App() {
         const text = await file.text();
         setContent(text);
       } else {
-        alert('Unsupported file type. Please upload .txt, .pdf, or .docx');
+        toast.error('Unsupported file type. Please upload .txt, .pdf, or .docx');
       }
     } catch (error) {
       console.error('File upload failed:', error);
-      alert('Failed to read file. Please try pasting the text instead.');
+      toast.error('Failed to read file. Please try pasting the text instead.');
     } finally {
       setIsUploading(false);
     }
@@ -193,6 +292,7 @@ export default function App() {
     const run_id = `run_analyze_${Date.now()}`;
     setSelectedRunId(run_id);
     setIsAnalyzing(true);
+    setAnalysisStep('Initializing Analyst Agent...');
     setAnalysisStatus('in_progress');
     setConsistencyResult(null);
     setQasp(null);
@@ -201,8 +301,9 @@ export default function App() {
     setPwstStatus('not_started');
     
     try {
-      const data = await analyzeDocument(content, docType, run_id);
+      const { result: data, consistency } = await runDirectedAnalysis(content, docType, run_id, (step) => setAnalysisStep(step));
       setResult(data);
+      setConsistencyResult(consistency);
       setAnalysisStatus('complete');
       setActiveTab('analysis');
       
@@ -211,14 +312,31 @@ export default function App() {
       const estimatedPages = Math.max(1, Math.ceil(wordCount / 500));
       const reqScored = data.document_metrics?.requirements_scored ?? 0;
       if (reqScored < Math.max(5, estimatedPages * 0.5)) {
-        alert("Warning: Potential extraction miss detected. The number of requirements found is low relative to the document length. Consider running a Consistency Check.");
+        toast.warning("Warning: Potential extraction miss detected. The number of requirements found is low relative to the document length. Consider running a Consistency Check.");
       }
     } catch (error) {
       console.error('Analysis failed:', error);
       setAnalysisStatus('failed');
-      alert('Failed to analyze document. Please try again.');
+      toast.error('Failed to analyze document. Please try again.');
     } finally {
       setIsAnalyzing(false);
+      setTokenLogs(getTokenLogs());
+    }
+  };
+
+  const handleLearn = async (req: Requirement, userCorrection: string, userReasoning: string = "") => {
+    const run_id = `run_learn_${Date.now()}`;
+    setSelectedRunId(run_id);
+    setIsLearning(true);
+    try {
+      const entry = await learnFromCorrection(req.original_text, req.suggested_rewrite_statement, userCorrection, userReasoning, run_id);
+      setLearningEntries(prev => [entry, ...prev]);
+      toast.success("Lesson learned! This correction will help improve future analyses.");
+    } catch (error) {
+      console.error('Learning failed:', error);
+      toast.error('Failed to process correction. Please try again.');
+    } finally {
+      setIsLearning(false);
       setTokenLogs(getTokenLogs());
     }
   };
@@ -351,6 +469,16 @@ export default function App() {
     return 'text-rose-600 bg-rose-50 border-rose-100';
   };
 
+  const Tooltip = ({ text, children }: { text: string, children: React.ReactNode }) => (
+    <div className="group relative inline-block">
+      {children}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-slate-800 text-white text-[10px] rounded shadow-xl z-50">
+        {text}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-800" />
+      </div>
+    </div>
+  );
+
   const getCriticalityIcon = (crit: string) => {
     switch (crit) {
       case 'Critical Issue': return <ShieldAlert className="w-4 h-4 text-rose-500" />;
@@ -362,6 +490,89 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F4F7F9] text-slate-900 font-sans selection:bg-indigo-100">
+      <AnimatePresence>
+        {(isAnalyzing || isGeneratingQASP || isGeneratingPWST) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-white/90 backdrop-blur-md flex flex-col items-center justify-center p-6"
+          >
+            <div className="flex flex-col items-center gap-8 max-w-md w-full">
+              <div className="relative">
+                <div className="w-24 h-24 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Brain className="w-8 h-8 text-indigo-600 animate-pulse" />
+                </div>
+              </div>
+              
+              <div className="text-center space-y-4 w-full">
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                  {isAnalyzing ? 'Multi-Pass Analysis' : 'Generating Document'}
+                </h2>
+                
+                {/* Live Stepper */}
+                <div className="space-y-4">
+                  {[
+                    { id: 'parsing', label: 'Semantic Parsing', icon: FileText, active: isAnalyzing && analysisStep.includes('Parsing') },
+                    { id: 'analyzing', label: 'PBA Dimension Scoring', icon: Target, active: isAnalyzing && analysisStep.includes('Analyzing') },
+                    { id: 'refining', label: 'ARC Rewrite Generation', icon: RefreshCw, active: isAnalyzing && analysisStep.includes('Refining') },
+                    { id: 'finalizing', label: 'Executive Synthesis', icon: CheckCircle2, active: (isAnalyzing && analysisStep.includes('Finalizing')) || isGeneratingQASP || isGeneratingPWST }
+                  ].map((step, i) => {
+                    const steps = ['Parsing', 'Analyzing', 'Refining', 'Finalizing'];
+                    const currentStepIdx = steps.findIndex(s => analysisStep.includes(s));
+                    const isPast = i < currentStepIdx || (!isAnalyzing && (isGeneratingQASP || isGeneratingPWST));
+                    const isCurrent = i === currentStepIdx || (i === 3 && (isGeneratingQASP || isGeneratingPWST));
+                    
+                    return (
+                      <div key={step.id} className="flex items-center gap-4 text-left">
+                        <div className={cn(
+                          "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500",
+                          isPast ? "bg-emerald-500 border-emerald-500 text-white" : 
+                          isCurrent ? "border-indigo-600 text-indigo-600 animate-pulse shadow-[0_0_15px_rgba(79,70,229,0.3)]" : 
+                          "border-slate-200 text-slate-300"
+                        )}>
+                          {isPast ? <Check className="w-4 h-4" /> : <step.icon className="w-4 h-4" />}
+                        </div>
+                        <div className="flex-1">
+                          <div className={cn(
+                            "text-[10px] font-black uppercase tracking-widest",
+                            isCurrent ? "text-indigo-600" : isPast ? "text-emerald-600" : "text-slate-400"
+                          )}>
+                            {step.label}
+                          </div>
+                          {isCurrent && (
+                            <div className="h-1 w-full bg-slate-100 rounded-full mt-1 overflow-hidden">
+                              <motion.div 
+                                className="h-full bg-indigo-600"
+                                initial={{ x: '-100%' }}
+                                animate={{ x: '100%' }}
+                                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <p className="text-slate-500 text-sm font-medium animate-pulse">
+                  {isAnalyzing 
+                    ? 'Processing document chunks for maximum accuracy...' 
+                    : 'Synthesizing final report and QASP/PWST templates...'}
+                </p>
+                
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {analysisStep}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <Toaster position="top-right" richColors />
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 py-3 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -370,11 +581,50 @@ export default function App() {
               <Zap className="text-white w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-slate-900">PWS Intelligence</h1>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">PBAi</h1>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Requirement Reviewer + Coach</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
+            {result && (
+              <button 
+                onClick={() => {
+                  setResult(null);
+                  setConsistencyResult(null);
+                  setQasp(null);
+                  setPwst(null);
+                  setAnalysisStatus('not_started');
+                  setQaspStatus('not_started');
+                  setPwstStatus('not_started');
+                  setAnalysisStep('');
+                  setActiveTab('analysis');
+                  // Keep content so they can re-analyze or edit easily
+                }}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors"
+              >
+                <Home className="w-3.5 h-3.5" />
+                RETURN TO HOME
+              </button>
+            )}
+            <button 
+              onClick={() => setIsTrainingMode(!isTrainingMode)}
+              className={cn(
+                "flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-all rounded-lg border",
+                isTrainingMode 
+                  ? "bg-rose-600 text-white border-rose-600 shadow-md" 
+                  : "text-rose-600 hover:bg-rose-50 border-rose-200"
+              )}
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              {isTrainingMode ? 'TRAINING MODE: ON' : 'TRAINING MODE'}
+            </button>
+            <button 
+              onClick={() => setShowLearningModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-indigo-200"
+            >
+              <Brain className="w-3.5 h-3.5" />
+              LEARNING CENTER
+            </button>
             <button 
               onClick={() => setShowTokenInspector(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-amber-500 hover:bg-amber-50 rounded-lg transition-colors border border-amber-500"
@@ -415,6 +665,19 @@ export default function App() {
                         className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden"
                       >
                         <div className="p-1">
+                          <button
+                            onClick={() => {
+                              exportComprehensiveExcelReport(result);
+                              setIsExportOpen(false);
+                            }}
+                            className="w-full flex items-center justify-between px-4 py-3 text-left text-[11px] font-black text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors uppercase border-b border-slate-100 mb-1"
+                          >
+                            <div className="flex flex-col">
+                              <span>Comprehensive Report</span>
+                              <span className="text-[8px] text-indigo-400 font-bold tracking-tighter">SCORING + METHODOLOGY</span>
+                            </div>
+                            <span className="text-[9px] text-indigo-400">.xlsx</span>
+                          </button>
                           {(['xlsx', 'csv', 'pdf', 'docx'] as const).map((format) => (
                             <button
                               key={format}
@@ -521,7 +784,7 @@ export default function App() {
                 onClick={handleAnalyze}
                 disabled={isAnalyzing || !content.trim()}
                 className={cn(
-                  "w-full mt-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-sm uppercase tracking-widest",
+                  "w-full mt-8 py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-1 transition-all text-sm uppercase tracking-widest",
                   isAnalyzing 
                     ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                     : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 active:scale-[0.99]"
@@ -529,13 +792,20 @@ export default function App() {
               >
                 {isAnalyzing ? (
                   <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    Analyzing Document...
+                    <div className="flex items-center gap-3">
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Analyzing Document...
+                    </div>
+                    <span className="text-[10px] font-medium text-slate-400 normal-case tracking-normal mt-1 animate-pulse">
+                      {analysisStep}
+                    </span>
                   </>
                 ) : (
                   <>
-                    <Search className="w-4 h-4" />
-                    Run Analyst
+                    <div className="flex items-center gap-3">
+                      <Search className="w-4 h-4" />
+                      Run Analyst
+                    </div>
                   </>
                 )}
               </button>
@@ -708,130 +978,189 @@ export default function App() {
                     exit={{ opacity: 0, y: -10 }}
                     className="space-y-6"
                   >
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4 text-indigo-500" />
-                          Dimension Averages
-                        </h3>
-                        <div className="space-y-4">
-                          {Object.entries(result.dimension_averages ?? {}).map(([key, val]) => (
-                            <div key={key}>
-                              <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                                <span>{key.replace('_', ' ')}</span>
-                                <span>{Math.round(val)}%</span>
-                              </div>
-                              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <motion.div 
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${val}%` }}
-                                  className={cn(
-                                    "h-full rounded-full",
-                                    val >= 80 ? "bg-emerald-500" : val >= 60 ? "bg-amber-500" : "bg-rose-500"
-                                  )}
+                    <div className="grid grid-cols-12 gap-6">
+                      {/* Bento Grid: Main Score & Summary */}
+                      <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Overall Score Card */}
+                        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                              <Tooltip text="Performance-Based Acquisition (PBA) focuses on outcomes rather than processes.">
+                                Overall Maturity
+                              </Tooltip>
+                            </h3>
+                            <Gauge className="w-5 h-5 text-indigo-500" />
+                          </div>
+                          <div className="flex items-end gap-3">
+                            <span className={cn("text-6xl font-black tracking-tighter", result.overall_document_score >= 80 ? "text-emerald-600" : result.overall_document_score >= 60 ? "text-amber-500" : "text-rose-500")}>
+                              {result.overall_document_score}
+                            </span>
+                            <div className="mb-2">
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PBA Index</div>
+                              <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden mt-1">
+                                <div 
+                                  className={cn("h-full transition-all duration-1000", result.overall_document_score >= 80 ? "bg-emerald-500" : result.overall_document_score >= 60 ? "bg-amber-500" : "bg-rose-500")}
+                                  style={{ width: `${result.overall_document_score}%` }}
                                 />
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                          <Target className="w-4 h-4 text-indigo-500" />
-                          High Impact Suggestions
-                        </h3>
-                        <ul className="space-y-3">
-                          {(result.high_impact_suggestions ?? []).map((suggestion, i) => (
-                            <li key={i} className="flex gap-3 text-sm text-slate-600 leading-relaxed">
-                              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] font-bold">
-                                {i + 1}
-                              </span>
-                              {suggestion}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {consistencyResult && (
-                      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                          <ShieldAlert className="w-4 h-4 text-indigo-500" />
-                          Consistency Audit Results
-                        </h3>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase">Confidence Score</span>
-                            <span className={cn(
-                              "text-xs font-black",
-                              consistencyResult.confidence_score >= 90 ? "text-emerald-600" : "text-amber-600"
-                            )}>
-                              {consistencyResult.confidence_score}%
-                            </span>
                           </div>
-                          {consistencyResult.issues.length > 0 ? (
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              {consistencyResult.issues.map((issue, i) => (
-                                <li key={i} className="text-[11px] text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-100 flex gap-2">
-                                  <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                                  {issue}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <div className="text-[11px] text-emerald-700 bg-emerald-50 p-3 rounded-xl border border-emerald-100 flex gap-2">
-                              <CheckCircle2 className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                              No consistency issues detected.
-                            </div>
-                          )}
+                          <p className="mt-4 text-[11px] text-slate-500 leading-relaxed font-medium">
+                            This score reflects the document's alignment with Performance-Based Acquisition principles across all identified requirements.
+                          </p>
                         </div>
-                      </div>
-                    )}
 
-                    <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-                      <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center">
-                          <FileText className="w-6 h-6 text-indigo-600" />
+                        {/* Metrics Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                          {[
+                            { label: 'Requirements', value: result.document_metrics.requirements_scored, icon: ClipboardCheck, color: 'text-blue-600 bg-blue-50' },
+                            { label: 'Critical Issues', value: result.requirements.filter(r => r.criticality === 'Critical Issue').length, icon: ShieldAlert, color: 'text-rose-600 bg-rose-50' },
+                            { label: 'Major Issues', value: result.requirements.filter(r => r.criticality === 'Major Issue').length, icon: AlertCircle, color: 'text-amber-600 bg-amber-50' },
+                            { label: 'Excluded', value: result.document_metrics.excluded_findings_count, icon: FileText, color: 'text-slate-600 bg-slate-50' },
+                          ].map((stat, i) => (
+                            <div key={i} className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                              <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center mb-3", stat.color)}>
+                                <stat.icon className="w-4 h-4" />
+                              </div>
+                              <div className="text-xl font-black text-slate-900">{stat.value}</div>
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</div>
+                            </div>
+                          ))}
                         </div>
-                        <div>
-                          <h3 className="text-lg font-black text-slate-900">Executive Summary</h3>
-                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Document Analysis Overview</p>
+
+                        {/* Executive Summary Card */}
+                        <div className="md:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                          <div className="flex items-center gap-2 mb-4">
+                            <FileSearch className="w-5 h-5 text-indigo-500" />
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest">Executive Summary</h3>
+                          </div>
+                          <div className="prose prose-slate prose-sm max-w-none text-slate-600 leading-relaxed italic">
+                            "{result.executive_summary}"
+                          </div>
                         </div>
                       </div>
-                      <div className="prose prose-slate max-w-none">
-                        <p className="text-slate-600 leading-relaxed italic">"{result.executive_summary}"</p>
+
+                      {/* Radar Chart & Dimension Breakdown */}
+                      <div className="col-span-12 lg:col-span-4 space-y-6">
+                        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm h-full">
+                          <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest">Dimension Radar</h3>
+                            <Tooltip text="Visual representation of PBA maturity across 5 key dimensions.">
+                              <HelpCircle className="w-4 h-4 text-slate-300 cursor-help" />
+                            </Tooltip>
+                          </div>
+                          
+                          <div className="h-[250px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                                { subject: 'Outcome', A: result.dimension_averages.outcome_orientation, full: 100 },
+                                { subject: 'Metrics', A: result.dimension_averages.measurability, full: 100 },
+                                { subject: 'Flex', A: result.dimension_averages.flexibility, full: 100 },
+                                { subject: 'Surveil', A: result.dimension_averages.surveillance_linkage, full: 100 },
+                                { subject: 'Clarity', A: result.dimension_averages.clarity_conciseness, full: 100 },
+                              ]}>
+                                <PolarGrid stroke="#e2e8f0" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }} />
+                                <Radar
+                                  name="PBA Score"
+                                  dataKey="A"
+                                  stroke="#4f46e5"
+                                  fill="#4f46e5"
+                                  fillOpacity={0.5}
+                                />
+                              </RadarChart>
+                            </ResponsiveContainer>
+                          </div>
+
+                          <div className="mt-6 space-y-4">
+                            {Object.entries(result.dimension_averages).map(([key, val]) => (
+                              <div key={key} className="space-y-1">
+                                <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                  <span>{key.replace('_', ' ')}</span>
+                                  <span>{Math.round(val)}%</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                  <div 
+                                    className={cn(
+                                      "h-full transition-all duration-1000",
+                                      val >= 80 ? "bg-emerald-500" : val >= 60 ? "bg-amber-500" : "bg-rose-500"
+                                    )}
+                                    style={{ width: `${val}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                        <div>
-                          <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <CheckCircle2 className="w-3 h-3" />
+
+                      {/* Strengths & Improvements */}
+                      <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100">
+                          <h3 className="text-xs font-black text-emerald-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <ThumbsUp className="w-4 h-4" />
                             Key Strengths
-                          </h4>
+                          </h3>
                           <ul className="space-y-3">
                             {result.strengths.map((s, i) => (
-                              <li key={i} className="flex gap-3 text-sm text-slate-600 leading-relaxed">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
+                              <li key={i} className="flex gap-3 text-sm text-emerald-800">
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                                 {s}
                               </li>
                             ))}
                           </ul>
                         </div>
-                        <div>
-                          <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <AlertCircle className="w-3 h-3" />
-                            Areas for Improvement
-                          </h4>
+                        <div className="bg-rose-50/50 rounded-2xl p-6 border border-rose-100">
+                          <h3 className="text-xs font-black text-rose-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4" />
+                            Critical Gaps
+                          </h3>
                           <ul className="space-y-3">
                             {result.areas_for_improvement.map((a, i) => (
-                              <li key={i} className="flex gap-3 text-sm text-slate-600 leading-relaxed">
-                                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
+                              <li key={i} className="flex gap-3 text-sm text-rose-800">
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
                                 {a}
                               </li>
                             ))}
                           </ul>
                         </div>
                       </div>
+
+                      {/* Consistency Audit Results (Conditional) */}
+                      {consistencyResult && (
+                        <div className="col-span-12 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                          <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <ShieldAlert className="w-4 h-4 text-indigo-500" />
+                            Consistency Audit Results
+                          </h3>
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Confidence Score</span>
+                              <span className={cn(
+                                "text-xs font-black",
+                                consistencyResult.confidence_score >= 90 ? "text-emerald-600" : "text-amber-600"
+                              )}>
+                                {consistencyResult.confidence_score}%
+                              </span>
+                            </div>
+                            {consistencyResult.issues.length > 0 ? (
+                              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {consistencyResult.issues.map((issue, i) => (
+                                  <li key={i} className="text-[11px] text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-100 flex gap-2">
+                                    <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                                    {issue}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <div className="text-[11px] text-emerald-700 bg-emerald-50 p-3 rounded-xl border border-emerald-100 flex gap-2">
+                                <CheckCircle2 className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                                No consistency issues detected.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -844,10 +1173,67 @@ export default function App() {
                       exit={{ opacity: 0, y: -10 }}
                       className="space-y-4"
                     >
-                      {(result.requirements ?? []).map((req) => (
+                      {/* Command Bar */}
+                      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center gap-4">
+                          <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 flex-1 min-w-[200px]">
+                            <Search className="w-4 h-4 text-slate-400" />
+                            <input 
+                              type="text" 
+                              placeholder="Search requirements..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              className="bg-transparent border-none text-xs font-bold text-slate-700 focus:outline-none w-full"
+                            />
+                          </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <Filter className="w-4 h-4 text-slate-400" />
+                          <select 
+                            value={filterCriticality}
+                            onChange={(e) => setFilterCriticality(e.target.value)}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black text-slate-700 focus:outline-none"
+                          >
+                            <option value="all">ALL CRITICALITY</option>
+                            <option value="Critical Issue">CRITICAL ONLY</option>
+                            <option value="Major Issue">MAJOR ONLY</option>
+                            <option value="Minor Improvement">MINOR ONLY</option>
+                            <option value="Strength">STRENGTHS ONLY</option>
+                          </select>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <SortAsc className="w-4 h-4 text-slate-400" />
+                          <select 
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black text-slate-700 focus:outline-none"
+                          >
+                            <option value="id">SORT BY ID</option>
+                            <option value="score-desc">HIGHEST SCORE</option>
+                            <option value="score-asc">LOWEST SCORE</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {(result.requirements ?? [])
+                        .filter(req => filterCriticality === 'all' || req.criticality === filterCriticality)
+                        .filter(req => 
+                          req.original_text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          req.suggested_rewrite_statement.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          req.req_id.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .sort((a, b) => {
+                          if (sortBy === 'score-desc') return b.overall_score - a.overall_score;
+                          if (sortBy === 'score-asc') return a.overall_score - b.overall_score;
+                          return a.req_id.localeCompare(b.req_id);
+                        })
+                        .map((req) => (
                         <div 
                           key={req.req_id}
-                          className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all group"
+                          className={cn(
+                            "bg-white rounded-2xl border overflow-hidden shadow-sm hover:shadow-md transition-all group",
+                            resolvedReqIds.has(req.req_id) ? "border-emerald-200 bg-emerald-50/10" : "border-slate-200"
+                          )}
                         >
                           <div className="p-6">
                             <div className="flex items-start justify-between mb-4">
@@ -860,27 +1246,50 @@ export default function App() {
                                     {tag}
                                   </span>
                                 ))}
-                                {editedReqIds.has(req.req_id) && (
+                                {resolvedReqIds.has(req.req_id) && (
                                   <span className="text-[9px] font-black px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded uppercase tracking-widest flex items-center gap-1">
-                                    <CheckCircle2 className="w-2.5 h-2.5" />
-                                    Collaboratively Edited
+                                    <Check className="w-2.5 h-2.5" />
+                                    APPROVED
                                   </span>
                                 )}
                               </div>
-                              <div className={cn("text-xs font-black px-3 py-1 rounded-full border shadow-sm", getScoreColor(req.overall_score))}>
-                                {req.overall_score}
+                              <div className="flex items-center gap-3">
+                                {!resolvedReqIds.has(req.req_id) && (
+                                  <button
+                                    onClick={() => setResolvedReqIds(prev => new Set(prev).add(req.req_id))}
+                                    className="text-[9px] font-black text-emerald-600 hover:text-emerald-700 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-emerald-50 transition-colors"
+                                  >
+                                    <Check className="w-3 h-3" />
+                                    APPROVE REWRITE
+                                  </button>
+                                )}
+                                <div className={cn("text-xs font-black px-3 py-1 rounded-full border shadow-sm", getScoreColor(req.overall_score))}>
+                                  {req.overall_score}
+                                </div>
                               </div>
                             </div>
                             
-                            <p className="text-sm font-medium text-slate-800 leading-relaxed mb-6">
-                              {req.original_text}
-                            </p>
+                            {/* Diff View */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                              <div className="space-y-2">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Original Requirement</h4>
+                                <div className="p-4 bg-rose-50/30 border border-rose-100 rounded-xl text-sm text-slate-700 leading-relaxed min-h-[80px]">
+                                  {req.original_text}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Suggested ARC Rewrite</h4>
+                                <div className="p-4 bg-emerald-50/30 border border-emerald-100 rounded-xl text-sm text-slate-900 font-bold leading-relaxed min-h-[80px]">
+                                  {req.suggested_rewrite_statement}
+                                </div>
+                              </div>
+                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
                               <div>
                                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                                   {getCriticalityIcon(req.criticality)}
-                                  Analysis
+                                  Gap Analysis
                                 </h4>
                                 <p className="text-xs text-slate-600 leading-relaxed">
                                   {req.reasoning}
@@ -888,31 +1297,105 @@ export default function App() {
                               </div>
                               <div>
                                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                                  ARC Rewrite
+                                  <Tooltip text="Action-Result-Context (ARC) is the gold standard for performance requirements.">
+                                    <Target className="w-3.5 h-3.5 text-indigo-500" />
+                                  </Tooltip>
+                                  ARC Structure
                                 </h4>
-                                <p className="text-xs text-slate-800 font-bold leading-relaxed mb-2">
-                                  {req.suggested_rewrite_statement}
-                                </p>
-                                <div className="flex flex-wrap gap-1.5">
-                                  <span className="text-[8px] font-bold px-1.5 py-0.5 bg-white border border-slate-200 rounded text-slate-400">A: {req.suggested_rewrite_arc.action}</span>
-                                  <span className="text-[8px] font-bold px-1.5 py-0.5 bg-white border border-slate-200 rounded text-slate-400">R: {req.suggested_rewrite_arc.result}</span>
-                                  <span className="text-[8px] font-bold px-1.5 py-0.5 bg-white border border-slate-200 rounded text-slate-400">C: {req.suggested_rewrite_arc.context}</span>
+                                <div className="space-y-2">
+                                  <div className="flex gap-2 items-start">
+                                    <span className="text-[9px] font-black px-1.5 py-0.5 bg-white border border-slate-200 rounded text-indigo-600 w-6 text-center">A</span>
+                                    <span className="text-[10px] text-slate-600 italic">"{req.suggested_rewrite_arc.action}"</span>
+                                  </div>
+                                  <div className="flex gap-2 items-start">
+                                    <span className="text-[9px] font-black px-1.5 py-0.5 bg-white border border-slate-200 rounded text-indigo-600 w-6 text-center">R</span>
+                                    <span className="text-[10px] text-slate-600 italic">"{req.suggested_rewrite_arc.result}"</span>
+                                  </div>
+                                  <div className="flex gap-2 items-start">
+                                    <span className="text-[9px] font-black px-1.5 py-0.5 bg-white border border-slate-200 rounded text-indigo-600 w-6 text-center">C</span>
+                                    <span className="text-[10px] text-slate-600 italic">"{req.suggested_rewrite_arc.context}"</span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
+
+                            {isTrainingMode && (
+                              <div className="mt-6 p-4 bg-rose-50 rounded-xl border border-rose-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="w-6 h-6 bg-rose-600 rounded-lg flex items-center justify-center">
+                                    <GraduationCap className="text-white w-3.5 h-3.5" />
+                                  </div>
+                                  <h4 className="text-[10px] font-black text-rose-600 uppercase tracking-widest">Training Mode: Provide Ideal Statement</h4>
+                                </div>
+                                <div className="space-y-3">
+                                  <div>
+                                    <label className="text-[9px] font-bold text-rose-400 uppercase tracking-widest mb-1 block">Ideal Statement</label>
+                                    <textarea 
+                                      placeholder="Enter the ideal, corrected requirement statement here..."
+                                      className="w-full p-3 bg-white border border-rose-200 rounded-xl text-xs font-medium outline-none focus:border-rose-500 transition-all min-h-[80px] shadow-inner"
+                                      defaultValue={req.suggested_rewrite_statement}
+                                      id={`correction-${req.req_id}`}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="text-[9px] font-bold text-rose-400 uppercase tracking-widest mb-1 block">Reasoning behind correction (Optional)</label>
+                                    <textarea 
+                                      placeholder="What did the LLM do wrong? Why is this rewrite better? (e.g. 'LLM missed the specific outcome', 'The rewrite is more measurable')"
+                                      className="w-full p-3 bg-white border border-rose-200 rounded-xl text-xs font-medium outline-none focus:border-rose-500 transition-all min-h-[60px] shadow-inner"
+                                      id={`reasoning-${req.req_id}`}
+                                    />
+                                  </div>
+                                  <div className="flex justify-end">
+                                    <button 
+                                      onClick={() => {
+                                        const elCorr = document.getElementById(`correction-${req.req_id}`) as HTMLTextAreaElement;
+                                        const elReas = document.getElementById(`reasoning-${req.req_id}`) as HTMLTextAreaElement;
+                                        if (elCorr && elCorr.value.trim()) {
+                                          handleLearn(req, elCorr.value.trim(), elReas?.value.trim() || "");
+                                        }
+                                      }}
+                                      disabled={isLearning}
+                                      className="flex items-center gap-2 px-4 py-2 bg-rose-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-all shadow-sm disabled:opacity-50"
+                                    >
+                                      {isLearning ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                      Submit to Learner Agent
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
 
                             <div className="mt-4 flex items-center justify-between">
                               <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                                 Source: {req.source_ref.section} | Method: {req.extraction_method}
                               </span>
-                              <button 
-                                onClick={() => openCoach(req)}
-                                className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors"
-                              >
-                                <MessageSquare className="w-3.5 h-3.5" />
-                                Discuss with Coach
-                              </button>
+                              <div className="flex items-center gap-2">
+                                {!isTrainingMode && (
+                                  <button 
+                                    onClick={() => {
+                                      const correction = prompt("Enter your preferred version of this requirement for the AI to learn from:", req.suggested_rewrite_statement);
+                                      if (correction) handleLearn(req, correction);
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors"
+                                  >
+                                    <Brain className="w-3.5 h-3.5" />
+                                    Learn from Correction
+                                  </button>
+                                )}
+                                <button 
+                                  onClick={() => openCoach(req)}
+                                  className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-sm",
+                                    isTrainingMode 
+                                      ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
+                                      : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                  )}
+                                  disabled={isTrainingMode}
+                                >
+                                  <MessageSquare className="w-3.5 h-3.5" />
+                                  Discuss with Coach
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1338,6 +1821,149 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Learning Modal */}
+      <AnimatePresence>
+        {showLearningModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              onClick={() => setShowLearningModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-indigo-600 text-white">
+                <div className="flex items-center gap-3">
+                  <Brain className="w-6 h-6" />
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-tight">Learning Center</h2>
+                    <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest">AI Accuracy Improvement Store</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowLearningModal(false)}
+                  className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 bg-slate-50">
+                {learningEntries.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
+                      <Brain className="w-10 h-10 text-indigo-300" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">No lessons learned yet</h3>
+                    <p className="text-sm text-slate-500 max-w-md">
+                      When you correct the AI's suggestions, use the "Learn from Correction" button. 
+                      The Learner Agent will analyze your feedback and improve future analyses.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Lessons</p>
+                        <p className="text-3xl font-black text-indigo-600">{learningEntries.length}</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Top Category</p>
+                        <p className="text-xl font-black text-slate-800 truncate">
+                          {Object.entries(learningEntries.reduce((acc, e) => {
+                            acc[e.category] = (acc[e.category] || 0) + 1;
+                            return acc;
+                          }, {} as Record<string, number>)).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A'}
+                        </p>
+                      </div>
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Tags</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {Array.from(new Set(learningEntries.flatMap(e => e.tags))).slice(0, 5).map(tag => (
+                            <span key={tag} className="text-[8px] font-bold px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded uppercase tracking-widest">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Recent Lessons</h3>
+                    {learningEntries.map((entry, i) => (
+                      <div key={i} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-black px-2 py-1 bg-indigo-600 text-white rounded uppercase tracking-widest">
+                              {entry.category}
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                              {new Date(entry.timestamp).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex gap-1">
+                            {entry.tags.map(tag => (
+                              <span key={tag} className="text-[8px] font-bold px-1.5 py-0.5 bg-white border border-slate-200 text-slate-400 rounded uppercase tracking-widest">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Original Document Text</h4>
+                              <p className="text-xs text-slate-600 italic">"{entry.original_requirement}"</p>
+                            </div>
+                            <div>
+                              <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Original AI Suggestion</h4>
+                              <p className="text-xs text-slate-500 italic line-through opacity-60">"{entry.ai_rewrite}"</p>
+                            </div>
+                            <div>
+                              <h4 className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2">Human Correction</h4>
+                              <p className="text-xs text-slate-800 font-bold">"{entry.user_correction}"</p>
+                            </div>
+                            {entry.user_reasoning && (
+                              <div>
+                                <h4 className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-2">User Reasoning</h4>
+                                <p className="text-xs text-slate-600 italic">"{entry.user_reasoning}"</p>
+                              </div>
+                            )}
+                          </div>
+                          <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="text-[9px] font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-2">
+                              <Zap className="w-3 h-3" />
+                              Learner Agent Critique
+                            </h4>
+                            <p className="text-xs text-indigo-900 leading-relaxed italic">
+                              {entry.critique}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="p-6 border-t border-slate-100 bg-white flex justify-end">
+                <button
+                  onClick={() => setShowLearningModal(false)}
+                  className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg"
+                >
+                  Close Learning Center
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {showTokenInspector && (
           <motion.div 
@@ -1408,9 +2034,10 @@ export default function App() {
                         const totals = runEntries.reduce((acc, curr) => ({
                           prompt: acc.prompt + curr.token_usage.prompt_tokens,
                           output: acc.output + curr.token_usage.output_tokens,
+                          thought: acc.thought + (curr.token_usage.thought_tokens || 0),
                           total: acc.total + curr.token_usage.total_tokens,
                           latency: acc.latency + (curr.latency_ms || 0)
-                        }), { prompt: 0, output: 0, total: 0, latency: 0 });
+                        }), { prompt: 0, output: 0, thought: 0, total: 0, latency: 0 });
 
                         return (
                           <>
@@ -1418,7 +2045,7 @@ export default function App() {
                               <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest block mb-1">Total Tokens</span>
                               <div className="text-2xl font-black text-indigo-600">{totals.total.toLocaleString()}</div>
                               <div className="text-[10px] font-bold text-indigo-400 mt-1">
-                                {totals.prompt.toLocaleString()} P / {totals.output.toLocaleString()} O
+                                {totals.prompt.toLocaleString()} P / {totals.output.toLocaleString()} O / {totals.thought.toLocaleString()} T
                               </div>
                             </div>
                             <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
@@ -1447,11 +2074,12 @@ export default function App() {
                       <table className="w-full text-left table-fixed">
                         <thead>
                           <tr className="bg-slate-50 border-b border-slate-100">
-                            <th className="w-[45%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Agent / Function</th>
+                            <th className="w-[35%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Agent / Function</th>
                             <th className="w-[12%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Prompt</th>
                             <th className="w-[12%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Output</th>
+                            <th className="w-[12%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Thought</th>
                             <th className="w-[12%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Total</th>
-                            <th className="w-[19%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                            <th className="w-[17%] px-3 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -1463,6 +2091,7 @@ export default function App() {
                               </td>
                               <td className="px-3 py-3 text-[10px] font-bold text-slate-600 align-top">{entry.token_usage.prompt_tokens.toLocaleString()}</td>
                               <td className="px-3 py-3 text-[10px] font-bold text-slate-600 align-top">{entry.token_usage.output_tokens.toLocaleString()}</td>
+                              <td className="px-3 py-3 text-[10px] font-bold text-slate-400 align-top italic">{(entry.token_usage.thought_tokens || 0).toLocaleString()}</td>
                               <td className="px-3 py-3 text-[10px] font-black text-indigo-600 align-top">{entry.token_usage.total_tokens.toLocaleString()}</td>
                               <td className="px-3 py-3 align-top">
                                 {entry.is_estimate ? (
@@ -1513,7 +2142,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2 text-slate-400">
             <Zap className="w-5 h-5" />
-            <span className="text-xs font-black uppercase tracking-widest">PWS Intelligence v2.1</span>
+            <span className="text-xs font-black uppercase tracking-widest">PBAi v2.1</span>
           </div>
           <div className="flex items-center gap-8">
             <a href="#" className="text-[10px] font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors">Rubric</a>

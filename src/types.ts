@@ -93,12 +93,32 @@ export interface ChatMessage {
 }
 
 export type AgentType =
+  | "DIRECTOR"
   | "ANALYST"
   | "COACH"
   | "QASP_GENERATOR"
   | "PWST_GENERATOR"
   | "REPAIR"
-  | "CONSISTENCY_CHECKER";
+  | "CONSISTENCY_CHECKER"
+  | "LEARNER";
+
+export interface ConsistencyResult {
+  confidence_score: number;
+  issues: string[];
+  recommendations: string[];
+}
+
+export interface LearningEntry {
+  id: string;
+  timestamp: string;
+  original_requirement: string;
+  ai_rewrite: string;
+  user_correction: string;
+  user_reasoning?: string;
+  critique: string;
+  category: "score" | "rewrite" | "classification";
+  tags: string[];
+}
 
 export type AgentFunction =
   // Analyst
@@ -121,11 +141,14 @@ export type AgentFunction =
   | "PWST_BUILD"
   // Utils
   | "JSON_REPAIR"
-  | "CONSISTENCY_CHECK";
+  | "CONSISTENCY_CHECK"
+  | "DIRECTOR"
+  | "LEARNER";
 
 export interface TokenUsage {
   prompt_tokens: number;
   output_tokens: number;
+  thought_tokens?: number;
   total_tokens: number;
 }
 

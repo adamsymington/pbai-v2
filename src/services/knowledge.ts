@@ -79,7 +79,7 @@ export const KA_REQ_REVIEW_PROTOCOL = `
 [PRIORITY: 2]
 [APPLIES-TO: Analyst]
 
-TITLE: Requirement Identification and Scoring Protocol (PWS Intelligence)
+TITLE: Requirement Identification and Scoring Protocol (PBAi)
 
 GOAL:
 Extract contractor requirement statements comprehensively, exclude non-requirements from scoring, and ensure scoring is based only on text evidence.

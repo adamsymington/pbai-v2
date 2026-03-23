@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type, Modality } from "@google/genai";
+import { GoogleGenAI, Type, Modality, ThinkingLevel } from "@google/genai";
 import { 
   AnalysisResult, 
   DocumentType, 
@@ -9,7 +9,9 @@ import {
   AgentFunction,
   TokenUsage,
   QaspItem,
-  PwstItem
+  PwstItem,
+  ConsistencyResult,
+  LearningEntry
 } from "../types";
 import {
   KA_PBA_RUBRIC_SCORING,
@@ -28,15 +30,41 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
 // Token Store
 const TOKEN_LOGS_KEY = 'pws_intel_token_logs';
+const LEARNING_STORE_KEY = 'pws_intel_learning_store';
+
 export const getTokenLogs = (): TokenLogEntry[] => {
   const logs = localStorage.getItem(TOKEN_LOGS_KEY);
   return logs ? JSON.parse(logs) : [];
 };
 
+export const getLearningStore = (): LearningEntry[] => {
+  try {
+    const store = localStorage.getItem(LEARNING_STORE_KEY);
+    return store ? JSON.parse(store) : [];
+  } catch (e) {
+    console.error('Failed to parse learning store:', e);
+    return [];
+  }
+};
+
+export const addLearningEntry = (entry: LearningEntry) => {
+  try {
+    const store = getLearningStore();
+    store.push(entry);
+    localStorage.setItem(LEARNING_STORE_KEY, JSON.stringify(store.slice(-50))); // Keep last 50 lessons
+  } catch (e) {
+    console.error('Failed to save learning entry:', e);
+  }
+};
+
 const addTokenLog = (entry: TokenLogEntry) => {
-  const logs = getTokenLogs();
-  logs.push(entry);
-  localStorage.setItem(TOKEN_LOGS_KEY, JSON.stringify(logs.slice(-100))); // Keep last 100 entries
+  try {
+    const logs = getTokenLogs();
+    logs.push(entry);
+    localStorage.setItem(TOKEN_LOGS_KEY, JSON.stringify(logs.slice(-100))); // Keep last 100 entries
+  } catch (e) {
+    console.warn('Failed to save token log to localStorage:', e);
+  }
 };
 
 export const clearTokenLogs = () => {
@@ -48,6 +76,7 @@ function extractTokenUsage(response: any): TokenUsage | null {
     return {
       prompt_tokens: response.usageMetadata.promptTokenCount || 0,
       output_tokens: response.usageMetadata.candidatesTokenCount || 0,
+      thought_tokens: response.usageMetadata.thoughtTokenCount || 0,
       total_tokens: response.usageMetadata.totalTokenCount || 0
     };
   }
@@ -213,6 +242,9 @@ You must:
 3) Score ONLY extracted contractor requirements on PBA maturity (0–100) using the dimensions in KA-PBA-RUBRIC-SCORING.
 4) For each scored requirement, produce detailed analysis including classification, tags, dimension scores, reasoning, highlighted issues, and ARC rewrite.
 
+LEARNED EXAMPLES (GOLD STANDARD):
+{{LEARNED_EXAMPLES}}
+
 KNOWLEDGE BASE (AUTHORITATIVE ORDER):
 ${KA_PBA_RUBRIC_SCORING}
 ${KA_REQ_REVIEW_PROTOCOL}
@@ -228,25 +260,164 @@ CRITICAL: If you encounter "for Government review/approval", you MUST split the 
 Do NOT combine them into a single object. Each split requirement must have its own req_id, scores, and ARC rewrite.
 `;
 
-export async function analyzeDocument(content: string, docType: DocumentType = "PWS", run_id: string = `run_analyze_${Date.now()}`): Promise<AnalysisResult> {
-  const modelName = "gemini-3-flash-preview";
+// Utility to chunk text semantically (best effort)
+function chunkText(text: string, size: number = 25000): string[] {
+  const chunks: string[] = [];
+  let currentPos = 0;
+  while (currentPos < text.length) {
+    let endPos = currentPos + size;
+    if (endPos < text.length) {
+      // Try to find a natural break point (paragraph or section)
+      const lastNewline = text.lastIndexOf('\n\n', endPos);
+      if (lastNewline > currentPos + (size * 0.5)) {
+        endPos = lastNewline;
+      }
+    }
+    chunks.push(text.substring(currentPos, endPos));
+    currentPos = endPos;
+  }
+  return chunks;
+}
+
+async function aggregateResults(results: AnalysisResult[]): Promise<AnalysisResult> {
+  if (results.length === 1) return results[0];
+
+  const allRequirements: Requirement[] = [];
+  const allStrengths = new Set<string>();
+  const allAreas = new Set<string>();
+  const allSuggestions = new Set<string>();
+  
+  let totalScore = 0;
+  const dimTotals = {
+    outcome_orientation: 0,
+    measurability: 0,
+    flexibility: 0,
+    surveillance_linkage: 0,
+    clarity_conciseness: 0
+  };
+
+  results.forEach(res => {
+    allRequirements.push(...res.requirements);
+    res.strengths.forEach(s => allStrengths.add(s));
+    res.areas_for_improvement.forEach(a => allAreas.add(a));
+    res.high_impact_suggestions.forEach(h => allSuggestions.add(h));
+    totalScore += res.overall_document_score;
+    
+    dimTotals.outcome_orientation += res.dimension_averages.outcome_orientation;
+    dimTotals.measurability += res.dimension_averages.measurability;
+    dimTotals.flexibility += res.dimension_averages.flexibility;
+    dimTotals.surveillance_linkage += res.dimension_averages.surveillance_linkage;
+    dimTotals.clarity_conciseness += res.dimension_averages.clarity_conciseness;
+  });
+
+  const count = results.length;
+  
+  // Final synthesis for the executive summary
+  const summaryPrompt = `
+    I have analyzed a large document in ${count} parts. 
+    Here are the individual summaries:
+    ${results.map((r, i) => `Part ${i+1}: ${r.executive_summary}`).join('\n\n')}
+    
+    Provide a single, cohesive Executive Summary for the entire document.
+  `;
+
+  const summaryRes = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: summaryPrompt
+  });
+
+  // Calculate classification breakdown
+  const classMap: Record<string, number> = {};
+  allRequirements.forEach(r => {
+    classMap[r.classification] = (classMap[r.classification] || 0) + 1;
+  });
+
+  return {
+    document_type: results[0].document_type,
+    executive_summary: summaryRes.text || "Consolidated summary unavailable.",
+    strengths: Array.from(allStrengths).slice(0, 5),
+    areas_for_improvement: Array.from(allAreas).slice(0, 5),
+    high_impact_suggestions: Array.from(allSuggestions).slice(0, 5),
+    document_metrics: {
+      pages_reviewed: results.reduce((acc, r) => acc + r.document_metrics.pages_reviewed, 0),
+      requirements_identified_total: allRequirements.length,
+      requirements_scored: allRequirements.length,
+      excluded_findings_count: results.reduce((acc, r) => acc + r.document_metrics.excluded_findings_count, 0)
+    },
+    overall_document_score: Math.round(totalScore / count),
+    dimension_averages: {
+      outcome_orientation: Math.round(dimTotals.outcome_orientation / count),
+      measurability: Math.round(dimTotals.measurability / count),
+      flexibility: Math.round(dimTotals.flexibility / count),
+      surveillance_linkage: Math.round(dimTotals.surveillance_linkage / count),
+      clarity_conciseness: Math.round(dimTotals.clarity_conciseness / count)
+    },
+    classification_breakdown: Object.entries(classMap).map(([classification, count]) => ({ classification, count })),
+    excluded_findings: results.flatMap(r => r.excluded_findings || []),
+    requirements: allRequirements
+  };
+}
+
+export async function analyzeDocument(
+  content: string, 
+  docType: DocumentType = "PWS", 
+  run_id: string = `run_analyze_${Date.now()}`,
+  onStep?: (step: string) => void
+): Promise<AnalysisResult> {
+  const modelName = "gemini-3.1-pro-preview";
+  
+  onStep?.('Semantic Parsing: Chunking document for deep context...');
+  
+  // If document is large, use chunked analysis
+  const CHUNK_THRESHOLD = 45000;
+  if (content.length > CHUNK_THRESHOLD) {
+    const chunks = chunkText(content);
+    const results: AnalysisResult[] = [];
+    
+    for (let i = 0; i < chunks.length; i++) {
+      onStep?.(`PBA Dimension Scoring: Analyzing chunk ${i + 1} of ${chunks.length}...`);
+      const res = await analyzeChunk(chunks[i], docType, run_id, i + 1, chunks.length, onStep);
+      results.push(res);
+    }
+    
+    onStep?.('Executive Synthesis: Aggregating multi-pass results...');
+    return await aggregateResults(results);
+  }
+
+  onStep?.('PBA Dimension Scoring: Analyzing document...');
+  return await analyzeChunk(content, docType, run_id, 1, 1, onStep);
+}
+
+async function analyzeChunk(
+  content: string, 
+  docType: DocumentType, 
+  run_id: string, 
+  part: number, 
+  totalParts: number,
+  onStep?: (step: string) => void
+): Promise<AnalysisResult> {
+  const modelName = "gemini-3.1-pro-preview";
   const t0 = performance.now();
   
-  // Truncate content to avoid hitting output token limits with massive JSON
-  const maxChars = 40000;
-  const truncatedContent = content.length > maxChars 
-    ? content.substring(0, maxChars) + "\n\n[TRUNCATED FOR ANALYSIS PERFORMANCE]"
-    : content;
+  if (part === 1) onStep?.('ARC Rewrite Generation: Applying learned patterns...');
+  
+  const learningStore = getLearningStore();
+  const learnedExamplesText = learningStore.length > 0 
+    ? learningStore.map(e => `Original: ${e.original_requirement}\nCorrection: ${e.user_correction}\nCritique: ${e.critique}`).join('\n---\n')
+    : "No specific corrections yet. Follow standard rubrics.";
+
+  const dynamicInstruction = ANALYST_SYSTEM_INSTRUCTION.replace("{{LEARNED_EXAMPLES}}", learnedExamplesText);
 
   try {
     const response = await ai.models.generateContent({
       model: modelName,
-      contents: `Document Type: ${docType}\n\nDocument Content:\n${truncatedContent}`,
+      contents: `Document Type: ${docType} (Part ${part} of ${totalParts})\n\nDocument Content:\n${content}`,
       config: {
-        systemInstruction: ANALYST_SYSTEM_INSTRUCTION,
+        systemInstruction: dynamicInstruction + "\n\nCRITICAL: You are analyzing a segment of a larger document. Extract ALL contractor requirements found in this segment. For each requirement, limit 'highlighted_issues' to 2 and 'probing_questions' to 2. Ensure the JSON is valid.",
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA as any,
-        temperature: 0.1, // Lower temperature for more stable JSON
+        temperature: 0.1,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH }
       },
     });
 
@@ -255,7 +426,6 @@ export async function analyzeDocument(content: string, docType: DocumentType = "
     const totalUsage = usage || { prompt_tokens: 0, output_tokens: 0, total_tokens: 0 };
     const latency = Math.round(t1 - t0);
 
-    // Option B: Allocated Breakdown for Analyst
     const allocations: Array<{ fn: AgentFunction, pct: number }> = [
       { fn: "REQ_EXTRACTION_PASS1", pct: 0.20 },
       { fn: "REQ_EXTRACTION_PASS2", pct: 0.10 },
@@ -279,7 +449,7 @@ export async function analyzeDocument(content: string, docType: DocumentType = "
         },
         latency_ms: Math.round(latency * alloc.pct),
         is_estimate: true,
-        notes: "Allocated from single Analyst call"
+        notes: `Part ${part}/${totalParts}`
       });
     });
 
@@ -289,7 +459,7 @@ export async function analyzeDocument(content: string, docType: DocumentType = "
 
     return JSON.parse(response.text) as AnalysisResult;
   } catch (error) {
-    console.error("Analysis failed, attempting repair...", error);
+    console.error(`Analysis of part ${part} failed, attempting repair...`, error);
     return await repairAnalysis(content, docType, error instanceof Error ? error.message : String(error), run_id);
   }
 }
@@ -299,7 +469,7 @@ export async function analyzeDocument(content: string, docType: DocumentType = "
  * Triggered if the primary Analyst output fails to parse or validate.
  */
 async function repairAnalysis(content: string, docType: DocumentType, errorMessage: string, run_id: string): Promise<AnalysisResult> {
-  const modelName = "gemini-3-flash-preview";
+  const modelName = "gemini-3.1-pro-preview";
   const repairPrompt = `
     The previous analysis attempt failed with the following error: ${errorMessage}
     
@@ -307,7 +477,7 @@ async function repairAnalysis(content: string, docType: DocumentType, errorMessa
     Limit your extraction to the most critical requirements if the document is long.
     
     Document Type: ${docType}
-    Document Content (first 15k chars): ${content.substring(0, 15000)}
+    Document Content (first 20k chars): ${content.substring(0, 20000)}
   `;
 
   const response = await trackedCall({
@@ -319,10 +489,11 @@ async function repairAnalysis(content: string, docType: DocumentType, errorMessa
       model: modelName,
       contents: repairPrompt,
       config: {
-        systemInstruction: ANALYST_SYSTEM_INSTRUCTION + "\n\nCRITICAL: You MUST output valid JSON. Be concise in reasoning to avoid hitting output limits.",
+        systemInstruction: ANALYST_SYSTEM_INSTRUCTION + "\n\nCRITICAL: You MUST output valid JSON. Be concise in reasoning to avoid hitting output limits. Focus on the most important requirements.",
         responseMimeType: "application/json",
         responseSchema: RESPONSE_SCHEMA as any,
         temperature: 0.1,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH }
       },
     })
   });
@@ -381,7 +552,8 @@ export async function checkConsistency(analysis: AnalysisResult, run_id: string 
             confidence_score: { type: Type.NUMBER }
           },
           required: ["issues", "confidence_score"]
-        } as any
+        } as any,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
       }
     })
   });
@@ -432,6 +604,7 @@ ${docExcerpt}
 `;
 
   const tools = [
+    { googleSearch: {} },
     {
       functionDeclarations: [
         {
@@ -463,7 +636,8 @@ ${docExcerpt}
     model: modelName,
     config: {
       systemInstruction,
-      tools
+      tools,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
     }
   });
 
@@ -488,7 +662,7 @@ ${docExcerpt}
  * T3: Compact requirements payload.
  */
 export async function generateQASP(analysis: AnalysisResult, userRefinements: string = "", run_id: string = `run_qasp_${Date.now()}`): Promise<QaspItem[]> {
-  const modelName = "gemini-3-flash-preview";
+  const modelName = "gemini-3.1-pro-preview";
   // T3: Compact payload rules
   const compactRequirements = analysis.requirements.map(r => ({
     req_id: r.req_id,
@@ -533,6 +707,7 @@ export async function generateQASP(analysis: AnalysisResult, userRefinements: st
           }
         } as any,
         temperature: 0.1,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
       }
     })
   });
@@ -545,6 +720,11 @@ export async function generateQASP(analysis: AnalysisResult, userRefinements: st
   }
 }
 
+/**
+ * STEP 7: PWST Generation
+ * T1: Flash model for mapping task.
+ * T3: Compact QASP + Requirements payload.
+ */
 /**
  * STEP 7: PWST Generation
  * T1: Flash model for mapping task.
@@ -595,4 +775,97 @@ export async function generatePWST(analysis: AnalysisResult, qasp: QaspItem[], r
     console.error("Failed to parse PWST JSON", e);
     return [];
   }
+}
+
+/**
+ * AGENT E: LEARNER (Accuracy Improvement)
+ * Analyzes human corrections to generate "lessons" for future analysis.
+ */
+export async function learnFromCorrection(
+  original: string, 
+  ai_rewrite: string, 
+  user_correction: string, 
+  user_reasoning: string = "",
+  run_id: string = `run_learn_${Date.now()}`
+): Promise<LearningEntry> {
+  const modelName = "gemini-3-flash-preview";
+  const learnPrompt = `
+    Analyze the difference between the AI's suggested rewrite and the user's manual correction.
+    
+    Original Requirement: ${original}
+    AI Suggestion: ${ai_rewrite}
+    User Correction: ${user_correction}
+    User Reasoning: ${user_reasoning || "None provided."}
+    
+    Identify:
+    1. Why the user made this change (Critique). Include the user's reasoning if provided.
+    2. What category of improvement this is (score|rewrite|classification).
+    3. Relevant tags.
+  `;
+
+  const response = await trackedCall({
+    run_id,
+    agent: "LEARNER",
+    fn: "CONSISTENCY_CHECK", // Reusing for now
+    model: modelName,
+    call: () => ai.models.generateContent({
+      model: modelName,
+      contents: learnPrompt,
+      config: {
+        systemInstruction: "You are PWS-INTEL-LEARNER. Extract the essence of a human correction into a structured lesson.",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            critique: { type: Type.STRING },
+            category: { type: Type.STRING, enum: ["score", "rewrite", "classification"] },
+            tags: { type: Type.ARRAY, items: { type: Type.STRING } }
+          },
+          required: ["critique", "category", "tags"]
+        } as any
+      }
+    })
+  });
+
+  const analysis = JSON.parse(response.text || '{}');
+  const entry: LearningEntry = {
+    id: crypto.randomUUID(),
+    timestamp: new Date().toISOString(),
+    original_requirement: original,
+    ai_rewrite,
+    user_correction,
+    user_reasoning,
+    critique: analysis.critique,
+    category: analysis.category,
+    tags: analysis.tags
+  };
+
+  addLearningEntry(entry);
+  return entry;
+}
+
+/**
+ * AGENT F: DIRECTOR (Orchestrator)
+ * Manages complex multi-agent workflows.
+ */
+export async function runDirectedAnalysis(
+  content: string, 
+  docType: DocumentType, 
+  run_id: string = `run_director_${Date.now()}`,
+  onProgress?: (step: string) => void
+): Promise<{ result: AnalysisResult, consistency: { issues: string[], confidence_score: number } }> {
+  const modelName = "gemini-3.1-pro-preview";
+  
+  // 1. Run Analysis
+  onProgress?.('Extracting and scoring requirements...');
+  const result = await analyzeDocument(content, docType, run_id, onProgress);
+  
+  // 2. Run Consistency Check
+  onProgress?.('Checking internal consistency...');
+  const consistency = await checkConsistency(result, run_id);
+  
+  // 3. Optional: If confidence is low, the Director could re-trigger or flag
+  // For now, we just return both.
+  
+  return { result, consistency };
 }
