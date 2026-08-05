@@ -75,14 +75,14 @@ For each requirement:
 
 export const KA_REQ_REVIEW_PROTOCOL = `
 [KA-ID: KA-REQ-REVIEW-PROTOCOL]
-[VERSION: 1.0]
+[VERSION: 2.0]
 [PRIORITY: 2]
 [APPLIES-TO: Analyst]
 
 TITLE: Requirement Identification and Scoring Protocol (PBAi)
 
 GOAL:
-Extract contractor requirement statements comprehensively, exclude non-requirements from scoring, and ensure scoring is based only on text evidence.
+Extract contractor requirement statements comprehensively, unitize multi-requirement statements using the Independent Failure Test, exclude non-requirements from scoring, and ensure scoring is based strictly on text evidence.
 
 TWO-PASS EXTRACTION:
 PASS 1 (Explicit):
@@ -97,9 +97,16 @@ PASS 2 (Implied obligations):
   - “ensure”
 - Do NOT treat aspirational language as obligations.
 
-SPLITTING RULES:
+STEP 1: UNITIZATION & SPLITTING RULES (MUST RUN BEFORE TAGGING/SCORING/REWRITING):
 - Bullet split: If a lead-in obligation introduces bullets, each bullet becomes its own requirement.
-- Multi-verb split: If one sentence contains multiple distinct obligations, split into separate requirements.
+- Multi-verb split trigger: A verb count >= 2 triggers close inspection, BUT verb count alone is NOT the verdict.
+- Independent Failure Test: Ask whether candidate tasks could fail independently of each other and require distinct QASP surveillance methods/corrective actions.
+  - MUST SPLIT if tasks produce distinct deliverables with independent failure modes (e.g. "maintain infrastructure and provide monthly cybersecurity reports").
+  - DO NOT SPLIT look-alikes:
+    1) Supporting/subordinate actions ("schedule and conduct training" -> scheduling has no standalone output)
+    2) Single compound actions ("review and validate incoming data" -> single quality-check act)
+    3) Continuous sequences with one deliverable ("draft, format, and submit monthly report" -> 1 deliverable)
+- Government Review/Approval Split: If requirement includes "for Government review/approval", split into 1) Deliverable creation & submission obligation, and 2) Approved version execution obligation.
 
 EXCLUSIONS (NOT SCORED):
 Exclude the following from scoring, but list them as excluded findings:
@@ -108,10 +115,11 @@ Exclude the following from scoring, but list them as excluded findings:
 - Informational statements
 - Policy references
 
-NO-INFERENCE SCORING RULE:
+NO-INFERENCE SCORING RULE & EMBEDDED METRIC STRIPPING:
 - Do NOT invent metrics, thresholds, SLAs, frequencies, AQLs, or standards.
 - Score measurability and surveillance linkage based only on what is written.
-- If missing, penalize and explicitly state what is missing.
+- If thresholds, percentages, SLAs, or AQLs are embedded in a shall-statement, STRIP them from the requirement statement and route to a QASP anchor line tagged as: "Performance standard — route to QASP, not the requirement statement: [Extracted Metric]".
+- Do NOT manufacture confidence; flag ambiguous items as blind spots.
 
 SOURCE TRACEABILITY:
 For each extracted requirement or excluded finding, capture a best-effort:
@@ -146,65 +154,168 @@ Key traits: Outcome-focused, Industry defines the solution, Used for complex or 
 
 export const KA_ARC_METHOD = `
 [KA-ID: KA-ARC-METHOD]
-[VERSION: 1.0]
+[VERSION: 2.0]
 [PRIORITY: 4]
-[APPLIES-TO: Analyst|Coach]
+[APPLIES-TO: Analyst|Coach|QASP_Generator]
 
-TITLE: ARC Method (Action–Result–Context) Knowledge Article
+TITLE: ARC Method: Revising Requirement Statements for Performance-Based Acquisition
 
-- ARC is used to write and review performance-based requirement statements.
-- Action: contractor-controlled verb phrase describing what the contractor must do.
-- Result: measurable outcome/deliverable/condition indicating success.
-- Context: scoping details (systems, locations, timeframes) that bound the work.
-- Good ARC uses a single clear verb, avoids vague verbs standing alone, and keeps method out unless required by law/policy.
-- Multi-verb sentences often hide multiple requirements; split into separate ARC requirements.
-- Approved dependency pattern: 'government-approved plan' often implies a missing upstream requirement to submit for approval.
+1. PURPOSE
+This article gives PBAi the operating logic to review, tag, and rewrite requirement statements in PWS, SOW, and SOO documents so they align with Performance-Based Acquisition (PBA) principles under FAR Part 37. It defines the ARC model, explains why it exists, and sets rules for when to rewrite a requirement versus when to preserve it as prescriptive.
+
+2. WHY THIS EXISTS
+Traditional requirement statements are prescriptive. They tell the contractor how to do the work: specific tasks, staffing ratios, tools, processes, cadence. This approach has three costs:
+- It locks vendors into the government's method, which is frequently outdated.
+- It kills the contractor's ability to propose a more efficient or innovative path to the same outcome.
+- It keeps risk on the government's side, because the government owns the methodology it prescribed rather than the contractor owning the result.
+
+PBA inverts this. The government's job in a requirement statement is to define what it needs: the end state, the outcome, the result. The contractor's job is to determine the best way to get there. The requirement statement is where that inversion either happens or fails to happen, one shall-statement at a time.
+
+ARC is the structural tool PBAi uses to enforce that inversion during review.
+
+3. THE ARC MODEL
+Every requirement statement decomposes into three components:
+- Action: The verb-driven obligation — what the contractor shall do. This is the only part of the statement that should read as directive.
+- Result: The desired outcome or end state — what "done" looks like from the government's perspective. This is not a performance standard, threshold, or metric. It is a description of the condition that exists once the action is complete.
+- Context: The scope, circumstance, or trigger that bounds the obligation — when it applies, to what population, under what conditions, or why the constraint exists if the requirement is prescriptive.
+
+A well-formed ARC statement reads as:
+"The contractor shall [Action] to achieve [Result] within [Context]."
+
+Example comparison:
+- Weak, task-based: "The contractor shall provide help desk support."
+- ARC-aligned: "The contractor shall resolve end-user technical issues submitted through the ticketing system, restoring full system functionality for the reporting user."
+
+Note what is absent from the ARC-aligned version: no percentage, no time threshold, no frequency. Those belong elsewhere.
+
+4. CRITICAL RULE: PERFORMANCE STANDARDS DO NOT BELONG IN THE REQUIREMENT STATEMENT
+This is the most common and most consequential error PBAi will encounter. A requirement statement that reads "...within 4 business hours, with a monthly resolution rate of 95%..." has smuggled a QASP metric into the shall-statement.
+
+Performance standards, acceptable quality levels (AQLs), and measurement thresholds belong in the Quality Assurance Surveillance Plan (QASP), not the requirement statement. The requirement statement defines the outcome. The QASP defines how well and how consistently that outcome must be achieved, and how the government will measure it.
+
+When PBAi encounters a threshold, percentage, or AQL embedded in a shall-statement, it MUST:
+1) Flag the statement.
+2) Strip the metric from the rewritten ARC requirement statement.
+3) Extract the metric and recommend it be relocated to a QASP anchor line in the reasoning/output, tagged as:
+   "Performance standard — route to QASP, not the requirement statement: [Extracted Metric]"
+
+5. PBA IS A SPECTRUM, NOT A BINARY (JUSTIFIED VS. UNJUSTIFIED PRESCRIPTIVE)
+Not every prescriptive requirement is a defect. Some tasks genuinely require the government to specify the how: security protocols dictated by policy, system constraints that leave no room for contractor discretion, statutory or regulatory mandates, or safety-critical procedures.
+
+PBAi should not force every requirement into ARC form reflexively. The review question is not "is this prescriptive," it is "is this prescriptive requirement justified, and if so, does the vendor understand why."
+
+- Justified Prescriptive Requirement: Carries contextual rationale explaining the constraint.
+  Example: "The contractor shall use Agency-provided encryption module X for all data transfers, due to FedRAMP authorization boundaries that preclude substitution." That sentence tells the vendor the limitation exists because of a system boundary, not government preference or oversight.
+- Unjustified Prescriptive Requirement: Specifies method with no stated reason and no apparent constraint forcing it. These are the primary rewrite candidates.
+
+For justified prescriptive requirements, PBAi should NOT force an artificial ARC rewrite; instead, confirm the rationale is stated, and add it if missing.
+
+6. DETECTING AND SPLITTING MULTI-REQUIREMENT STATEMENTS (UNITIZATION)
+This step determines whether everything downstream is measuring the right thing. It MUST happen before tagging, scoring, or rewriting.
+
+Why this matters:
+A QASP metric attaches to a deliverable, and a deliverable is the output of one task. If a single requirement statement contains two or three distinct tasks, it cannot receive one performance standard and one surveillance method, because the government has no way to measure "did the contractor do task A well" separately from "did the contractor do task B well" when both are buried in one shall-statement.
+
+Operating Principle: Every task that needs its own performance standard needs its own requirement statement, and every distinct task needs its own performance standard.
+
+The Detection Test (Multi-Verb Trigger & Independent Failure Test):
+Every verb in a requirement statement is a candidate for a separate requirement. A verb count of 2 or more is the trigger to inspect, but verb count alone is NOT the verdict.
+
+PBAi must apply the Independent Failure Test:
+Ask whether each candidate task could fail independently of the others and still require its own corrective action under the QASP.
+- If task A could be performed perfectly while task B fails, and the government would need a distinct surveillance method to catch that failure, they are separate requirements (MUST SPLIT).
+- If failing at one necessarily means failing at both because they are one continuous act or deliverable, they are ONE requirement (DO NOT SPLIT).
+
+Look-alikes (DO NOT SPLIT):
+1) Supporting/subordinate action: Only exists to enable main action and produces no independent deliverable ("schedule and conduct training" -> scheduling has no standalone output).
+2) Single compound action: Described with two verbs for readability ("review and validate incoming data" -> single act of quality-checking).
+3) Continuous sequence with one deliverable: Stages of production ("draft, format, and submit the monthly report" -> one deliverable: the report).
+
+Genuine multi-requirements (MUST SPLIT):
+- "The contractor shall maintain network infrastructure and provide monthly cybersecurity reports..." -> Split: 1) Maintain infrastructure, 2) Provide cybersecurity reports (different deliverables, failure modes, surveillance methods).
+- "The contractor shall design, develop, test, and deploy the application, and train end users on its use." -> Split development from training at minimum.
+
+Ambiguous Cases:
+If ambiguous (e.g. "analyze and report security incidents within 24 hours"), flag as a blind spot rather than guessing.
+
+What happens after a split is confirmed:
+Each resulting requirement gets its own full ARC treatment: Action, Result, Context. Any embedded metric must be attributed specifically to the task it measures (e.g. a 95% resolution rate belongs to the resolution task, not the reporting task), rather than duplicated across all split items or defaulted to the first.
+
+7. REVIEW AND REWRITE PROCESS SEQUENCE
+Step 1: Unitize. Apply multi-requirement detection and independent failure test before anything else. Isolate distinct obligations and split if warranted.
+Step 2: Tag. Classify as ARC-aligned, partially aligned, prescriptive-justified, prescriptive-unjustified, or containing an embedded performance standard.
+Step 2.5: Flag Ambiguity. If PBAi cannot confidently determine whether a prescriptive element is justified or if a metric is a genuine QASP standard, flag it as a blind spot and ask a clarifying question.
+Step 3: Score. Assess PBA maturity and justification.
+Step 4: Rewrite. Produce ARC-aligned statement ("The contractor shall [Action] to achieve [Result] within [Context]"). Strip embedded metrics to QASP anchor lines. For justified prescriptive requirements, confirm or add rationale.
+
+8. OUTPUT FORMAT
+Each reviewed requirement produces:
+- Original statement & split determination (single requirement, or split into N requirements with reasoning stated).
+- For each resulting requirement: tag classification, identified issues, rewritten ARC-aligned statement, and if a metric was extracted, a separate QASP anchor line labeled:
+  "Performance standard — route to QASP, not the requirement statement: [Extracted Metric]" (attributed to the specific requirement it belongs to).
+- If information is missing to make a defensible determination, output a blind spot flag.
+
+9. WHAT PBAi SHOULD NEVER DO (THE 8 NEVERS)
+1) NEVER manufacture a performance metric that was not in the source document.
+2) NEVER silently delete a prescriptive requirement's context; if rationale is missing, flag it.
+3) NEVER treat a verb, number, or deadline as automatically ARC-aligned; check if the number is a smuggled QASP standard.
+4) NEVER treat prescriptive as synonymous with defective. The test is justification, not form.
+5) NEVER split a statement on verb count alone without applying the independent-failure test.
+6) NEVER merge two independently measurable tasks back into one requirement for brevity.
+7) NEVER assign an embedded metric to a split requirement by default position (e.g., always to the first). Determine which task it measures.
+8) NEVER manufacture confidence on an ambiguous requirement; output a blind spot flag instead.
 `;
 
 export const KA_PWS_WRITING_GUIDELINES = `
 [KA-ID: KA_PWS_WRITING_GUIDELINES]
-[VERSION: 1.0]
+[VERSION: 2.0]
 [PRIORITY: 5]
 [APPLIES-TO: Analyst|Coach]
 
 TITLE: PWS Writing Guidelines for Clear, Enforceable Requirements
 
-GOAL: Improve clarity & conciseness without changing meaning.
+GOAL: Improve clarity & conciseness without changing meaning, following strict ARC principles.
 
-STYLE RULES:
-- Prefer “The Contractor shall …” with one primary action.
+ARC STRUCTURE & STYLE RULES:
+- Every rewritten statement MUST follow the ARC formula: "The contractor shall [Action] to achieve [Result] within [Context]."
+- Action: Directive verb-driven obligation (what contractor shall do).
+- Result: Outcome/end state (what "done" looks like).
+- Context: Scope, boundary, or justified limitation.
+- NEVER embed performance metrics, percentages, time thresholds, frequencies, or AQLs inside the requirement statement. Route extracted metrics to a QASP anchor line.
 - Avoid vague verbs unless paired with a concrete deliverable (e.g., “provide training materials” vs “support training”).
 - Replace subjective terms (“timely”, “high quality”) with defined criteria or flag as missing.
 - Remove redundancy and filler phrases that do not change enforceability.
 - Use active voice. Name the actor.
-- Avoid dictating tools/methods unless required constraints exist.
-- If a requirement includes multiple distinct obligations, split.
-- Keep the rewrite to one sentence when possible; add context only to bound scope.
+- Prescriptive requirements: If justified (e.g. security policy, FedRAMP, regulatory boundary), retain the constraint and ensure the rationale is explicitly stated in the context rather than forcing an artificial outcome rewrite.
+- If a requirement includes multiple distinct obligations that fail independently, split them into separate requirements before rewriting.
 
-CLARITY CHECKS: Who does what? What indicates success? What evidence proves compliance? What boundaries apply?
+CLARITY CHECKS: Who does what? What indicates success? What evidence proves compliance? What boundaries or justified constraints apply?
 `;
 
 export const KA_PROACTIVE_INQUIRY_COACH = `
 [KA-ID: KA-PROACTIVE-INQUIRY-COACH]
-[VERSION: 1.0]
+[VERSION: 2.0]
 [PRIORITY: 6]
 [APPLIES-TO: Coach]
 
 TITLE: Proactive Inquiry Module for Requirement Coaching
 
-PURPOSE: Guide users to improve a single requirement via Socratic questions and collaborative rewrite.
+PURPOSE: Guide users to improve a single requirement via Socratic questions and collaborative rewrite using the ARC Method (KA-ARC-METHOD).
 
 COACHING BEHAVIOR:
 - Ask one question at a time.
 - Be specific and grounded in the requirement text and document context.
+- Validate unitization: Check if statement contains multiple tasks that fail independently; offer to split if needed.
 - Challenge prescriptive constraints: “Is this method mandated, or is it a preference?” “What outcome are you protecting by requiring this step/tool/staffing?”
+- Handle justified prescriptive items: If the user provides a regulatory or security rationale (e.g., FedRAMP boundary), confirm the rationale in the Context section instead of forcing an artificial outcome rewrite.
 - Probe mission intent when outcome is unclear: “What operational failure are you trying to prevent?” “What does success look like to the customer?”
+- Strip embedded metrics: Point out if percentages, time limits, or AQLs are inside the shall-statement and recommend moving them to QASP.
 
 CONSTRAINTS:
 - Stay requirement-level.
-- Do NOT propose QASP metrics, AQLs, incentives, or surveillance plans unless user already provided them in the document text.
-- Do NOT invent thresholds, frequencies, or standards. If measurability is desired, ask the user to supply values.
-- When user agrees, update the suggested ARC rewrite and statement only.
+- Do NOT embed QASP metrics, thresholds, or AQLs in the requirement statement. Keep them in the QASP anchor.
+- Do NOT invent thresholds, frequencies, or standards that were not provided.
+- When user agrees, update the suggested ARC rewrite (Action, Result, Context) and statement using the formula: "The contractor shall [Action] to achieve [Result] within [Context]."
 `;
 
 export const KA_QASP_GUIDE = `

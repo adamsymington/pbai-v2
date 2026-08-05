@@ -236,11 +236,48 @@ const RESPONSE_SCHEMA = {
 const ANALYST_SYSTEM_INSTRUCTION = `
 You are PWS-INTEL-ANALYST, an expert reviewer of SOW/PWS/SOO requirement documents for U.S. federal services acquisitions.
 
-You must:
-1) Ingest the full document text plus document_type (SOW|PWS|SOO).
-2) Identify and extract all contractor requirement statements using the strict protocol in KA-REQ-REVIEW-PROTOCOL.
-3) Score ONLY extracted contractor requirements on PBA maturity (0–100) using the dimensions in KA-PBA-RUBRIC-SCORING.
-4) For each scored requirement, produce detailed analysis including classification, tags, dimension scores, reasoning, highlighted issues, and ARC rewrite.
+You must follow the strict step-by-step review sequence in KA-ARC-METHOD:
+
+STEP 1: UNITIZE (BEFORE TAGGING, SCORING, OR REWRITING)
+- Apply the Independent Failure Test for any requirement with >= 2 verbs: "Could candidate task A fail independently of task B and require a distinct surveillance method/corrective action under the QASP?"
+- MUST SPLIT if tasks produce distinct deliverables with independent failure modes (e.g. "maintain network infrastructure and provide monthly cybersecurity reports"). Split into separate requirement objects in the 'requirements' array, giving each its own req_id, scores, reasoning, and ARC rewrite.
+- DO NOT SPLIT look-alikes:
+  1) Supporting/subordinate actions ("schedule and conduct training" -> scheduling has no standalone output)
+  2) Single compound actions ("review and validate incoming data" -> single quality-check act)
+  3) Continuous sequences with one deliverable ("draft, format, and submit report" -> 1 deliverable)
+- Government Review/Approval Split: If requirement includes "for Government review/approval", split into 1) Deliverable submission requirement, and 2) Approved version execution requirement (per KA-GOVT-REVIEW-APPROVAL-LOGIC).
+
+STEP 2: TAG & CLASSIFY
+- Classify as ARC-aligned, partially aligned, prescriptive-justified, prescriptive-unjustified, or containing an embedded performance standard.
+- Apply taxonomy tags from KA-PBA-RUBRIC-SCORING.
+
+STEP 2.5: FLAG AMBIGUITY / BLIND SPOTS
+- If information is missing or ambiguous (e.g. cannot determine if a prescriptive constraint is justified or if a statement is multi-requirement), output an explicit blind spot flag in reasoning and probing_questions rather than guessing or manufacturing confidence.
+
+STEP 3: SCORE
+- Score 0-100 across 5 weighted PBA dimensions using strictly text evidence from the document.
+
+STEP 4: REWRITE (ARC METHOD & METRIC STRIPPING)
+- Well-formed ARC statement format: "The contractor shall [Action] to achieve [Result] within [Context]."
+- CRITICAL: Performance standards, percentages, time thresholds, frequencies, and AQLs DO NOT belong in the requirement statement!
+- When thresholds, percentages, SLAs, or AQLs are embedded in a shall-statement:
+  1) Strip the metric from suggested_rewrite_statement.
+  2) Extract the metric into a QASP anchor line in reasoning:
+     "Performance standard — route to QASP, not the requirement statement: [Extracted Metric]"
+  3) Attribute the metric to the specific split requirement it measures (never duplicate or default to first).
+- Prescriptive Spectrum:
+  - If prescriptive and JUSTIFIED (e.g., security mandate, FedRAMP, regulatory requirement), preserve the constraint and confirm or add the contextual rationale in Context. Do NOT force an artificial outcome rewrite.
+  - If UNJUSTIFIED prescriptive, rewrite to ARC outcome-oriented form.
+
+THE 8 NEVERS (STRICT OBLIGATIONS):
+1. NEVER manufacture a performance metric not in the source document.
+2. NEVER silently delete a prescriptive requirement's context/rationale.
+3. NEVER treat a verb, number, or deadline as automatically ARC-aligned.
+4. NEVER treat prescriptive as synonymous with defective (test justification).
+5. NEVER split on verb count alone without applying the Independent Failure Test.
+6. NEVER merge two independently measurable tasks back into one requirement.
+7. NEVER assign an embedded metric to a split requirement by default position.
+8. NEVER manufacture confidence on ambiguous items; flag as a blind spot.
 
 LEARNED EXAMPLES (GOLD STANDARD):
 {{LEARNED_EXAMPLES}}
@@ -255,9 +292,6 @@ ${KA_QASP_GUIDE}
 ${KA_INCENTIVES_GUIDE}
 ${KA_PBA_HISTORY_CONTEXT}
 ${KA_GOVT_REVIEW_APPROVAL_LOGIC}
-
-CRITICAL: If you encounter "for Government review/approval", you MUST split the requirement into TWO DISTINCT requirement objects in the 'requirements' array as per KA-GOVT-REVIEW-APPROVAL-LOGIC. 
-Do NOT combine them into a single object. Each split requirement must have its own req_id, scores, and ARC rewrite.
 `;
 
 // Utility to chunk text semantically (best effort)
@@ -574,12 +608,15 @@ You are PWS-INTEL-COACH. You coach the user on ONE requirement at a time.
 
 You have access to:
 - relevant source document context
-- the selected requirement (original + scores + tags + ARC rewrite)
+- the selected requirement (original + scores + tags + ARC rewrite + reasoning)
 
 Your job:
-- Ask probing questions that challenge prescriptive constraints when present.
-- Ask about mission intent when needed to clarify outcome.
-- Help the user collaboratively refine the suggested ARC rewrite.
+- Apply the ARC Method (KA-ARC-METHOD) to help the user collaboratively refine the requirement.
+- Ensure the statement follows: "The contractor shall [Action] to achieve [Result] within [Context]."
+- Strip embedded performance metrics (percentages, time limits, SLAs, AQLs) from the requirement statement and recommend routing them to QASP anchors.
+- For prescriptive requirements, check if justified (e.g. FedRAMP, security mandate). If justified, retain constraint with explicit rationale in Context. If unjustified, challenge and convert to ARC outcome form.
+- Apply the Independent Failure Test if the requirement contains multiple tasks that fail independently; advise splitting if needed.
+- Follow the 8 Nevers in KA-ARC-METHOD.
 
 KNOWLEDGE BASE (AUTHORITATIVE ORDER):
 ${KA_PBA_RUBRIC_SCORING}
@@ -598,6 +635,7 @@ ID: ${requirement.req_id}
 Original: ${requirement.original_text}
 Current Rewrite: ${requirement.suggested_rewrite_statement}
 ARC: ${JSON.stringify(requirement.suggested_rewrite_arc)}
+Reasoning: ${requirement.reasoning}
 
 Document Context Excerpt:
 ${docExcerpt}
@@ -672,6 +710,7 @@ export async function generateQASP(analysis: AnalysisResult, userRefinements: st
     overall_score: r.overall_score,
     dimension_scores: r.dimension_scores,
     suggested_rewrite_statement: r.suggested_rewrite_statement,
+    reasoning: r.reasoning,
     source_ref: r.source_ref
   }));
 
@@ -869,3 +908,160 @@ export async function runDirectedAnalysis(
   
   return { result, consistency };
 }
+
+/**
+ * MANUAL SPLIT & RE-ANALYSIS ACTION
+ * Takes an original requirement and user-defined split statement texts,
+ * re-analyzes each into a distinct fully scored and ARC-rewritten Requirement object.
+ */
+export async function splitAndAnalyzeRequirement(
+  originalReq: Requirement,
+  splitTexts: string[],
+  docType: DocumentType = "PWS",
+  run_id: string = `run_split_${Date.now()}`
+): Promise<Requirement[]> {
+  const modelName = "gemini-3.1-pro-preview";
+
+  const prompt = `
+Original Requirement ID: ${originalReq.req_id}
+Original Text: "${originalReq.original_text}"
+Source Ref: Page ${originalReq.source_ref.page}, Section "${originalReq.source_ref.section}"
+
+The user has flagged this requirement statement as containing multiple distinct obligations/tasks under the Independent Failure Test and split it into ${splitTexts.length} separate requirement statements:
+${splitTexts.map((text, idx) => `[Sub-statement ${idx + 1}]: "${text}"`).join('\n')}
+
+For EACH of these ${splitTexts.length} split statements:
+1. Assign a unique req_id based on the original ID, e.g., "${originalReq.req_id}.1", "${originalReq.req_id}.2" (or "${originalReq.req_id}a", "${originalReq.req_id}b").
+2. Set source_ref page to ${originalReq.source_ref.page}, section to "${originalReq.source_ref.section}".
+3. Re-analyze and score the requirement on PBA maturity (0-100) across all 5 dimensions based strictly on KA-PBA-RUBRIC-SCORING.
+4. Classify it (PWS/SOW/SOO requirement type), extraction_method as "Manual Multi-Task Split", and assign taxonomy tags.
+5. Set criticality to "High", "Medium", or "Low" based on impact.
+6. Provide detailed reasoning explaining why it is a distinct requirement and evaluating its PBA maturity.
+7. Generate an ARC-aligned rewrite following the formula: "The contractor shall [Action] to achieve [Result] within [Context]."
+8. CRITICAL: If the split statement contains embedded performance metrics (percentages, time limits, SLAs, AQLs), STRIP them from the rewritten statement and route them to a QASP anchor line in the reasoning:
+   "Performance standard — route to QASP, not the requirement statement: [Extracted Metric]"
+
+KNOWLEDGE BASE & PROTOCOLS:
+${KA_PBA_RUBRIC_SCORING}
+${KA_REQ_REVIEW_PROTOCOL}
+${KA_ARC_METHOD}
+${KA_PWS_WRITING_GUIDELINES}
+`;
+
+  const responseSchema = {
+    type: Type.ARRAY,
+    items: {
+      type: Type.OBJECT,
+      properties: {
+        req_id: { type: Type.STRING },
+        source_ref: {
+          type: Type.OBJECT,
+          properties: {
+            page: { type: Type.NUMBER },
+            section: { type: Type.STRING },
+            line_hint: { type: Type.STRING }
+          },
+          required: ["page", "section"]
+        },
+        original_text: { type: Type.STRING },
+        extraction_method: { type: Type.STRING },
+        classification: { type: Type.STRING },
+        tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+        dimension_scores: {
+          type: Type.OBJECT,
+          properties: {
+            outcome_orientation: { type: Type.NUMBER },
+            measurability: { type: Type.NUMBER },
+            flexibility: { type: Type.NUMBER },
+            surveillance_linkage: { type: Type.NUMBER },
+            clarity_conciseness: { type: Type.NUMBER }
+          },
+          required: ["outcome_orientation", "measurability", "flexibility", "surveillance_linkage", "clarity_conciseness"]
+        },
+        overall_score: { type: Type.NUMBER },
+        criticality: { type: Type.STRING },
+        reasoning: { type: Type.STRING },
+        highlighted_issues: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              span_text: { type: Type.STRING },
+              issue_tag: { type: Type.STRING },
+              explanation: { type: Type.STRING }
+            }
+          }
+        },
+        suggested_rewrite_arc: {
+          type: Type.OBJECT,
+          properties: {
+            action: { type: Type.STRING },
+            result: { type: Type.STRING },
+            context: { type: Type.STRING }
+          },
+          required: ["action", "result", "context"]
+        },
+        suggested_rewrite_statement: { type: Type.STRING },
+        probing_questions: { type: Type.ARRAY, items: { type: Type.STRING } }
+      },
+      required: ["req_id", "original_text", "overall_score", "suggested_rewrite_statement", "suggested_rewrite_arc", "dimension_scores", "classification", "tags", "criticality", "reasoning", "source_ref"]
+    }
+  };
+
+  const response = await trackedCall({
+    run_id,
+    agent: "ANALYST",
+    fn: "REQ_ARC_REWRITE",
+    model: modelName,
+    call: () => ai.models.generateContent({
+      model: modelName,
+      contents: prompt,
+      config: {
+        systemInstruction: "You are PWS-INTEL-ANALYST. Re-analyze manually split requirement statements into distinct, fully scored and ARC-rewritten Requirement objects according to KA-ARC-METHOD.",
+        responseMimeType: "application/json",
+        responseSchema: responseSchema as any,
+        temperature: 0.1,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH }
+      }
+    })
+  });
+
+  if (!response.text) {
+    throw new Error("No response from AI during requirement split analysis.");
+  }
+
+  const parsed = JSON.parse(response.text) as Requirement[];
+  return parsed;
+}
+
+/**
+ * AUTO-DETECT SPLIT CANDIDATES
+ * Uses Gemini to parse a compound requirement statement into candidate split sub-statements.
+ */
+export async function suggestRequirementSplits(reqText: string): Promise<string[]> {
+  const modelName = "gemini-3-flash-preview";
+  const response = await ai.models.generateContent({
+    model: modelName,
+    contents: `Analyze this requirement statement and detect if it contains multiple distinct tasks that produce independent deliverables or should be split under the Independent Failure Test in KA-ARC-METHOD.
+Requirement Text: "${reqText}"
+
+If it contains multiple distinct obligations, return a JSON array of strings representing the separate candidate requirement statements. If it is a single requirement, return an array containing just the original text.`,
+    config: {
+      systemInstruction: "You are PWS-INTEL-ANALYST. Separate compound requirement statements into distinct candidate statements using the Independent Failure Test in KA-ARC-METHOD.",
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
+      } as any,
+      temperature: 0.1
+    }
+  });
+
+  try {
+    const arr = JSON.parse(response.text || '[]') as string[];
+    return arr.length > 0 ? arr : [reqText];
+  } catch {
+    return [reqText];
+  }
+}
+

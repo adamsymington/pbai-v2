@@ -12,6 +12,7 @@ import {
   FileText, 
   CheckCircle2, 
   AlertCircle, 
+  AlertTriangle,
   RefreshCw, 
   Table as TableIcon, 
   ClipboardCheck, 
@@ -46,7 +47,12 @@ import {
   SortAsc,
   Check,
   ThumbsUp,
-  HelpCircle
+  HelpCircle,
+  Scissors,
+  Plus,
+  Trash2,
+  Sparkles,
+  Layers
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Toaster, toast } from 'sonner';
@@ -60,7 +66,9 @@ import {
   clearTokenLogs,
   runDirectedAnalysis,
   learnFromCorrection,
-  getLearningStore
+  getLearningStore,
+  splitAndAnalyzeRequirement,
+  suggestRequirementSplits
 } from './services/gemini';
 import { 
   AnalysisResult, 
@@ -135,6 +143,7 @@ export default function App() {
   const [editedReqIds, setEditedReqIds] = useState<Set<string>>(new Set());
   const [qaspRefinement, setQaspRefinement] = useState('');
   const [showQaspPrompt, setShowQaspPrompt] = useState(false);
+  const [showQaspWarning, setShowQaspWarning] = useState(false);
   const [showTokenInspector, setShowTokenInspector] = useState(false);
   const [showLearningModal, setShowLearningModal] = useState(false);
   const [learningEntries, setLearningEntries] = useState<LearningEntry[]>([]);
@@ -153,6 +162,138 @@ export default function App() {
     const saved = localStorage.getItem('pws_resolved_reqs');
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
+
+  // Split Requirement State
+  const [splitModalReq, setSplitModalReq] = useState<Requirement | null>(null);
+  const [splitStatements, setSplitStatements] = useState<string[]>([]);
+  const [isSplitting, setIsSplitting] = useState(false);
+  const [isSuggestingSplit, setIsSuggestingSplit] = useState(false);
+
+  const openSplitModal = (req: Requirement) => {
+    setSplitModalReq(req);
+    setSplitStatements([req.original_text, ""]);
+  };
+
+  const handleAddSplitStatement = () => {
+    setSplitStatements(prev => [...prev, ""]);
+  };
+
+  const handleRemoveSplitStatement = (index: number) => {
+    if (splitStatements.length <= 2) return;
+    setSplitStatements(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateSplitStatement = (index: number, val: string) => {
+    setSplitStatements(prev => {
+      const next = [...prev];
+      next[index] = val;
+      return next;
+    });
+  };
+
+  const handleAutoSuggestSplit = async () => {
+    if (!splitModalReq) return;
+    setIsSuggestingSplit(true);
+    try {
+      const suggestions = await suggestRequirementSplits(splitModalReq.original_text);
+      if (suggestions.length > 1) {
+        setSplitStatements(suggestions);
+        toast.success(`Auto-detected ${suggestions.length} candidate requirement tasks!`);
+      } else {
+        toast.info("Auto-detect suggested a single obligation. You can still manually separate the text below.");
+        if (splitStatements.length < 2) {
+          setSplitStatements([splitModalReq.original_text, ""]);
+        }
+      }
+    } catch (err) {
+      console.error("Auto-detect split failed", err);
+      toast.error("Auto-detect split failed. Please split manually.");
+    } finally {
+      setIsSuggestingSplit(false);
+    }
+  };
+
+  const handleConfirmSplit = async () => {
+    if (!splitModalReq) return;
+    const validStatements = splitStatements.map(s => s.trim()).filter(Boolean);
+    if (validStatements.length < 2) {
+      toast.error("Please provide at least 2 distinct sub-requirement statements.");
+      return;
+    }
+
+    setIsSplitting(true);
+    try {
+      const newReqs = await splitAndAnalyzeRequirement(splitModalReq, validStatements, docType);
+      
+      if (result) {
+        const idx = result.requirements.findIndex(r => r.req_id === splitModalReq.req_id);
+        let updatedReqs = [...result.requirements];
+        if (idx !== -1) {
+          updatedReqs.splice(idx, 1, ...newReqs);
+        } else {
+          updatedReqs = [...updatedReqs, ...newReqs];
+        }
+
+        // Recalculate document metrics
+        const newTotalScored = updatedReqs.length;
+        const totalScoreSum = updatedReqs.reduce((acc, r) => acc + r.overall_score, 0);
+        const newOverallScore = Math.round(totalScoreSum / newTotalScored);
+
+        // Recalculate dimension averages
+        const dims = {
+          outcome_orientation: 0,
+          measurability: 0,
+          flexibility: 0,
+          surveillance_linkage: 0,
+          clarity_conciseness: 0
+        };
+        updatedReqs.forEach(r => {
+          dims.outcome_orientation += r.dimension_scores.outcome_orientation;
+          dims.measurability += r.dimension_scores.measurability;
+          dims.flexibility += r.dimension_scores.flexibility;
+          dims.surveillance_linkage += r.dimension_scores.surveillance_linkage;
+          dims.clarity_conciseness += r.dimension_scores.clarity_conciseness;
+        });
+
+        const updatedResult: AnalysisResult = {
+          ...result,
+          requirements: updatedReqs,
+          overall_document_score: newOverallScore,
+          document_metrics: {
+            ...result.document_metrics,
+            requirements_identified_total: newTotalScored,
+            requirements_scored: newTotalScored
+          },
+          dimension_averages: {
+            outcome_orientation: Math.round(dims.outcome_orientation / newTotalScored),
+            measurability: Math.round(dims.measurability / newTotalScored),
+            flexibility: Math.round(dims.flexibility / newTotalScored),
+            surveillance_linkage: Math.round(dims.surveillance_linkage / newTotalScored),
+            clarity_conciseness: Math.round(dims.clarity_conciseness / newTotalScored)
+          }
+        };
+
+        setResult(updatedResult);
+
+        // Clean up resolved set
+        if (resolvedReqIds.has(splitModalReq.req_id)) {
+          setResolvedReqIds(prev => {
+            const next = new Set(prev);
+            next.delete(splitModalReq.req_id);
+            return next;
+          });
+        }
+
+        toast.success(`Requirement ${splitModalReq.req_id} split into ${newReqs.length} distinct ARC-analyzed requirements!`);
+        setSplitModalReq(null);
+      }
+    } catch (err) {
+      console.error("Failed to split requirement:", err);
+      toast.error("Failed to split requirement. Please check input and try again.");
+    } finally {
+      setIsSplitting(false);
+    }
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const coachChatRef = useRef<any>(null);
@@ -357,14 +498,35 @@ export default function App() {
     }
   };
 
-  const handleGenerateQASP = async () => {
+  const handleGenerateQASP = async (force: boolean = false) => {
     if (!result) return;
+
+    // Check if all requirements are resolved/confirmed
+    const unapprovedCount = result.requirements.length - resolvedReqIds.size;
+    if (unapprovedCount > 0 && !force) {
+      setShowQaspWarning(true);
+      return;
+    }
+
     const run_id = `run_qasp_${Date.now()}`;
     setSelectedRunId(run_id);
     setIsGeneratingQASP(true);
     setQaspStatus('in_progress');
+    setShowQaspWarning(false);
+    
     try {
-      const data = await generateQASP(result, qaspRefinement, run_id);
+      // Prepare finalized requirements: use rewrite if approved, otherwise original
+      const finalizedResult = {
+        ...result,
+        requirements: result.requirements.map(r => ({
+          ...r,
+          suggested_rewrite_statement: resolvedReqIds.has(r.req_id) 
+            ? r.suggested_rewrite_statement 
+            : r.original_text
+        }))
+      };
+
+      const data = await generateQASP(finalizedResult, qaspRefinement, run_id);
       setQasp(data);
       setQaspStatus('complete');
       setActiveTab('qasp');
@@ -1370,6 +1532,20 @@ export default function App() {
                                 Source: {req.source_ref.section} | Method: {req.extraction_method}
                               </span>
                               <div className="flex items-center gap-2">
+                                <button 
+                                  onClick={() => openSplitModal(req)}
+                                  disabled={isTrainingMode}
+                                  className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border",
+                                    isTrainingMode 
+                                      ? "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200" 
+                                      : "bg-amber-50 text-amber-700 border-amber-200/80 hover:bg-amber-100 hover:border-amber-300"
+                                  )}
+                                  title="Flag multiple tasks and split into distinct requirements for ARC re-analysis"
+                                >
+                                  <Scissors className="w-3.5 h-3.5 text-amber-600" />
+                                  Split Requirement
+                                </button>
                                 {!isTrainingMode && (
                                   <button 
                                     onClick={() => {
@@ -1691,6 +1867,53 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* QASP Warning Modal */}
+      <AnimatePresence>
+        {showQaspWarning && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl border border-slate-200"
+            >
+              <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center mb-6">
+                <AlertTriangle className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest mb-4">Unconfirmed Revisions</h3>
+              <p className="text-sm text-slate-500 mb-8 leading-relaxed">
+                You have <span className="font-bold text-slate-900">{result?.requirements.length ? result.requirements.length - resolvedReqIds.size : 0}</span> unconfirmed requirement revisions. 
+                <br /><br />
+                The generated QASP will reflect the <span className="font-bold text-slate-900">original statements</span> for these items and <span className="font-bold text-slate-900">approved revisions</span> for confirmed items.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => handleGenerateQASP(true)}
+                  className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
+                >
+                  CONTINUE WITH ORIGINAL STATEMENTS
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowQaspWarning(false);
+                    setShowQaspPrompt(false);
+                    setActiveTab('requirements');
+                  }}
+                  className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs hover:bg-slate-200 transition-all"
+                >
+                  GO BACK TO REQUIREMENTS
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* QASP Refinement Prompt Modal */}
       <AnimatePresence>
         {showQaspPrompt && (
@@ -1724,7 +1947,7 @@ export default function App() {
                   CANCEL
                 </button>
                 <button 
-                  onClick={handleGenerateQASP}
+                  onClick={() => handleGenerateQASP()}
                   disabled={isGeneratingQASP}
                   className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-bold text-xs hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
                 >
@@ -2130,6 +2353,166 @@ export default function App() {
                 >
                   <Download className="w-3.5 h-3.5" />
                   Export Run JSON
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Split Requirement Modal */}
+        {splitModalReq && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto"
+            onClick={(e) => {
+              if (e.target === e.currentTarget && !isSplitting) setSplitModalReq(null);
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white rounded-2xl max-w-2xl w-full border border-slate-100 shadow-2xl overflow-hidden my-8"
+            >
+              {/* Header */}
+              <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl border border-amber-500/30">
+                    <Scissors className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-black tracking-tight">Split Requirement</h3>
+                      <span className="text-[10px] font-black px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded uppercase tracking-wider">
+                        {splitModalReq.req_id}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Separate multi-task statement into distinct requirement objects for ARC re-analysis.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => !isSplitting && setSplitModalReq(null)}
+                  disabled={isSplitting}
+                  className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 space-y-6 max-h-[72vh] overflow-y-auto">
+                {/* Guidance Callout */}
+                <div className="p-4 bg-amber-50/80 border border-amber-200/80 rounded-xl text-xs leading-relaxed text-amber-900 space-y-1">
+                  <div className="flex items-center gap-2 font-black text-amber-800 text-[10px] uppercase tracking-wider">
+                    <Info className="w-4 h-4 text-amber-600 shrink-0" />
+                    Independent Failure Test (KA-ARC-METHOD)
+                  </div>
+                  <p className="text-[11px] text-amber-800/90 leading-normal">
+                    Ask whether candidate tasks could fail independently and require distinct surveillance methods/corrective actions under the QASP. Distinct tasks must be separated so each receives its own performance standard and ARC rewrite.
+                  </p>
+                </div>
+
+                {/* Original Statement Reference */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Original Requirement Statement
+                  </label>
+                  <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-700 leading-relaxed">
+                    {splitModalReq.original_text}
+                  </div>
+                </div>
+
+                {/* Header Action Bar */}
+                <div className="flex items-center justify-between pt-2">
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-indigo-500" />
+                    Distinct Requirement Statements ({splitStatements.length})
+                  </label>
+                  <button
+                    onClick={handleAutoSuggestSplit}
+                    disabled={isSuggestingSplit || isSplitting}
+                    className="flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {isSuggestingSplit ? (
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3 h-3 text-indigo-500" />
+                    )}
+                    Auto-Detect Tasks
+                  </button>
+                </div>
+
+                {/* Statements list */}
+                <div className="space-y-4">
+                  {splitStatements.map((stmt, idx) => (
+                    <div key={idx} className="p-4 bg-slate-50/80 border border-slate-200/80 rounded-xl space-y-2 relative group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-1">
+                          Sub-Requirement {splitModalReq.req_id}.{idx + 1}
+                        </span>
+                        {splitStatements.length > 2 && (
+                          <button
+                            onClick={() => handleRemoveSplitStatement(idx)}
+                            disabled={isSplitting}
+                            className="text-slate-400 hover:text-rose-600 p-1 rounded transition-colors disabled:opacity-50"
+                            title="Remove statement"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                      <textarea
+                        value={stmt}
+                        onChange={(e) => handleUpdateSplitStatement(idx, e.target.value)}
+                        placeholder={`Enter task text for sub-requirement ${splitModalReq.req_id}.${idx + 1}...`}
+                        rows={3}
+                        disabled={isSplitting}
+                        className="w-full p-3 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-800 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner leading-relaxed"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Statement button */}
+                <button
+                  onClick={handleAddSplitStatement}
+                  disabled={isSplitting}
+                  className="w-full py-2.5 border-2 border-dashed border-slate-200 hover:border-indigo-300 rounded-xl text-xs font-bold text-slate-500 hover:text-indigo-600 flex items-center justify-center gap-2 transition-all hover:bg-indigo-50/30 disabled:opacity-50"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Another Sub-Requirement Task
+                </button>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button
+                  onClick={() => setSplitModalReq(null)}
+                  disabled={isSplitting}
+                  className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmSplit}
+                  disabled={isSplitting || splitStatements.some(s => !s.trim())}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm disabled:opacity-50"
+                >
+                  {isSplitting ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Re-analyzing with ARC...
+                    </>
+                  ) : (
+                    <>
+                      <Scissors className="w-4 h-4" />
+                      Confirm Split & Re-Analyze
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>
