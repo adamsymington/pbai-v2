@@ -55,6 +55,7 @@ import {
   Layers
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import { 
   analyzeDocument, 
@@ -748,8 +749,15 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <RouterLink
+              to="/csaw"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200"
+            >
+              <ShieldAlert className="w-3.5 h-3.5" />
+              CSAW CONTRACT DASHBOARD
+            </RouterLink>
             {result && (
-              <button 
+              <button
                 onClick={() => {
                   setResult(null);
                   setConsistencyResult(null);
