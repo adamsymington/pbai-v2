@@ -15,7 +15,7 @@ fy,customer,vehicle,vendor,model,new_or_used,aircraft,obligations,offers,extent_
 2022,DOI FWS,GSA MAS,Davenport Aviation,H125,new,1,4770000,1,A,FWS order under GS07F139DA,description; bare or lightly equipped aircraft
 2022,DOE NNSA,Open market,Leonardo Helicopters,unspecified twin,new,2,36006000,4,A,CONT_AWD_89233122CNA000245_8900_-NONE-_-NONE-,description (two)
 2022,DEA,Agency IDV,Bell Textron,Bell single-engine light utility,new,1,4366000,,A,CONT_AWD_15DDHQ22F00000733_1524_15DDHQ19D00000023_1524,description
-2023,CBP,GSA MAS,Davenport Aviation,H125 LEP,new,,52270000,1,A,CONT_AWD_70B02C23F00000959_7014_GS07F139DA_4732,mods order 3 then 2 after an initial NTP; 5-7 aircraft; confirm in Davenport file
+2023,CBP,GSA MAS,Davenport Aviation,H125 LEP,new,6,52270000,1,A,CONT_AWD_70B02C23F00000959_7014_GS07F139DA_4732,Davenport file: 1 at base (Sep 2023) + 3 (P00002 Aug 2024) + 2 (P00004 Sep 2025); includes $0.35M FLIR and switch upgrades
 2024,USDA APHIS,Open market,Trinity Aviation,MD 530F,unknown,1,2850000,2,F,CONT_AWD_12639524P0191_12K3_-NONE-_-NONE-,description
 2026,CBP,GSA MAS,Davenport Aviation,H125 LEP RW,new,10,95510000,2,A,CONT_AWD_70B02C26F00000290_7014_GS07F139DA_4732,description (quantity 10)
 2026,DOI US Park Police,Open market,Bell Textron,unspecified,new,,53240000,1,C,CONT_AWD_140D0426C0109_1406_-NONE-_-NONE-,unknown; not competed
