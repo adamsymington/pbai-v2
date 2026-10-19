@@ -158,7 +158,7 @@ No evidence found that Sourcewell, NASPO ValuePoint, or HGACBuy carries complete
 | **Adjacent total** | **1,093** |
 | Aircraft purchases (for comparison) | 510 |
 
-DoD adds $8.1 billion in parts, $3.7 billion in repair, and $624 million in services. Coast Guard and NASA are the largest civilian buyers of repair and services. All of these are floors: each pull required a helicopter keyword, and Forest Service and Interior fire aviation, usually described by mission rather than aircraft type, is barely captured ($9 million for Forest Service).
+DoD adds $8.1 billion in parts, $3.7 billion in repair, and $624 million in services. The Coast Guard bought 97 percent of civilian helicopter parts ($553 million, mostly PSC 1615 airframe components for the MH-60T and MH-65), and its annual parts spend tripled from $28 million in FY2016 to $94 million in FY2026 as those fleets aged. Coast Guard and NASA are also the largest civilian buyers of repair and services. CBP shows only $1.5 million in keyword-matched parts, so its H125 support likely runs through vehicles this pull did not capture. All of these are floors: each pull required a helicopter keyword, and Forest Service and Interior fire aviation, usually described by mission rather than aircraft type, is barely captured ($9 million for Forest Service).
 
 Civilian agencies spent at least twice as much keeping helicopters flying ($1.09 billion) as buying them ($510 million). An aircraft-purchase SIN addresses at most a third of civilian rotary-wing contract spend. Parts and repair are already reachable through existing MAS SINs and agency sustainment contracts, and the business case should not count them as SIN volume.
 
