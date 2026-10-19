@@ -28,7 +28,7 @@ The document that created that accommodation, and its effective date, is now the
 | 6 | Completion-work share | About one-third of price | Lightly equipped FWS H125 on MAS, $4.77M (May 2022), vs. CBP configured H125, $7.19M (Sep 2022) |
 | 7 | State and local volume | 23 aircraft through the channel as of January 2020 (GSA R7); at least 5 state/local orders since | SRP dollars **[PENDING]** |
 | 8 | Sellers on schedule | 1 authorized dealer (Davenport, Airbus only). No OEM. Bell, which won 61% of non-CBP civilian purchase dollars, holds no schedule aircraft | eLibrary confirmation **[PENDING]** |
-| 9 | Adjacent rotary-wing spend, civilian | $524M FY16-FY26 in repair and aviation services (helicopter-keyword floor) vs. $510M in aircraft purchases | Parts pull not yet received. Fire aviation is under-captured |
+| 9 | Adjacent rotary-wing spend, civilian | $1.09B FY16-FY26 in parts, repair, and aviation services (helicopter-keyword floor) vs. $510M in aircraft purchases | Purchases are at most a third of civilian rotary-wing contract spend. Fire aviation is under-captured |
 | 10 | IFF | $150K to $240K a year on federal MAS volume (median to mean); $716K in FY26 | 0.75% of civilian MAS obligations by year; state/local **[PENDING]** |
 
 ---
@@ -149,9 +149,18 @@ No evidence found that Sourcewell, NASPO ValuePoint, or HGACBuy carries complete
 
 #### 2.4 Adjacent spend
 
-Civilian helicopter repair and maintenance (J01x) totaled $365 million and aviation services (V1xx) $159 million over FY16-FY26, with Coast Guard and NASA the largest buyers. DoD adds $3.7 billion in repair and $624 million in services. These are floors: the pull required a helicopter keyword, and Forest Service and Interior fire aviation, usually described by mission rather than aircraft type, is barely captured ($9 million for Forest Service). Parts are **[PENDING]** the third adjacent pull.
+| Civilian, FY16-FY26 | $M |
+|---|---|
+| Rotary-wing parts and components (1615, 1620, 1630, 1680, 2840, 2995) | 569 |
+| Repair and maintenance (J01x) | 365 |
+| Aviation services (V1xx) | 159 |
+| Modification (K01x) | 0.4 |
+| **Adjacent total** | **1,093** |
+| Aircraft purchases (for comparison) | 510 |
 
-On the civilian side, money spent keeping helicopters flying (at least $524 million) matches money spent buying them ($510 million). An aircraft-purchase SIN addresses half of civilian rotary-wing contract spend at most.
+DoD adds $8.1 billion in parts, $3.7 billion in repair, and $624 million in services. Coast Guard and NASA are the largest civilian buyers of repair and services. All of these are floors: each pull required a helicopter keyword, and Forest Service and Interior fire aviation, usually described by mission rather than aircraft type, is barely captured ($9 million for Forest Service).
+
+Civilian agencies spent at least twice as much keeping helicopters flying ($1.09 billion) as buying them ($510 million). An aircraft-purchase SIN addresses at most a third of civilian rotary-wing contract spend. Parts and repair are already reachable through existing MAS SINs and agency sustainment contracts, and the business case should not count them as SIN volume.
 
 ### 3. Analysis of Alternatives
 
@@ -195,7 +204,7 @@ Present the projection as a range. With one buyer at two-thirds of volume and or
 - Source: USAspending prime transactions, PSC 1520, NAICS 336411 with helicopter descriptions, PSC 1510/1560 with helicopter keywords, and every order under GS-07F-139DA. Pulled October 19, 2026. FY2026 is incomplete in FPDS; DoD runs about 90 days behind.
 - Aircraft purchases were tagged by hand from award descriptions. Three purchases lack an aircraft count and are shown as estimates.
 - Customer is the funding agency, so CBP aircraft bought through Army contracts would count as CBP. None appeared in the purchase data.
-- Adjacent spend is keyword-limited and understates fire aviation.
+- Adjacent spend is keyword-limited and understates fire aviation. The civilian/DoD split for parts uses funding agency name ("Defense" = DoD).
 
 ## Sources
 
