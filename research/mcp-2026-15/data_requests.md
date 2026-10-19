@@ -29,7 +29,7 @@ Run three separate downloads from USAspending Advanced Search, Award Data downlo
 | Pull | Filters | File name |
 |---|---|---|
 | A | PSC = 1520; Action date 10/01/2015 to present | `psc1520.csv` |
-| B | NAICS = 336411; same dates | `naics336411.csv` |
+| B | PSC 1510 and 1560, keyword helicopter / rotorcraft / rotary wing / H125 / AS350 / UH-72 / UH-60; same dates (miscoding check; replaces the NAICS 336411 pull, which the API filter would not return cleanly) | `misc_1510.csv` |
 | C | PSC in V111, V112, V113, V121, V122, V129 (air charter/passenger/freight), J015, J016, J017, J019, K015, K016, 1615, 1620, 1630, 1680, 2840, 2995; same dates. Optionally filter keyword "helicopter" OR "rotor" OR "rotary" to cut fixed-wing noise | `adjacent.csv` |
 
 All columns, no filtering of fields. The script needs these at minimum: `contract_transaction_unique_key`, `contract_award_unique_key`, `award_id_piid`, `modification_number`, `parent_award_id_piid`, `parent_award_type`, `federal_action_obligation`, `action_date`, `action_date_fiscal_year`, awarding and funding agency and sub-agency names, `recipient_name`, `recipient_parent_name`, `product_or_service_code`, `naics_code`, `extent_competed_code`, `number_of_offers_received`, `other_than_full_and_open_competition_code`, `fair_opportunity_limited_sources_code`, `award_type_code`, `transaction_description`, `prime_award_base_transaction_description`.
@@ -72,7 +72,7 @@ USAspending Assistance search, FY2016 to present, CFDA/ALN 97.067 (HSGP, includi
 
 ```
 python3 pull_usaspending.py --out data    # pulls 2 and 7, plus every GS-07F-139DA order
-python3 analyze.py --psc data/psc1520.csv --naics data/naics336411.csv \
+python3 analyze.py --psc data/psc1520.csv --naics data/misc_1510.csv \
     --adjacent data/adjacent.csv --srp data/srp_gs07f139da.csv \
     --overrides quantity_overrides.csv --out outputs
 ```

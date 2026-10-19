@@ -139,7 +139,7 @@ Present the projection as a range (low = median year without a CBP order; high =
 - FY2026 is incomplete in FPDS, and DoD data runs about 90 days behind. State this in every table that includes FY2026.
 - CBP orders may split configuration, training, and spares into separate CLINs or separate actions. The script rolls all modifications up to the award; separate awards for the same aircraft need to be linked by hand in `quantity_overrides.csv`.
 - The 70 percent figure may count aircraft rather than dollars. CBP buys light singles; other agencies buy twins. The matrix reports both.
-- NAICS 336411 includes fixed-wing aircraft. The script keeps non-1520 rows only when the description names a helicopter and writes the rest to `excluded_naics_rows.csv` for review.
+- The NAICS 336411 cross-check was dropped. Helicopters miscoded outside PSC 1520 are caught only where a 1510/1560 description names a helicopter, so treat civilian totals as a floor. Rows from the cross-check that don't name a helicopter go to `excluded_naics_rows.csv` for review.
 
 ## Sources
 

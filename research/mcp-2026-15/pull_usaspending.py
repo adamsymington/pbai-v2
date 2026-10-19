@@ -7,7 +7,6 @@ CSV in --out so analyze.py can read it directly.
 
 Pulls:
     psc1520        Contracts, PSC 1520 (aircraft, rotary wing), FY2016 to date
-    naics336411    Contracts, NAICS 336411 (aircraft manufacturing), FY2016 to date
     adjacent       Contracts, aviation services / MRO / modification / parts PSCs,
                    limited to helicopter keywords
     misc_1510      Contracts, PSC 1510 and 1560 with helicopter keywords (miscoding check)
@@ -21,7 +20,7 @@ Usage:
     python3 pull_usaspending.py --dry-run                   # print request bodies, send nothing
 
 Then:
-    python3 analyze.py --psc data/psc1520.csv --naics data/naics336411.csv data/misc_1510.csv \
+    python3 analyze.py --psc data/psc1520.csv --naics data/misc_1510.csv \
         --adjacent data/adjacent.csv --out outputs
 """
 
@@ -60,10 +59,6 @@ def time_period():
 PULLS = {
     "psc1520": {
         "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS, "psc_codes": ["1520"]},
-    },
-    "naics336411": {
-        "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,
-                    "naics_codes": {"require": ["336411"]}},
     },
     "adjacent": {
         "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,

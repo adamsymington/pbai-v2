@@ -144,8 +144,9 @@ def segment(df):
     df["text"] = text
     df["in_psc1520"] = df["psc"].str.upper().eq("1520")
     df["helo_text"] = text.str.contains(HELO_RX)
-    # NAICS 336411 covers fixed-wing too; keep non-1520 rows only when the description names a helicopter.
-    df["in_scope"] = df["in_psc1520"] | (df["naics"].str.startswith("336411") & df["helo_text"])
+    # Cross-check files (1510/1560 pulls, any NAICS export) include fixed-wing; keep non-1520 rows only
+    # when the description names a helicopter.
+    df["in_scope"] = df["in_psc1520"] | df["helo_text"]
     df["customer_agency"] = df["funding_agency"].where(df["funding_agency"] != "", df["awarding_agency"])
     df["customer_sub"] = df["funding_sub"].where(df["funding_sub"] != "", df["awarding_sub"])
     df["is_dod_customer"] = df["customer_agency"].str.contains(DOD_NAMES)
@@ -386,7 +387,8 @@ def pct(x):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--psc", nargs="+", required=True, help="USAspending/FPDS export(s) filtered to PSC 1520")
-    ap.add_argument("--naics", nargs="*", default=[], help="Export(s) filtered to NAICS 336411")
+    ap.add_argument("--naics", nargs="*", default=[],
+                    help="Cross-check export(s): misc_1510.csv, or a NAICS 336411 pull if you have one")
     ap.add_argument("--adjacent", nargs="*", default=[], help="Export(s) for V1xx, J01x, K01x, parts PSCs")
     ap.add_argument("--srp", help="SRP sales export for GS-07F-139DA (fiscal year, customer type, sales)")
     ap.add_argument("--overrides", help="CSV: award_key, quantity, configured, model, seller_type")
@@ -470,7 +472,7 @@ def main(argv=None):
     lines = [
         "# MCP 2026-15 helicopter market data: generated tables",
         f"\nWindow: {facts['window']}. Rows in scope: {len(core):,}; awards: {len(awards):,}; "
-        f"NAICS-only rows excluded as non-helicopter: {len(review_out):,} (see excluded_naics_rows.csv).",
+        f"cross-check rows excluded as non-helicopter: {len(review_out):,} (see excluded_naics_rows.csv).",
         "\n## Headline numbers",
         f"- Civilian obligations, 10-yr total: {money(civ_total)}; annual mean {money(facts['civilian_annual']['mean'])}, "
         f"median {money(facts['civilian_annual']['median'])}, range {money(facts['civilian_annual']['min'])}"
