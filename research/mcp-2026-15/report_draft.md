@@ -195,7 +195,7 @@ Civilian agencies spent at least twice as much keeping helicopters flying ($1.09
 
 ### 4. Financial Analysis
 
-Delete the $1.2 billion projection carried over from the Grants QSMO 518210GM template. Nothing in the helicopter data supports it.
+The completed draft change package projects $50 million in year one rising to $103 million by year five, on an assumed $100 million a year in federal civilian demand. The data supports the year-one figure and not the growth: federal civilian purchases averaged $46 million a year, and the existing contract has averaged about $45 million in combined sales. `change_package_redlines.md` gives a replacement projection built on actuals.
 
 Civilian MAS obligations on helicopter orders, by obligation year:
 
