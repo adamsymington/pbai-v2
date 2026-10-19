@@ -1,6 +1,6 @@
 # MCP 2026-15: Market Research, Rotary-Wing Aircraft SIN
 
-Draft for insertion into the MCP business case. Status as of October 19, 2026: federal contract data (USAspending, FY2016 to FY2026) is in and analyzed. Still pending: SRP sales on GS-07F-139DA before FY2025 and by SIN and customer type, FAIRS fleet data, LESO/1033 holdings, and the document that created the temporary accommodation. Cells marked **[PENDING]** wait on those.
+Draft for insertion into the MCP business case. Status as of October 19, 2026: federal contract data (USAspending, FY2016 to FY2026) is in and analyzed. Still pending: Davenport's confirmation of the FY2025-FY2026 customer-type split, FAIRS fleet data, LESO/1033 holdings, and the document that created the temporary accommodation. Cells marked **[PENDING]** wait on those.
 
 The aircraft-purchase figures come from `civilian_aircraft_purchases.csv`, a hand-tagged list of every civilian award for a complete helicopter. Sustainment, parts, overhaul, and the Coast Guard's H-60 hull rebuild are excluded. Each row cites the FPDS award.
 
@@ -14,7 +14,7 @@ Nothing changed in how CBP buys. Every CBP Light Enforcement Helicopter purchase
 
 The rules changed instead. MAS Refresh 26 (SF30 dated April 25, 2025, Mass Mod A897) wrote into SIN 336413 that "the award of rotary-wing or fixed-wing aircraft is explicitly excluded." The GSS recommendation followed that rule. CBP then ordered aircraft on GS-07F-139DA twice after the exclusion took effect: two helicopters for $17.6 million on September 9, 2025 (modification P00004 to order 70B02C23F00000959), and ten for $95.5 million on May 19, 2026 (order 70B02C26F00000290). GSA's September 30, 2026 RFI describes helicopters as "currently accommodated on a temporary basis under an existing Security and Protection SIN."
 
-The document that created that accommodation, and its effective date, is now the most important item in the file. If it postdates either order, $113 million in aircraft was ordered against a SIN whose text excluded them. The business case should answer that before a protester or the IG asks.
+The document that created that accommodation, and its effective date, is now the most important item in the file. If it postdates either order, $113 million in aircraft was ordered against a SIN whose text excluded them. Davenport's reported sales show the same pattern: $39.3 million in sales reported under SIN 336413 after the exclusion took effect (FY2025 Q4 through FY2026 Q2). Earlier, $84.5 million in federal helicopter sales (FY2020 Q4 to FY2022 Q1) were reported under SIN 332216, a tools SIN under Industrial Products. The aircraft have never had a SIN that fits them. The business case should answer that before a protester or the IG asks.
 
 ### Ten numbers
 
@@ -26,10 +26,10 @@ The document that created that accommodation, and its effective date, is now the
 | 4 | Competition | CBP MAS orders drew 1, 1, 1, 1, and 2 offers. Open-market civilian purchases averaged 3.2 offers | FPDS coded every CBP order as fair opportunity given. No brand-name code appears in FPDS; the eBuy justifications are the record |
 | 5 | Price per configured aircraft (CBP H125) | $6.57M (2019) → $7.0-7.2M (2021-22) → $8.2M (Aug 2024) → $8.8M (Sep 2025) → $9.55M (May 2026) | Order and modification level, Davenport file |
 | 6 | Completion-work share | About one-third of price | Lightly equipped FWS H125 on MAS, $4.77M (May 2022), vs. CBP configured H125, $7.19M (Sep 2022) |
-| 7 | State and local volume | 23 aircraft through the channel as of January 2020 (GSA R7); at least 5 state/local orders since | Reported sales on the contract: $50.1M FY25 Q1 to FY26 Q2, not yet split by customer type **[PENDING]** |
+| 7 | State and local volume | $63M-$113M of reported sales, FY20 to FY26 Q2: 22-38% of the contract, $10M-$17M a year | SSQ+. Range reflects a likely misreporting of CBP deliveries as state/local in FY25-FY26; confirm with Davenport |
 | 8 | Sellers on schedule | 1 authorized dealer (Davenport, Airbus only). No OEM. Bell, which won 61% of non-CBP civilian purchase dollars, holds no schedule aircraft | eLibrary confirmation **[PENDING]** |
 | 9 | Adjacent rotary-wing spend, civilian | $1.09B FY16-FY26 in parts, repair, and aviation services (helicopter-keyword floor) vs. $510M in aircraft purchases | Purchases are at most a third of civilian rotary-wing contract spend. Fire aviation is under-captured |
-| 10 | IFF | $150K to $240K a year on federal MAS volume (median to mean); $716K in FY26. Actual: $376K on $50.1M reported sales over six quarters (about $250K a year) | 0.75% of civilian MAS obligations by year; SSQ+ reported sales |
+| 10 | IFF | Actual: $2.2M on $293.9M reported sales, FY20 to FY26 Q2, about $340K a year | 0.75% of SSQ+ reported sales, federal and state/local combined |
 
 ---
 
@@ -103,13 +103,24 @@ By January 2020, GSA Region 7 reported 23 helicopters ordered through it "from a
 - Baltimore County PD: second H125, replacing an AS350B3 (August 2026)
 - Phoenix PD: H145 (date not confirmed)
 
-Reported schedule sales (SSQ+, GS-07F-139DA, all SINs) cover only FY2025 Q1 through FY2026 Q2 so far:
+Davenport's reported schedule sales (SSQ+, GS-07F-139DA, FY2017 Q2 to FY2026 Q2) total $293.9 million, split by SIN and customer type:
 
-| | FY25 Q1 | FY25 Q2 | FY25 Q3 | FY25 Q4 | FY26 Q1 | FY26 Q2 | Total |
-|---|---|---|---|---|---|---|---|
-| Reported sales ($M) | 4.13 | 6.70 | 0.00 | 0.51 | 3.88 | 34.89 | 50.11 |
+| FY | Federal | State or local | Disaster recovery | Total |
+|---|---|---|---|---|
+| 2020 | 26.1 | 8.2 | | 34.2 |
+| 2021 | 66.3 | 10.4 | | 76.7 |
+| 2022 | 16.3 | | 6.3 | 22.7 |
+| 2023 | 53.2 | 22.7 | | 75.8 |
+| 2024 | 12.3 | 22.2 | | 34.4 |
+| 2025 | 0.9 | 10.5 | | 11.3 |
+| 2026 (Q1-Q2) | 0.0 | 38.8 | | 38.8 |
+| **Total ($M)** | **175.0** | **112.6** | **6.3** | **293.9** |
 
-Sales are reported when invoiced, usually at aircraft delivery, so they lag FPDS orders by a year or more and can't be matched quarter by quarter. This view doesn't split federal from state and local. SSQ+ lists the contract under the Industrial Products and Services category (contracting office 47QSMS), not Security and Protection. That needs reconciling with the RFI's statement that helicopters sit on a Security and Protection SIN. A SIN-level breakdown and a longer timeframe are **[PENDING]**. FPDS does not record non-federal orders.
+No sales were reported before FY2020, even though CBP's first order was July 2018 and GSA reported 23 aircraft ordered by January 2020. Sales are reported at invoicing, usually delivery, which explains part of the lag.
+
+The FY2025-FY2026 split is not credible as reported. Federal sales fall to $0.9 million over six quarters while CBP had $42 million in aircraft ordered for delivery in that window (three ordered August 2024, two ordered September 2025). Over the same quarters, state and local sales total $49.2 million, including $34.9 million in FY2026 Q2 alone. Two readings fit: CBP deliveries were reported under the state and local SIN suffix, or several state and local aircraft delivered at once. Cumulatively the first fits better. Federal orders placed through August 2024 total about $235 million, against $175 million of federal-reported sales; moving the FY2025-FY2026 state and local sales to federal brings that to about $224 million. Confirm with Davenport's IOA before quoting a state and local figure.
+
+So state and local sales on the contract were **$63 million to $113 million** from FY2020 through FY2026 Q2. The low end assumes the FY2025-FY2026 state and local sales were really CBP's. That is 22 to 38 percent of everything sold on the contract, about $10 million to $17 million a year. The first state and local sale ($8.2 million, FY2020 Q1, under legacy SIN 567-99) lines up with Albuquerque PD's January 2020 H125. A further $6.3 million in FY2022 came through Disaster Purchasing. GSS's "limited" state and local demand was, on the conservative reading, more than a fifth of the channel.
 
 "Limited" is partly right for a reason GSS did not identify: much state and local rotary-wing demand never reaches a commercial market. The DoD 1033 program had distributed 616 aircraft to law enforcement agencies since 2006, most of them helicopters (Vertical, about 2015); Florida alone held almost 100. They are loaned with title retained by DLA, for a service fee (Citrus County, Florida took four OH-58s for $12,000). That pool is aging out. OH-58s and UH-1s built in the late 1960s and 1970s are now 50 years old or more, and the replacement path visible in the press is commercial: San Juan County, New Mexico replaced a 1033 OH-58 with a new Bell 505. LESO holdings by type and transfer year are **[PENDING]**.
 
@@ -131,7 +142,7 @@ DoD obligated about $75 billion under PSC 1520 and NAICS 336411 helicopter descr
 | OEM direct | $150M (29%) | Bell (FBI, DEA, Park Police, WAPA), Leonardo (NNSA) |
 | Other dealers and used-aircraft sellers | $13M (3%) | Rainier Heli, Shier Aviation, Trinity Aviation, others |
 
-One woman-owned small business carries the entire schedule channel. GS-07F-139DA is a broad contract (FPDS NAICS 339113 on its orders; it has also sold COVID test kits to GSA, BOP, and Navy) rather than an aviation contract, which is part of why the aircraft sit awkwardly under a Security and Protection SIN. Helicopter Services, Inc. (47QMCA20D001T, SIN 336413) is the only other MAS holder found with aircraft-related SINs, and it shows $4,259 in helicopter-coded federal sales over the decade. Full eLibrary confirmation is **[PENDING]**.
+One woman-owned small business carries the entire schedule channel. GS-07F-139DA is a broad contract (FPDS NAICS 339113 on its orders; it has also sold COVID test kits to GSA, BOP, and Navy) rather than an aviation contract. SSQ+ files it under Industrial Products and Services. Its helicopter sales have been reported under three SINs: legacy 567-99 (FY2020), SIN 332216 ($84.5 million federal, FY2020 Q4 to FY2022 Q1), and SIN 336413 (Aircraft Armoring and Helicopter Equipment, $201 million from FY2020 Q4 on). SIN 332216 is a tools SIN under Industrial Products; its title should be confirmed in eLibrary, but no reading of it covers complete aircraft. Helicopter Services, Inc. (47QMCA20D001T, SIN 336413) is the only other MAS holder found with aircraft-related SINs, and it shows $4,259 in helicopter-coded federal sales over the decade. Full eLibrary confirmation is **[PENDING]**.
 
 The OEM side explains the dealer model. GAMA reports 732 turbine helicopter deliveries worldwide in 2025 (preliminary), valued at about $4.7 billion. Federal civilian purchases average $46 million a year. That isn't enough for an OEM to carry a schedule contract, which is why Airbus sells to CBP through a dealer and to the Army through program contracts.
 
@@ -170,7 +181,7 @@ Civilian agencies spent at least twice as much keeping helicopters flying ($1.09
 
 ### 3. Analysis of Alternatives
 
-**A. Remove helicopters from MAS (GSS, September 2025).** This moves 68 percent of federal civilian helicopter purchase dollars off the schedule, including the only customer that has bought through MAS every year it bought. CBP would need a standalone competition for each order, and the brand-name justification it now posts on eBuy becomes a J&A under FAR 6.302. State and local buyers lose their only federal channel. Cooperative Purchasing authority (40 U.S.C. 502(c)(1)(B)) reaches "law enforcement and security equipment" in the legacy FSC 84 group; it does not reach agency open-market contracts. The data gives no evidence that open-market pricing would be lower.
+**A. Remove helicopters from MAS (GSS, September 2025).** This moves 68 percent of federal civilian helicopter purchase dollars off the schedule, including the only customer that has bought through MAS every year it bought. CBP would need a standalone competition for each order, and the brand-name justification it now posts on eBuy becomes a J&A under FAR 6.302. State and local buyers, who account for 22 to 38 percent of the contract's sales, lose their only federal channel. Cooperative Purchasing authority (40 U.S.C. 502(c)(1)(B)) reaches "law enforcement and security equipment" in the legacy FSC 84 group; it does not reach agency open-market contracts. The data gives no evidence that open-market pricing would be lower.
 
 **B. Status quo (temporary accommodation).** Keeps the channel open but rests on an accommodation that contradicts SIN 336413's text. Two CBP aircraft orders ($113 million) were placed after the exclusion. Every further order carries scope risk until the accommodation is documented with an effective date.
 
@@ -198,8 +209,8 @@ Mean $31.9 million, median $19.8 million. IFF at 0.75 percent: $149K (median yea
 |---|---|---|
 | Federal civilian MAS volume | FY16-FY26 median to mean | $20M-$32M |
 | Upside if a Bell dealer joins | Bell's civilian purchase volume, about $10M/yr | $3M-$10M (assumption: one-third to all of it moves to MAS) |
-| State and local MAS volume | SSQ+ on GS-07F-139DA, once split by customer type | **[PENDING]** |
-| Check against actual | SSQ+ reported sales, FY25 Q1 to FY26 Q2: $50.1M, IFF $376K (about $250K a year) | Consistent with the federal-volume range above |
+| State and local MAS volume | SSQ+ on GS-07F-139DA, FY20 to FY26 Q2 | $10M-$17M |
+| Check against actual | SSQ+ reported sales, FY20 to FY26 Q2: $293.9M, IFF $2.2M | About $45M sales and $340K IFF a year |
 | IFF (0.75%) | Sum of above | $170K-$320K before state/local |
 
 Present the projection as a range. With one buyer at two-thirds of volume and orders arriving every one to three years, any point estimate will miss in most individual years.
