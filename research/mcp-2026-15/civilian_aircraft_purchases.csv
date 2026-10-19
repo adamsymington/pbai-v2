@@ -1,0 +1,21 @@
+fy,customer,vehicle,vendor,model,new_or_used,aircraft,obligations,offers,extent_competed,award_key,count_basis
+2016,NPS,Open market,Rainier Heli International,Bell 412EP,used,1,4633000,4,A,CONT_AWD_IND16PC00153_1406_-NONE-_-NONE-,description
+2016,USDA APHIS,Open market,Shier Aviation,unspecified,unknown,,4600000,3,F,CONT_AWD_AG6395C160206_12K3_-NONE-_-NONE-,unknown; description says helicopters
+2018,CBP,GSA MAS,Davenport Aviation,H125 LEH,new,7,45960000,1,A,CONT_AWD_70B02C18F00000452_7014_GS07F139DA_4732,press ($45.9M for 7)
+2018,FBI,Agency IDV,Bell Textron,Bell 429,new,3,18122000,,F,15F06718F0001311 / 1352 / 1354 under 15F06718D0004181,one order per aircraft
+2018,DEA,Open market,Bell Textron,Bell 407,used,,6820000,1,D,CONT_AWD_15DDHQ18P00000696_1524_-NONE-_-NONE-,unknown; description says helicopters
+2018,DOE WAPA,Open market,Bell Textron,Bell 407,used,1,2295000,4,F,CONT_AWD_89503018CWA000001_8900_-NONE-_-NONE-,description
+2019,CBP,GSA MAS,Davenport Aviation,H125 LEH,new,10,65720000,1,A,CONT_AWD_70B02C19F00000617_7014_GS07F139DA_4732,9 + option for 10th exercised; matches press $65.7M
+2019,NASA,GSA MAS,Davenport Aviation,H135 T3/P,new,3,18480000,1,A,NASA order under GS07F139DA,description (three)
+2019,DEA,Agency IDV,Bell Textron,Bell 407GXi,new,1,8101000,,A,CONT_AWD_15DDHQ19F00001759_1524_15DDHQ19D00000023_1524,description
+2021,CBP,GSA MAS,Davenport Aviation,H125 LEH,new,9,63590000,1,A,CONT_AWD_70B02C21F00000080_7014_GS07F139DA_4732,3 initial ($21.2M press) + LEH 4-7 + 2 more
+2021,FBI,Agency IDV,Bell Textron,Bell 429,new,2,17810000,,F,15F06721F0002394 / 3007 under 15F06718D0004181,one order per aircraft
+2021,DOE WAPA,Open market,Bell Textron,Bell 407GXi,new,1,3577000,1,G,CONT_AWD_89503021CWA000011_8900_-NONE-_-NONE-,description
+2021,State INL,Open market,unknown,Bell 206B3,used,1,831000,9,F,CONT_AWD_19AQMM21P0763_1900_-NONE-_-NONE-,description
+2022,DOI FWS,GSA MAS,Davenport Aviation,H125,new,1,4770000,1,A,FWS order under GS07F139DA,description; bare or lightly equipped aircraft
+2022,DOE NNSA,Open market,Leonardo Helicopters,unspecified twin,new,2,36006000,4,A,CONT_AWD_89233122CNA000245_8900_-NONE-_-NONE-,description (two)
+2022,DEA,Agency IDV,Bell Textron,Bell single-engine light utility,new,1,4366000,,A,CONT_AWD_15DDHQ22F00000733_1524_15DDHQ19D00000023_1524,description
+2023,CBP,GSA MAS,Davenport Aviation,H125 LEP,new,,52270000,1,A,CONT_AWD_70B02C23F00000959_7014_GS07F139DA_4732,mods order 3 then 2 after an initial NTP; 5-7 aircraft; confirm in Davenport file
+2024,USDA APHIS,Open market,Trinity Aviation,MD 530F,unknown,1,2850000,2,F,CONT_AWD_12639524P0191_12K3_-NONE-_-NONE-,description
+2026,CBP,GSA MAS,Davenport Aviation,H125 LEP RW,new,10,95510000,2,A,CONT_AWD_70B02C26F00000290_7014_GS07F139DA_4732,description (quantity 10)
+2026,DOI US Park Police,Open market,Bell Textron,unspecified,new,,53240000,1,C,CONT_AWD_140D0426C0109_1406_-NONE-_-NONE-,unknown; not competed
