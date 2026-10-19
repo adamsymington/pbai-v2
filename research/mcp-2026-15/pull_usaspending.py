@@ -7,8 +7,10 @@ CSV in --out so analyze.py can read it directly.
 
 Pulls:
     psc1520        Contracts, PSC 1520 (aircraft, rotary wing), FY2016 to date
-    adjacent       Contracts, aviation services / MRO / modification / parts PSCs,
-                   limited to helicopter keywords
+    naics336411    Contracts, NAICS 336411 (aircraft manufacturing; includes fixed-wing)
+    adj_services   Contracts, V1xx aviation services with helicopter keywords
+    adj_mro        Contracts, J01x/K01x maintenance and modification with helicopter keywords
+    adj_parts      Contracts, rotary-wing parts PSCs with helicopter keywords
     misc_1510      Contracts, PSC 1510 and 1560 with helicopter keywords (miscoding check)
     grants         Assistance, HSGP/OPSG (97.067) and Byrne JAG (16.738) with aircraft keywords
     davenport      Every order and modification under GS-07F-139DA (child awards of the IDV)
@@ -20,8 +22,8 @@ Usage:
     python3 pull_usaspending.py --dry-run                   # print request bodies, send nothing
 
 Then:
-    python3 analyze.py --psc data/psc1520.csv --naics data/misc_1510.csv \
-        --adjacent data/adjacent.csv --out outputs
+    python3 analyze.py --psc data/psc1520.csv --naics data/naics336411.csv data/misc_1510.csv \
+        --adjacent data/adj_services.csv data/adj_mro.csv data/adj_parts.csv --out outputs
 """
 
 import argparse
@@ -42,14 +44,11 @@ GRANTS = ["02", "03", "04", "05"]
 HELO_KEYWORDS = ["helicopter", "rotorcraft", "rotary wing", "rotary-wing", "H125", "AS350", "UH-72", "UH-60"]
 GSA_IDV_PIID = "GS07F139DA"
 
-ADJACENT_PSC = [
-    # Air charter and aviation services (fire, survey, passenger, cargo)
-    "V111", "V112", "V113", "V114", "V119", "V121", "V122", "V123", "V124", "V125", "V126", "V127", "V129",
-    # Aircraft maintenance, repair, modification
-    "J015", "J016", "J017", "J019", "K015", "K016", "K017",
-    # Rotary-wing components and parts
-    "1615", "1620", "1630", "1680", "2840", "2995",
-]
+# Split into three pulls: one query with all 26 PSCs plus keywords times out on USAspending's side.
+ADJ_SERVICES = ["V111", "V112", "V113", "V114", "V119", "V121", "V122", "V123", "V124", "V125", "V126",
+                "V127", "V129"]
+ADJ_MRO = ["J015", "J016", "J017", "J019", "K015", "K016", "K017"]
+ADJ_PARTS = ["1615", "1620", "1630", "1680", "2840", "2995"]
 
 
 def time_period():
@@ -60,9 +59,21 @@ PULLS = {
     "psc1520": {
         "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS, "psc_codes": ["1520"]},
     },
-    "adjacent": {
+    "naics336411": {
         "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,
-                    "psc_codes": ADJACENT_PSC, "keywords": HELO_KEYWORDS},
+                    "naics_codes": {"require": ["336411"]}},
+    },
+    "adj_services": {
+        "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,
+                    "psc_codes": ADJ_SERVICES, "keywords": HELO_KEYWORDS},
+    },
+    "adj_mro": {
+        "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,
+                    "psc_codes": ADJ_MRO, "keywords": HELO_KEYWORDS},
+    },
+    "adj_parts": {
+        "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,
+                    "psc_codes": ADJ_PARTS, "keywords": HELO_KEYWORDS},
     },
     "misc_1510": {
         "filters": {"time_period": time_period(), "award_type_codes": CONTRACTS,

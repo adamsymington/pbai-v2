@@ -71,7 +71,7 @@ USAspending Assistance search, FY2016 to present, CFDA/ALN 97.067 (HSGP, includi
 ## Running the analysis
 
 ```
-python3 pull_usaspending.py --out data    # pulls 2 and 7, plus every GS-07F-139DA order
+python3 pull_usaspending.py --out data    # pulls 2 and 7, plus every GS-07F-139DA order (adjacent spend is split into adj_services, adj_mro, adj_parts)
 python3 analyze.py --psc data/psc1520.csv --naics data/misc_1510.csv \
     --adjacent data/adjacent.csv --srp data/srp_gs07f139da.csv \
     --overrides quantity_overrides.csv --out outputs

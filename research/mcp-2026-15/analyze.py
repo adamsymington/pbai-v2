@@ -57,13 +57,17 @@ ALIASES = {
 
 # Commercial-derivative and military program aircraft: segment out before any civilian math.
 DOD_PROGRAM_RX = re.compile(
-    r"UH-?72|LAKOTA|TH-?73|TH-?57|UH-?60|BLACK\s*HAWK|HH-?60|MH-?60|CH-?47|CHINOOK|AH-?64|APACHE|"
-    r"UH-?1Y|AH-?1Z|MH-?139|GREY\s*WOLF|CH-?53|V-?22|OSPREY|FLRAA|FARA|MV-?75",
+    r"\bUH-?72|LAKOTA|\bTH-?73|\bTH-?57|\bUH-?60|BLACK\s*HAWK|\bHH-?60|\bMH-?60|\bCH-?47|CHINOOK|"
+    r"\bAH-?64|APACHE|\bUH-?1Y|\bAH-?1Z|\bMH-?139|GREY\s*WOLF|\bCH-?53|\bV-?22\b|OSPREY|\bFLRAA\b|"
+    r"\bFARA\b|\bMV-?75",
     re.I,
 )
+# Word-bounded on purpose: an unbounded "CH-?" matches PURCHASE and pulls fixed-wing NAICS rows into scope.
 HELO_RX = re.compile(
-    r"HELICOPTER|ROTOR|ROTARY|H1[2-7]\d|AS-?350|EC-?1[2-5]\d|BELL\s*\d{3}|AW-?1\d\d|AW-?609|"
-    r"MD\s*5\d\d|MD\s*902|R-?44|R-?66|S-?76|S-?92|UH-?|AH-?|CH-?|LEH\b|LIGHT\s+ENFORCEMENT",
+    r"HELICOPTER|ROTORCRAFT|ROTARY[\s-]*WING|\b(?:MAIN|TAIL)\s+ROTOR|\bROTOR\s+BLADE|"
+    r"\bH1[2-7]\d[A-Z]*\b|\bAS-?350|\bEC-?1[2-5]\d[A-Z]*\b|\bBELL\s*(?:206|212|407|412|429|505|525)[A-Z]*\b|"
+    r"\bAW-?1\d\d[A-Z]*\b|\bMD\s*(?:500|520|530|600|902)\b|\bR-?(?:22|44|66)\b|\bS-?(?:70|76|92)\b|"
+    r"\b(?:UH|AH|CH|HH|MH|TH|OH|SH|VH)-?\d{1,3}[A-Z]?\b|\bLEH\b|LIGHT\s+ENFORCEMENT\s+HELI",
     re.I,
 )
 CONFIG_RX = re.compile(
@@ -111,7 +115,8 @@ def load(paths):
     for p in paths:
         if not p:
             continue
-        df = pd.read_csv(p, dtype=str, low_memory=False)
+        wanted = {n for names in ALIASES.values() for n in names}
+        df = pd.read_csv(p, dtype=str, low_memory=False, usecols=lambda c: c.strip().lower() in wanted)
         df.columns = [c.strip().lower() for c in df.columns]
         out = pd.DataFrame(index=df.index)
         for canon, names in ALIASES.items():
