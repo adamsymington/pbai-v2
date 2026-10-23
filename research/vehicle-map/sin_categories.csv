@@ -1,1 +1,1552 @@
-sin,category
+sin,category,source,gw_category,total_sales
+54151S,Information Technology,site,IT,22138751772.0
+541611,Professional Services,site,Professional Services,9268847925.0
+511210,Information Technology,site,IT,9110790971.0
+518210C,Information Technology,site,IT,4711985849.0
+541330ENG,Professional Services,site,Professional Services,2436791525.0
+54151ECOM,Information Technology,site,IT,2062628440.0
+561210FAC,Facilities,site,Facilities & Construction,2045850206.0
+54151HACS,Information Technology,site,IT,1770205992.0
+33411,Information Technology,site,IT,1454658614.0
+54151,Information Technology,site,IT,1359733878.0
+517312,Information Technology,site,IT,1326263430.0
+561599L,Travel,site,Travel & Lodging,1261027948.0
+541211,Professional Services,site,Professional Services,1156618266.0
+561612,Security and Protection,site,Security and Protection,1052159168.0
+541614,Professional Services,site,Transportation and Logistics Services,998042836.0
+OLM,Information Technology,fallback,IT,898667105.0
+4PL,Industrial Products and Services,inferred,Industrial Products & Services,898267055.0
+33721,Furniture and Furnishings,site,Office Management,863552865.0
+54151HEAL,Information Technology,site,IT,822317336.0
+561499M,Transportation and Logistics Services,inferred,Transportation and Logistics Services,731207133.0
+481211B,Transportation and Logistics Services,site,Travel & Lodging,713908951.0
+517410,Information Technology,site,IT,712656758.0
+541715,Professional Services,site,Professional Services,708241721.0
+541219,Professional Services,site,Professional Services,675051623.0
+561422,Information Technology,site,IT,626641193.0
+541620,Professional Services,site,Facilities & Construction,618572827.0
+ANCILLARY,Facilities,fallback,Facilities & Construction,468871164.0
+561611,Professional Services,fallback,Professional Services,401095791.0
+33411BP,Information Technology,inferred,Facilities & Construction,395890344.0
+611430ST,Security and Protection,site,Industrial Products & Services,381808454.0
+332510C,Industrial Products and Services,site,Industrial Products & Services,381702108.0
+611430,Professional Services,site,Human Capital,359809111.0
+561440,Professional Services,fallback,Professional Services,349050043.0
+541519PIV,Information Technology,site,Professional Services,347567806.0
+13251,Information Technology,inferred,IT,336481994.0
+541810ODC,Professional Services,site,Professional Services,296042975.0
+541930,Professional Services,site,Professional Services,261317971.0
+332510CBP,Industrial Products and Services,inferred,Industrial Products & Services,252653892.0
+532111,Transportation and Logistics Services,site,Transportation and Logistics Services,249755844.0
+336992,Miscellaneous,fallback,Sustainment S&E,240354757.0
+339940OS4,Office Management,inferred,Office Management,236715327.0
+811212,Information Technology,site,IT,207310063.0
+541613,Professional Services,site,Professional Services,205387008.0
+541330L,Professional Services,fallback,Professional Services,191816119.0
+541519ICAM,Information Technology,site,IT,191071068.0
+334290,Security and Protection,site,Security and Protection,185638819.0
+ANCRA,Facilities,fallback,Facilities & Construction,180554105.0
+541612HC,Human Capital,inferred,Professional Services,178177966.0
+334512,Professional Services,fallback,Professional Services,178032724.0
+333924,Transportation and Logistics Services,fallback,Transportation and Logistics Services,177363950.0
+334516,Scientific Management and Solutions,site,Industrial Products & Services,174792236.0
+541990,Professional Services,site,IT,173904572.0
+541614SVC,Professional Services,site,Professional Services,166878320.0
+541511,Professional Services,site,Professional Services,166453321.0
+541330EMI,Professional Services,site,Professional Services,166000986.0
+336413,Security and Protection,site,Industrial Products & Services,152359247.0
+531,Transportation and Logistics Services,inferred,Transportation and Logistics Services,151165197.0
+337121H,Furniture and Furnishings,inferred,Office Management,142897067.0
+33721P,Furniture and Furnishings,site,Office Management,132517739.0
+541370GEO,Information Technology,site,IT,130444103.0
+339940,Office Management,site,Office Management,130223345.0
+541690E,Professional Services,inferred,Professional Services,128687036.0
+511210BP,Information Technology,inferred,(no category in SSQ+),121201465.0
+541519CSP,Information Technology,site,Facilities & Construction,119297578.0
+334290L,Security and Protection,site,Security and Protection,117299429.0
+532310,Industrial Products and Services,site,Transportation and Logistics Services,116454300.0
+336612,Miscellaneous,fallback,Sustainment S&E,114706569.0
+511120,Miscellaneous,inferred,Miscellaneous S&E,113152630.0
+541380,Scientific Management and Solutions,site,Professional Services,108697909.0
+3152,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",107829682.0
+624SS,Professional Services,fallback,Professional Services,100792215.0
+332999,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",99817943.0
+562910REM,Professional Services,site,Facilities & Construction,98752198.0
+334220,Information Technology,fallback,IT,96609413.0
+561320SBSA,Professional Services,fallback,Professional Services,94720857.0
+3361V,Transportation and Logistics Services,inferred,Transportation and Logistics Services,93811574.0
+492110,Transportation and Logistics Services,site,Transportation and Logistics Services,90117614.0
+336991,Transportation and Logistics Services,inferred,Transportation and Logistics Services,88441752.0
+332311P,Facilities,inferred,Facilities & Construction,85236038.0
+561450,Professional Services,site,Professional Services,80991815.0
+518210DC,Office Management,inferred,Professional Services,80681311.0
+541820,Professional Services,site,Professional Services,78747563.0
+334515,Scientific Management and Solutions,site,Industrial Products & Services,78470879.0
+336211,Transportation and Logistics Services,site,Transportation and Logistics Services,78140346.0
+339113PA,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",77656724.0
+541810,Professional Services,site,Professional Services,77500317.0
+561920,Professional Services,site,Professional Services,76359356.0
+24654,Security and Protection,inferred,Security and Protection,72470979.0
+541990IPSBP,Professional Services,inferred,Professional Services,71372232.0
+541330SEC,Professional Services,fallback,Professional Services,69454174.0
+541611LIT,Office Management,inferred,Professional Services,69380332.0
+541910,Professional Services,site,Professional Services,68127086.0
+512110,Professional Services,site,Professional Services,66758199.0
+33512,Facilities,inferred,Facilities & Construction,65471439.0
+339113LAB,Scientific Management and Solutions,site,Industrial Products & Services,64384368.0
+238910,Security and Protection,inferred,Security and Protection,62830882.0
+336212,Transportation and Logistics Services,inferred,Facilities & Construction,62293765.0
+335999,Transportation and Logistics Services,inferred,Transportation and Logistics Services,62276337.0
+532420LC,Office Management,inferred,Industrial Products & Services,61522359.0
+561439,Office Management,inferred,Industrial Products & Services,61042445.0
+561110,Office Management,inferred,Professional Services,59705150.0
+611630,Professional Services,site,Professional Services,59003345.0
+3PACK,Transportation and Logistics Services,fallback,Transportation and Logistics Services,58374078.0
+337121P,Furniture and Furnishings,site,Office Management,56548056.0
+518210ERM,Office Management,inferred,Professional Services,56278093.0
+541110,Professional Services,site,Professional Services,56144068.0
+335220D,Facilities,inferred,Facilities & Construction,55772281.0
+493110RM,Office Management,inferred,Professional Services,55480042.0
+518210FM,Information Technology,site,IT,54634046.0
+532490L,Scientific Management and Solutions,site,Industrial Products & Services,54017965.0
+339920S,Miscellaneous,inferred,Miscellaneous S&E,53941047.0
+541690,Professional Services,site,Professional Services,53877777.0
+3361,Transportation and Logistics Services,inferred,Industrial Products & Services,50815531.0
+811212SA,Office Management,site,Office Management,48242811.0
+334519,Industrial Products and Services,inferred,Industrial Products & Services,47620975.0
+611420,Information Technology,site,Human Capital,47037682.0
+541614CF,Furniture and Furnishings,site,Office Management,46862490.0
+611710,Human Capital,inferred,IT,44613966.0
+333318TDTM,Human Capital,inferred,Human Capital,44490494.0
+541420,Professional Services,site,Professional Services,44044414.0
+238160,Facilities,inferred,Facilities & Construction,42960620.0
+532120,Transportation and Logistics Services,inferred,Transportation and Logistics Services,42020349.0
+332216,Security and Protection,site,Industrial Products & Services,41093145.0
+531110,Travel,inferred,Travel & Lodging,38090103.0
+541990RISK,Professional Services,site,Professional Services,37989402.0
+611512,Human Capital,inferred,Human Capital,37657121.0
+541370GIS,Professional Services,site,Facilities & Construction,36841913.0
+333316C,Office Management,inferred,Industrial Products & Services,35007400.0
+561EEO,Professional Services,fallback,Professional Services,33726709.0
+541614OR,Transportation and Logistics Services,inferred,Transportation and Logistics Services,33399019.0
+334519ENV,Scientific Management and Solutions,site,Industrial Products & Services,32442435.0
+NEW,Industrial Products and Services,fallback,Industrial Products & Services,32098977.0
+322220,Transportation and Logistics Services,fallback,Transportation and Logistics Services,30881226.0
+339112,Scientific Management and Solutions,site,"Clothing, Textiles & Subsistence S&E",30213767.0
+811212BP,Information Technology,inferred,Facilities & Construction,29187319.0
+541990L,Office Management,inferred,Professional Services,28960917.0
+522310,Professional Services,site,Professional Services,28589347.0
+337127,Furniture and Furnishings,inferred,Office Management,27548458.0
+332999P,Facilities,inferred,Facilities & Construction,27467053.0
+812910,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",26949995.0
+325611,Facilities,inferred,Facilities & Construction,26909809.0
+325998W,Facilities,inferred,Facilities & Construction,26767690.0
+541612LOB,Human Capital,site,Professional Services,26559902.0
+56131,Human Capital,inferred,Professional Services,26502251.0
+333241,Office Management,inferred,Office Management,26131348.0
+OLMBP,Facilities,fallback,Facilities & Construction,25730459.0
+339950,Miscellaneous,inferred,Miscellaneous S&E,25317535.0
+333415,Scientific Management and Solutions,site,Facilities & Construction,25290069.0
+00CORP500,Professional Services,fallback,Professional Services,23966871.0
+334511,Scientific Management and Solutions,site,Industrial Products & Services,23392426.0
+314120,Office Management,fallback,Office Management,23316267.0
+561730,Facilities,inferred,Facilities & Construction,23005649.0
+333316P,Security and Protection,fallback,Security and Protection,21379530.0
+481211O,Transportation and Logistics Services,inferred,Travel & Lodging,21336418.0
+541990AV,Professional Services,fallback,Professional Services,20439246.0
+333112,Industrial Products and Services,site,Transportation and Logistics Services,19818553.0
+333415HVAC,Facilities,inferred,Facilities & Construction,19367313.0
+54151ECOMBP,Information Technology,inferred,Professional Services,19317676.0
+52016,Professional Services,fallback,Professional Services,19297681.0
+524292,Professional Services,fallback,Professional Services,19079473.0
+811310MR,Industrial Products and Services,inferred,Industrial Products & Services,18784504.0
+561320,Professional Services,fallback,Professional Services,18769770.0
+333415REM,Office Management,inferred,Office Management,18473278.0
+334290PACS,Security and Protection,site,Professional Services,18397322.0
+561990,Professional Services,fallback,Professional Services,18360016.0
+003100,Industrial Products and Services,fallback,Industrial Products & Services,18176086.0
+561210SB,Professional Services,fallback,Professional Services,18157130.0
+8741,Professional Services,fallback,Professional Services,18128845.0
+541611W,Professional Services,fallback,Professional Services,17507078.0
+541430,Professional Services,site,Professional Services,17495470.0
+333921,Industrial Products and Services,inferred,Industrial Products & Services,17217469.0
+339113H,Furniture and Furnishings,inferred,Office Management,17170404.0
+337127INT,Furniture and Furnishings,inferred,Office Management,16832499.0
+24652,Security and Protection,inferred,Security and Protection,16335346.0
+485,Transportation and Logistics Services,inferred,Transportation and Logistics Services,15737975.0
+332999BMS,Facilities,inferred,Facilities & Construction,15554151.0
+333TOOL,Industrial Products and Services,inferred,Industrial Products & Services,15409880.0
+324191,Facilities,inferred,Facilities & Construction,15326537.0
+333249,Industrial Products and Services,fallback,Industrial Products & Services,13941605.0
+541519PKI,Information Technology,site,IT,13920788.0
+8713,Professional Services,fallback,Professional Services,13615905.0
+532420LT,Office Management,fallback,Office Management,13612357.0
+541214HR,Professional Services,fallback,Professional Services,13558792.0
+561510,Transportation and Logistics Services,fallback,Transportation and Logistics Services,13142959.0
+337215,Office Management,fallback,Office Management,13108847.0
+333318F,Facilities,fallback,Facilities & Construction,12920514.0
+333120,Facilities,fallback,Facilities & Construction,12900366.0
+812990,Professional Services,fallback,Professional Services,12856761.0
+511130,Miscellaneous,fallback,Miscellaneous S&E,12460331.0
+33712,Office Management,fallback,Office Management,12365371.0
+333923S,Transportation and Logistics Services,fallback,Transportation and Logistics Services,12170582.0
+316210,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",12161844.0
+488190,Facilities,fallback,Facilities & Construction,11561413.0
+334310,Information Technology,fallback,IT,11286069.0
+333314,Scientific Management and Solutions,site,Industrial Products & Services,11278192.0
+332439,Facilities,fallback,Facilities & Construction,11142107.0
+322291,Office Management,fallback,Office Management,11102321.0
+FURNISH,Office Management,fallback,Office Management,10904815.0
+531210,Professional Services,site,Professional Services,10708057.0
+333997,Industrial Products and Services,fallback,Industrial Products & Services,10669911.0
+541611MPS,Office Management,fallback,Office Management,10636946.0
+339113R,Scientific Management and Solutions,site,Industrial Products & Services,10486952.0
+132100,Information Technology,fallback,IT,10267520.0
+532490P,Facilities,fallback,Facilities & Construction,10200724.0
+336320,Security and Protection,fallback,Security and Protection,10128150.0
+324110,Industrial Products and Services,fallback,Industrial Products & Services,10091853.0
+325320,Facilities,fallback,Facilities & Construction,9855751.0
+339920,Miscellaneous,fallback,Sustainment S&E,9747097.0
+325998,Facilities,fallback,Facilities & Construction,9198032.0
+339994,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",8859624.0
+33721BP,Furniture and Furnishings,inferred,Office Management,8812462.0
+332510S,Industrial Products and Services,fallback,Industrial Products & Services,8757867.0
+532420LTOP,Industrial Products and Services,fallback,Industrial Products & Services,8485916.0
+541990IPS,Professional Services,site,Professional Services,8392853.0
+54161,Professional Services,fallback,Professional Services,8367513.0
+3361E,Transportation and Logistics Services,fallback,Transportation and Logistics Services,8356488.0
+532420L,Information Technology,site,IT,8336688.0
+333316F,Industrial Products and Services,fallback,Industrial Products & Services,8223977.0
+314110,Office Management,fallback,Office Management,8115558.0
+541511T,Transportation and Logistics Services,fallback,Transportation and Logistics Services,8073462.0
+336999,Office Management,fallback,Office Management,7852395.0
+332215T,Office Management,fallback,Office Management,7675722.0
+3FURNISH,Office Management,fallback,Office Management,7623619.0
+334511T,Information Technology,fallback,IT,7613383.0
+335220E,Facilities,fallback,Facilities & Construction,7547471.0
+336611,Miscellaneous,fallback,Sustainment S&E,7525600.0
+13254,Information Technology,fallback,IT,7337746.0
+561599,Travel,inferred,Travel & Lodging,7194355.0
+4112,Transportation and Logistics Services,fallback,Transportation and Logistics Services,7058509.0
+333314NV,Industrial Products and Services,fallback,Industrial Products & Services,6967195.0
+326199,Office Management,fallback,Office Management,6821490.0
+562112,Professional Services,site,Facilities & Construction,6815900.0
+561410,Professional Services,fallback,Professional Services,6515840.0
+335220,Transportation and Logistics Services,fallback,Transportation and Logistics Services,6427112.0
+339999E,Industrial Products and Services,fallback,Industrial Products & Services,6244610.0
+3FIRE,Industrial Products and Services,fallback,Industrial Products & Services,5923165.0
+611430TD,Human Capital,site,Professional Services,5551373.0
+54151BP,Information Technology,inferred,(no category in SSQ+),5514181.0
+325612,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",5390081.0
+541214,Professional Services,site,Professional Services,5274107.0
+59527,Professional Services,fallback,Professional Services,5026898.0
+33611,Transportation and Logistics Services,fallback,Transportation and Logistics Services,4906629.0
+713940,Professional Services,fallback,Professional Services,4878590.0
+333922,Transportation and Logistics Services,fallback,Transportation and Logistics Services,4702221.0
+333923,Transportation and Logistics Services,fallback,Transportation and Logistics Services,4591025.0
+335911,Security and Protection,fallback,Security and Protection,4344472.0
+541611O,Professional Services,fallback,Professional Services,4287245.0
+333914,Facilities,fallback,Facilities & Construction,4247273.0
+325412,Information Technology,fallback,IT,4133378.0
+7361,Professional Services,fallback,Professional Services,4129964.0
+333318T,Industrial Products and Services,fallback,Industrial Products & Services,4111148.0
+339992,Miscellaneous,fallback,Miscellaneous S&E,4010117.0
+03FAC500,Industrial Products and Services,fallback,Industrial Products & Services,3965803.0
+611TRAINAW,Human Capital,fallback,Human Capital,3844640.0
+333912,Industrial Products and Services,fallback,Industrial Products & Services,3726331.0
+339999S,Miscellaneous,fallback,Miscellaneous S&E,3587039.0
+337215SBSA,Office Management,fallback,Office Management,3576070.0
+59522,Professional Services,fallback,Professional Services,3461236.0
+339999F,Miscellaneous,fallback,Miscellaneous S&E,3020902.0
+52013,Professional Services,fallback,Professional Services,2960001.0
+5414A,Professional Services,fallback,Professional Services,2887364.0
+33721PBP,Furniture and Furnishings,inferred,Office Management,2811466.0
+327910,Industrial Products and Services,fallback,Industrial Products & Services,2808446.0
+3363,Miscellaneous,fallback,Sustainment S&E,2722549.0
+562910RMI,Professional Services,site,Facilities & Construction,2515759.0
+334419,Transportation and Logistics Services,fallback,Transportation and Logistics Services,2441580.0
+26001,Miscellaneous,fallback,Sustainment S&E,2414714.0
+5411,Professional Services,fallback,Professional Services,2273821.0
+238320,Industrial Products and Services,fallback,Equipment Related Services,2208248.0
+336350,Industrial Products and Services,fallback,Industrial Products & Services,2185271.0
+334513,Scientific Management and Solutions,site,Industrial Products & Services,2178530.0
+332913,Facilities,fallback,Facilities & Construction,2114278.0
+334118,Industrial Products and Services,fallback,Industrial Products & Services,2103264.0
+532420C,Industrial Products and Services,fallback,Industrial Products & Services,2049274.0
+321918,Office Management,fallback,Office Management,2043152.0
+52011,Professional Services,fallback,Professional Services,2023795.0
+492210SB,Transportation and Logistics Services,fallback,Transportation and Logistics Services,2017994.0
+326212,Miscellaneous,fallback,Sustainment S&E,2016313.0
+339920PARK,Miscellaneous,fallback,Miscellaneous S&E,1999876.0
+524292INS,Professional Services,fallback,Professional Services,1973890.0
+4111,Transportation and Logistics Services,fallback,Transportation and Logistics Services,1954947.0
+339999ASB,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",1944474.0
+339930,Miscellaneous,fallback,Miscellaneous S&E,1934441.0
+325992,Security and Protection,fallback,Security and Protection,1913699.0
+492210,Transportation and Logistics Services,fallback,Transportation and Logistics Services,1911848.0
+541850,Professional Services,fallback,Professional Services,1890390.0
+337122O,Facilities,fallback,Facilities & Construction,1872111.0
+3331SBSA,Facilities,fallback,Facilities & Construction,1742362.0
+541612ER,Professional Services,fallback,Professional Services,1732172.0
+532490ESA,Scientific Management and Solutions,site,Industrial Products & Services,1725002.0
+332999S,Office Management,fallback,Office Management,1665996.0
+332321,Facilities,fallback,Facilities & Construction,1628285.0
+8712,Professional Services,fallback,Professional Services,1579667.0
+8714,Professional Services,fallback,Professional Services,1579666.0
+315210,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",1462808.0
+326220,Industrial Products and Services,fallback,Industrial Products & Services,1451388.0
+54151SBP,Information Technology,inferred,Facilities & Construction,1426169.0
+5415,Professional Services,fallback,Professional Services,1421674.0
+541612EPM,Professional Services,fallback,Professional Services,1389969.0
+333244,Industrial Products and Services,fallback,Industrial Products & Services,1382815.0
+13232,Information Technology,fallback,IT,1272584.0
+59521,Professional Services,fallback,Professional Services,1209328.0
+00397,Facilities,fallback,Facilities & Construction,1209018.0
+271106,Facilities,fallback,Facilities & Construction,1193974.0
+52012,Professional Services,fallback,Professional Services,1130392.0
+33721T,Office Management,fallback,Office Management,1103688.0
+532289,Office Management,fallback,Office Management,1085563.0
+337122OSB,Miscellaneous,fallback,Miscellaneous S&E,1018833.0
+331315A,Transportation and Logistics Services,fallback,Transportation and Logistics Services,981720.0
+332311,Industrial Products and Services,fallback,Industrial Products & Services,977494.0
+33721SBSA,Office Management,fallback,Office Management,975303.0
+5991,Travel,fallback,Travel & Lodging,967214.0
+13252,Information Technology,fallback,IT,946209.0
+13245D,Information Technology,fallback,IT,930883.0
+711,Office Management,fallback,Office Management,901388.0
+541720,Professional Services,fallback,Professional Services,888996.0
+3363P,Industrial Products and Services,fallback,Industrial Products & Services,857463.0
+36110E,Facilities,fallback,Facilities & Construction,846149.0
+8991,Facilities,fallback,Facilities & Construction,826575.0
+541612LR,Professional Services,fallback,Professional Services,818935.0
+811310,Industrial Products and Services,fallback,Industrial Products & Services,796410.0
+52021,Human Capital,fallback,Human Capital,759393.0
+3825,Professional Services,fallback,Professional Services,730157.0
+25350,Industrial Products and Services,fallback,Industrial Products & Services,696667.0
+561621H,Miscellaneous,fallback,Sustainment S&E,688297.0
+56329,Facilities,fallback,Facilities & Construction,682423.0
+7365,Professional Services,fallback,Professional Services,647343.0
+337127CFSB,Office Management,fallback,Office Management,604956.0
+26252,Transportation and Logistics Services,fallback,Transportation and Logistics Services,574784.0
+337127LFSB,Office Management,fallback,Office Management,567791.0
+335210,Office Management,fallback,Office Management,556051.0
+19208,Miscellaneous,fallback,Miscellaneous S&E,550044.0
+332510,Industrial Products and Services,site,Industrial Products & Services,537482.0
+322291BP,Industrial Products and Services,fallback,Industrial Products & Services,520665.0
+5207,Professional Services,fallback,Professional Services,492444.0
+532112,Transportation and Logistics Services,fallback,Transportation and Logistics Services,487804.0
+541513,Industrial Products and Services,fallback,Industrial Products & Services,487542.0
+13241,Information Technology,fallback,IT,458475.0
+66137,Industrial Products and Services,fallback,Industrial Products & Services,457567.0
+5413,Professional Services,fallback,Professional Services,442568.0
+337122SBSA,Office Management,fallback,Office Management,440779.0
+811003,Facilities,fallback,Facilities & Construction,436451.0
+70500,Information Technology,fallback,IT,427655.0
+337127TLSB,Office Management,fallback,Office Management,404371.0
+337215MSB,Office Management,fallback,Office Management,396006.0
+84500,Miscellaneous,fallback,Sustainment S&E,393208.0
+6271007,Industrial Products and Services,fallback,Industrial Products & Services,386514.0
+13212,Information Technology,fallback,IT,377711.0
+2511,Transportation and Logistics Services,fallback,Transportation and Logistics Services,362416.0
+332312,Industrial Products and Services,fallback,Industrial Products & Services,360943.0
+611430TTS,Scientific Management and Solutions,site,Industrial Products & Services,356438.0
+337127CF,Office Management,fallback,Office Management,350854.0
+333316M,Industrial Products and Services,fallback,Industrial Products & Services,349853.0
+13255,Information Technology,fallback,IT,344558.0
+561210FS,Transportation and Logistics Services,fallback,Transportation and Logistics Services,343680.0
+311423,Office Management,fallback,Office Management,340522.0
+339940SVC,Office Management,fallback,Office Management,336828.0
+8716,Facilities,fallback,Facilities & Construction,334930.0
+8711,Facilities,fallback,Facilities & Construction,334930.0
+541922,Professional Services,fallback,Professional Services,332073.0
+5202,Professional Services,fallback,Professional Services,325512.0
+1328,Information Technology,fallback,IT,322328.0
+333999,Scientific Management and Solutions,site,Industrial Products & Services,294625.0
+5412,Professional Services,fallback,Professional Services,288329.0
+8995,Facilities,fallback,Facilities & Construction,288067.0
+5209,Professional Services,fallback,Professional Services,278524.0
+7364,Professional Services,fallback,Professional Services,275243.0
+19299A,Facilities,fallback,Facilities & Construction,275119.0
+333316CPC,Industrial Products and Services,fallback,Industrial Products & Services,269243.0
+13250,Human Capital,fallback,Human Capital,256588.0
+5414F,Professional Services,fallback,Professional Services,254895.0
+3821,Professional Services,fallback,Professional Services,248269.0
+561001,Industrial Products and Services,fallback,Industrial Products & Services,231706.0
+7123,Office Management,fallback,Office Management,228090.0
+41299,Industrial Products and Services,fallback,Industrial Products & Services,225040.0
+13215,Information Technology,fallback,IT,223330.0
+7513,Transportation and Logistics Services,fallback,Transportation and Logistics Services,206703.0
+81111,Facilities,fallback,Facilities & Construction,200447.0
+023101,Transportation and Logistics Services,fallback,Transportation and Logistics Services,188059.0
+13233,Information Technology,fallback,IT,186548.0
+13253,Information Technology,fallback,IT,176398.0
+333318,Industrial Products and Services,fallback,Industrial Products & Services,173357.0
+314110SBSA,Office Management,fallback,Office Management,171547.0
+333318FBP,Industrial Products and Services,fallback,Industrial Products & Services,167968.0
+811002,Industrial Products and Services,fallback,Industrial Products & Services,153220.0
+6539,Travel,fallback,Travel & Lodging,152442.0
+339113G,Facilities,fallback,Facilities & Construction,145949.0
+5414G,Professional Services,fallback,Professional Services,138795.0
+25351,Industrial Products and Services,fallback,Industrial Products & Services,138653.0
+371003,Facilities,fallback,Facilities & Construction,129250.0
+321920,Industrial Products and Services,fallback,Industrial Products & Services,129116.0
+2461000,Security and Protection,fallback,Security and Protection,127060.0
+13234,Information Technology,fallback,IT,124814.0
+8744,Human Capital,fallback,Human Capital,106641.0
+4971,Office Management,fallback,Office Management,101532.0
+7601,Miscellaneous,fallback,Miscellaneous S&E,100450.0
+4264K,Security and Protection,fallback,Security and Protection,92519.0
+339999A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",92153.0
+336612R,Office Management,fallback,Office Management,90250.0
+37599,Facilities,fallback,Facilities & Construction,89563.0
+36500,Professional Services,fallback,Professional Services,87700.0
+326211,Miscellaneous,fallback,Sustainment S&E,86360.0
+8717,Professional Services,fallback,Professional Services,85453.0
+321991,Transportation and Logistics Services,fallback,Transportation and Logistics Services,83586.0
+561002,Industrial Products and Services,fallback,Industrial Products & Services,80542.0
+26009,Miscellaneous,fallback,Sustainment S&E,80380.0
+71195,Office Management,fallback,Office Management,79437.0
+811212R,Industrial Products and Services,fallback,Industrial Products & Services,79079.0
+19006,Miscellaneous,fallback,Sustainment S&E,78817.0
+30241,Office Management,fallback,Office Management,76703.0
+5414B,Professional Services,fallback,Professional Services,76400.0
+333TOOLBP,Industrial Products and Services,inferred,Industrial Products & Services,76234.0
+5208,Professional Services,fallback,Professional Services,72083.0
+4264G,Office Management,fallback,Office Management,68921.0
+333414,Industrial Products and Services,fallback,Industrial Products & Services,66619.0
+51507,Professional Services,fallback,Professional Services,65993.0
+105002,Industrial Products and Services,fallback,Industrial Products & Services,65527.0
+336211V,Transportation and Logistics Services,fallback,Transportation and Logistics Services,64921.0
+541099,Industrial Products and Services,fallback,Industrial Products & Services,63748.0
+75200,Office Management,fallback,Office Management,62795.0
+36110,Facilities,fallback,Facilities & Construction,57550.0
+246203,Security and Protection,fallback,Security and Protection,54818.0
+339113P,Office Management,fallback,Office Management,53244.0
+337127CISB,Office Management,fallback,Office Management,52842.0
+8743,Professional Services,fallback,Professional Services,48823.0
+165205,Professional Services,fallback,Professional Services,47949.0
+42699,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",47875.0
+246421,Professional Services,fallback,Professional Services,42518.0
+4266,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",42094.0
+54019,Industrial Products and Services,fallback,Industrial Products & Services,37403.0
+52015,Professional Services,fallback,Professional Services,37231.0
+5191M,Miscellaneous,fallback,Miscellaneous S&E,35195.0
+59528,Professional Services,fallback,Professional Services,34750.0
+66610,Industrial Products and Services,fallback,Industrial Products & Services,33984.0
+51506,Professional Services,fallback,Professional Services,31604.0
+36199,Industrial Products and Services,fallback,Industrial Products & Services,29787.0
+10003,Human Capital,fallback,Human Capital,26976.0
+8527,Office Management,fallback,Office Management,26446.0
+36110A,Facilities,fallback,Facilities & Construction,25859.0
+587,Information Technology,fallback,IT,25553.0
+8731,Scientific Management and Solutions,fallback,Medical,23850.0
+811005,Industrial Products and Services,fallback,Industrial Products & Services,22675.0
+3822,Professional Services,fallback,Professional Services,22062.0
+332312F,Miscellaneous,fallback,Electronic & Communication Equipment,20676.0
+326199BP,Industrial Products and Services,fallback,Industrial Products & Services,20495.0
+323111SBSA,Security and Protection,fallback,Security and Protection,20398.0
+71204,Office Management,fallback,Office Management,18132.0
+30215,Office Management,fallback,Office Management,17975.0
+246356,Security and Protection,fallback,Security and Protection,17779.0
+20316,Security and Protection,fallback,Security and Protection,17276.0
+24636,Security and Protection,fallback,Security and Protection,16135.0
+25339,Industrial Products and Services,fallback,Industrial Products & Services,15048.0
+6534,Transportation and Logistics Services,fallback,Transportation and Logistics Services,14325.0
+325611BP,Facilities,inferred,Industrial Products & Services,12987.0
+4261A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",12687.0
+24651,Professional Services,fallback,Professional Services,10260.0
+4264F,Professional Services,fallback,Professional Services,10099.0
+19233A,Facilities,fallback,Facilities & Construction,9088.0
+339994BP,Industrial Products and Services,fallback,Industrial Products & Services,8913.0
+59525,Professional Services,fallback,Professional Services,7722.0
+8992,Facilities,fallback,Facilities & Construction,7582.0
+335210BP,Industrial Products and Services,fallback,Industrial Products & Services,7329.0
+5201,Professional Services,fallback,Professional Services,6511.0
+5205,Professional Services,fallback,Professional Services,6510.0
+588,Information Technology,fallback,IT,6420.0
+332994,Industrial Products and Services,fallback,Industrial Products & Services,6234.0
+7511,Transportation and Logistics Services,fallback,Transportation and Logistics Services,6090.0
+3835,Security and Protection,fallback,Security and Protection,5742.0
+325612BP,Industrial Products and Services,fallback,Industrial Products & Services,5150.0
+5414E,Professional Services,fallback,Professional Services,4991.0
+25340,Industrial Products and Services,fallback,Industrial Products & Services,4871.0
+6155000,Industrial Products and Services,fallback,Industrial Products & Services,4643.0
+71116,Office Management,fallback,Office Management,3869.0
+4513,Transportation and Logistics Services,fallback,Transportation and Logistics Services,3234.0
+71111,Office Management,fallback,Office Management,2301.0
+334220BP,Unassigned,fallback,(no category in SSQ+),1888.0
+71205,Office Management,fallback,Office Management,1757.0
+19202,Miscellaneous,fallback,Miscellaneous S&E,1323.0
+41251,Security and Protection,fallback,Security and Protection,1313.0
+333112BP,Industrial Products and Services,inferred,Industrial Products & Services,1310.0
+47355,Industrial Products and Services,fallback,Industrial Products & Services,1275.0
+71117,Office Management,fallback,Office Management,892.0
+314120BP,Industrial Products and Services,fallback,Industrial Products & Services,438.0
+19237I,Miscellaneous,fallback,Miscellaneous S&E,285.0
+26010,Miscellaneous,fallback,Sustainment S&E,233.0
+7585,Office Management,fallback,Office Management,139.0
+561910,Transportation and Logistics Services,fallback,Transportation and Logistics Services,116.0
+325320BP,Industrial Products and Services,fallback,Industrial Products & Services,90.0
+375363,Facilities,fallback,Facilities & Construction,83.0
+66200,Industrial Products and Services,fallback,Industrial Products & Services,1.0
+TEMPSIN,Facilities,fallback,Facilities & Construction,0.0
+SAKANSAS,Facilities,fallback,Facilities & Construction,0.0
+O0001,Office Management,fallback,Office Management,0.0
+F5293,Miscellaneous,fallback,Miscellaneous S&E,0.0
+F5292,Miscellaneous,fallback,Miscellaneous S&E,0.0
+F5291,Miscellaneous,fallback,Miscellaneous S&E,0.0
+CP,Unassigned,fallback,(no category in SSQ+),0.0
+C8998,Facilities,fallback,Facilities & Construction,0.0
+C8997,Facilities,fallback,Facilities & Construction,0.0
+C8995,Facilities,fallback,Facilities & Construction,0.0
+C8993,Facilities,fallback,Facilities & Construction,0.0
+C8991,Facilities,fallback,Facilities & Construction,0.0
+C8749,Professional Services,fallback,Professional Services,0.0
+C8748,Facilities,fallback,Facilities & Construction,0.0
+C8747,Professional Services,fallback,Professional Services,0.0
+C8746,Professional Services,fallback,Professional Services,0.0
+C874507,Human Capital,fallback,Human Capital,0.0
+C874505,Human Capital,fallback,Human Capital,0.0
+C874504,Human Capital,fallback,Human Capital,0.0
+C874503,Human Capital,fallback,Human Capital,0.0
+C874501,Human Capital,fallback,Human Capital,0.0
+C8744,Human Capital,fallback,Human Capital,0.0
+C8743,Professional Services,fallback,Professional Services,0.0
+C8742,Information Technology,fallback,IT,0.0
+C8741,Professional Services,fallback,Professional Services,0.0
+C8717,Facilities,fallback,Facilities & Construction,0.0
+C8716,Professional Services,fallback,Professional Services,0.0
+C8715,Facilities,fallback,Facilities & Construction,0.0
+C8714,Facilities,fallback,Facilities & Construction,0.0
+C8713,Facilities,fallback,Facilities & Construction,0.0
+C8712,Facilities,fallback,Facilities & Construction,0.0
+C871211,Professional Services,fallback,Professional Services,0.0
+C871210,Facilities,fallback,Facilities & Construction,0.0
+C871209,Facilities,fallback,Facilities & Construction,0.0
+C871208,Professional Services,fallback,Professional Services,0.0
+C871207,Professional Services,fallback,Professional Services,0.0
+C871206,Facilities,fallback,Facilities & Construction,0.0
+C871205,Professional Services,fallback,Professional Services,0.0
+C871203,Facilities,fallback,Facilities & Construction,0.0
+C871202,Information Technology,fallback,IT,0.0
+C8711,Facilities,fallback,Facilities & Construction,0.0
+C59521,Information Technology,fallback,IT,0.0
+C5415,Human Capital,fallback,Human Capital,0.0
+C5414G,Professional Services,fallback,Professional Services,0.0
+C5414F,Human Capital,fallback,Human Capital,0.0
+C5414E,Professional Services,fallback,Professional Services,0.0
+C5414D,Human Capital,fallback,Human Capital,0.0
+C5414C,Human Capital,fallback,Human Capital,0.0
+C5414B,Human Capital,fallback,Human Capital,0.0
+C5414A,Human Capital,fallback,Human Capital,0.0
+C5413,Human Capital,fallback,Human Capital,0.0
+C5412,Human Capital,fallback,Human Capital,0.0
+C5411,Human Capital,fallback,Human Capital,0.0
+C5411000,Human Capital,fallback,Human Capital,0.0
+C5209,Facilities,fallback,Facilities & Construction,0.0
+C5208,Professional Services,fallback,Professional Services,0.0
+C5207,Professional Services,fallback,Professional Services,0.0
+C5205,Professional Services,fallback,Professional Services,0.0
+C5203,Facilities,fallback,Facilities & Construction,0.0
+C5202,Facilities,fallback,Facilities & Construction,0.0
+C52022,Professional Services,fallback,Professional Services,0.0
+C52021,Professional Services,fallback,Professional Services,0.0
+C5201,Facilities,fallback,Facilities & Construction,0.0
+C52017,Human Capital,fallback,Human Capital,0.0
+C52015,Professional Services,fallback,Professional Services,0.0
+C52014,Professional Services,fallback,Professional Services,0.0
+C52013,Professional Services,fallback,Professional Services,0.0
+C52012,Professional Services,fallback,Professional Services,0.0
+C52011,Professional Services,fallback,Professional Services,0.0
+C3824,Human Capital,fallback,Human Capital,0.0
+C3823,Human Capital,fallback,Human Capital,0.0
+C13252,Professional Services,fallback,Professional Services,0.0
+C13251,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+C13250,Professional Services,fallback,Professional Services,0.0
+C10003,Miscellaneous,fallback,Sustainment S&E,0.0
+CU099,Facilities,fallback,Facilities & Construction,0.0
+CU012,Professional Services,fallback,Professional Services,0.0
+CT006,Professional Services,fallback,Professional Services,0.0
+CR799B,Facilities,fallback,Facilities & Construction,0.0
+CR799A,Facilities,fallback,Facilities & Construction,0.0
+CR710,Professional Services,fallback,Professional Services,0.0
+CR708,Professional Services,fallback,Professional Services,0.0
+CR708A,Professional Services,fallback,Professional Services,0.0
+CR707,Facilities,fallback,Facilities & Construction,0.0
+CR706,Professional Services,fallback,Professional Services,0.0
+CR704,Professional Services,fallback,Professional Services,0.0
+CR703,Professional Services,fallback,Professional Services,0.0
+CR701,Professional Services,fallback,Professional Services,0.0
+CR701A,Professional Services,fallback,Professional Services,0.0
+CR499,Professional Services,fallback,Professional Services,0.0
+CR425,Professional Services,fallback,Professional Services,0.0
+CR425A,Facilities,fallback,Facilities & Construction,0.0
+CR422,Professional Services,fallback,Professional Services,0.0
+CR422A,Professional Services,fallback,Professional Services,0.0
+CR408,Facilities,fallback,Facilities & Construction,0.0
+CR407G,Facilities,fallback,Facilities & Construction,0.0
+CR407F,Facilities,fallback,Facilities & Construction,0.0
+CR407E,Facilities,fallback,Facilities & Construction,0.0
+CR407D,Facilities,fallback,Facilities & Construction,0.0
+CR407C,Facilities,fallback,Facilities & Construction,0.0
+CR407A,Facilities,fallback,Facilities & Construction,0.0
+CR407,Facilities,fallback,Facilities & Construction,0.0
+CF999,Professional Services,fallback,Professional Services,0.0
+CF110,Professional Services,fallback,Professional Services,0.0
+CF108,Facilities,fallback,Facilities & Construction,0.0
+CD399,Professional Services,fallback,Professional Services,0.0
+CD317,Facilities,fallback,Facilities & Construction,0.0
+CD316,Professional Services,fallback,Professional Services,0.0
+CD313,Professional Services,fallback,Professional Services,0.0
+CD311,Professional Services,fallback,Professional Services,0.0
+CD310,Professional Services,fallback,Professional Services,0.0
+CD308,Professional Services,fallback,Professional Services,0.0
+CD307,Professional Services,fallback,Professional Services,0.0
+CD306,Professional Services,fallback,Professional Services,0.0
+CD302,Professional Services,fallback,Professional Services,0.0
+CD301,Professional Services,fallback,Professional Services,0.0
+C7050,Professional Services,fallback,Professional Services,0.0
+C7035,Professional Services,fallback,Professional Services,0.0
+C7025,Professional Services,fallback,Professional Services,0.0
+C7010,Professional Services,fallback,Professional Services,0.0
+B72A,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+B71C,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+B66C,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+B54B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+B54A,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+B23,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+96801,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+96701,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+89999,Facilities,fallback,Facilities & Construction,0.0
+8998,Facilities,fallback,Facilities & Construction,0.0
+8997,Facilities,fallback,Facilities & Construction,0.0
+8996,Facilities,fallback,Facilities & Construction,0.0
+8994,Facilities,fallback,Facilities & Construction,0.0
+8993,Facilities,fallback,Facilities & Construction,0.0
+89910,Facilities,fallback,Facilities & Construction,0.0
+8749,Miscellaneous,fallback,Sustainment S&E,0.0
+8748,Human Capital,fallback,Human Capital,0.0
+8747,Professional Services,fallback,Professional Services,0.0
+8746,Professional Services,fallback,Professional Services,0.0
+8745,Miscellaneous,fallback,Sustainment S&E,0.0
+874597,Human Capital,fallback,Human Capital,0.0
+874507,Facilities,fallback,Facilities & Construction,0.0
+874506,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+874505,Human Capital,fallback,Human Capital,0.0
+874504,Facilities,fallback,Facilities & Construction,0.0
+874503,Human Capital,fallback,Human Capital,0.0
+874502,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+874501,Facilities,fallback,Facilities & Construction,0.0
+8742,Human Capital,fallback,Human Capital,0.0
+87399,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+8734,Scientific Management and Solutions,fallback,Medical,0.0
+8733,Scientific Management and Solutions,fallback,Medical,0.0
+8732,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+8722H,Professional Services,fallback,Professional Services,0.0
+8722G,Professional Services,fallback,Professional Services,0.0
+8722E,Professional Services,fallback,Professional Services,0.0
+8722D,Professional Services,fallback,Professional Services,0.0
+8722C,Professional Services,fallback,Professional Services,0.0
+8722B,Professional Services,fallback,Professional Services,0.0
+8722A,Professional Services,fallback,Professional Services,0.0
+8721F,Professional Services,fallback,Professional Services,0.0
+8721E,Professional Services,fallback,Professional Services,0.0
+8721D,Professional Services,fallback,Professional Services,0.0
+8721C,Professional Services,fallback,Professional Services,0.0
+8721B,Professional Services,fallback,Professional Services,0.0
+8721A,Professional Services,fallback,Professional Services,0.0
+8715,Facilities,fallback,Facilities & Construction,0.0
+871299,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871211,Facilities,fallback,Facilities & Construction,0.0
+871210,Facilities,fallback,Facilities & Construction,0.0
+871209,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871208,Facilities,fallback,Facilities & Construction,0.0
+871207,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871206,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871205,Facilities,fallback,Facilities & Construction,0.0
+871204,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871203,Facilities,fallback,Facilities & Construction,0.0
+871202,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871201,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871200,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+871100,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+85299,Facilities,fallback,Facilities & Construction,0.0
+8524,Office Management,fallback,Office Management,0.0
+8523,Facilities,fallback,Facilities & Construction,0.0
+8522,Facilities,fallback,Facilities & Construction,0.0
+8521,Facilities,fallback,Facilities & Construction,0.0
+83499,Facilities,fallback,Facilities & Construction,0.0
+834900,Facilities,fallback,Facilities & Construction,0.0
+834700,Facilities,fallback,Facilities & Construction,0.0
+834400,Facilities,fallback,Facilities & Construction,0.0
+834100,Facilities,fallback,Facilities & Construction,0.0
+812002,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+8111000,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+811006,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+811004,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+811001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+801002,Industrial Products and Services,fallback,Equipment Related Services,0.0
+801001,Industrial Products and Services,fallback,Equipment Related Services,0.0
+8001000,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+78500,Facilities,fallback,Facilities & Construction,0.0
+7606,Miscellaneous,fallback,Miscellaneous S&E,0.0
+7604,Miscellaneous,fallback,Miscellaneous S&E,0.0
+7603,Miscellaneous,fallback,Miscellaneous S&E,0.0
+7602,Miscellaneous,fallback,Miscellaneous S&E,0.0
+7512,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+75220,Office Management,fallback,Office Management,0.0
+738X500,Professional Services,fallback,Professional Services,0.0
+7389,Professional Services,fallback,Professional Services,0.0
+7388,Professional Services,fallback,Professional Services,0.0
+7386,Professional Services,fallback,Professional Services,0.0
+7385,Professional Services,fallback,Professional Services,0.0
+7384,Professional Services,fallback,Professional Services,0.0
+73812,Professional Services,fallback,Professional Services,0.0
+73811,Professional Services,fallback,Professional Services,0.0
+7381,Professional Services,fallback,Professional Services,0.0
+7363,Professional Services,fallback,Professional Services,0.0
+7362,Professional Services,fallback,Professional Services,0.0
+7335,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+7334,Information Technology,fallback,IT,0.0
+7333,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+7332,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+7331,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+72299,Office Management,fallback,Office Management,0.0
+72298,Office Management,fallback,Office Management,0.0
+72297,Office Management,fallback,Office Management,0.0
+72208,Office Management,fallback,Office Management,0.0
+72206,Office Management,fallback,Office Management,0.0
+72205,Office Management,fallback,Office Management,0.0
+72204,Office Management,fallback,Office Management,0.0
+72203,Office Management,fallback,Office Management,0.0
+72202,Office Management,fallback,Office Management,0.0
+72201,Facilities,fallback,Facilities & Construction,0.0
+72500,Office Management,fallback,Office Management,0.0
+71299,Office Management,fallback,Office Management,0.0
+71297,Office Management,fallback,Office Management,0.0
+7126,Office Management,fallback,Office Management,0.0
+7125,Office Management,fallback,Office Management,0.0
+7124,Office Management,fallback,Office Management,0.0
+7122,Office Management,fallback,Office Management,0.0
+7121,Office Management,fallback,Office Management,0.0
+7110014762954,Office Management,fallback,Office Management,0.0
+7110013092034,Office Management,fallback,Office Management,0.0
+7110013092033,Office Management,fallback,Office Management,0.0
+7110013092032,Office Management,fallback,Office Management,0.0
+7110013092013,Office Management,fallback,Office Management,0.0
+7110013092012,Office Management,fallback,Office Management,0.0
+7110013092011,Office Management,fallback,Office Management,0.0
+7110013092002,Office Management,fallback,Office Management,0.0
+7110013091997,Office Management,fallback,Office Management,0.0
+7110013091996,Office Management,fallback,Office Management,0.0
+7110013091995,Office Management,fallback,Office Management,0.0
+7110013091994,Office Management,fallback,Office Management,0.0
+7110013091988,Office Management,fallback,Office Management,0.0
+7110013091973,Office Management,fallback,Office Management,0.0
+7110013091972,Office Management,fallback,Office Management,0.0
+7110013091971,Office Management,fallback,Office Management,0.0
+7110013091970,Office Management,fallback,Office Management,0.0
+7110013091969,Office Management,fallback,Office Management,0.0
+7110013091968,Office Management,fallback,Office Management,0.0
+7110013091967,Office Management,fallback,Office Management,0.0
+7110013091965,Office Management,fallback,Office Management,0.0
+7110013091964,Office Management,fallback,Office Management,0.0
+7110013091963,Office Management,fallback,Office Management,0.0
+7110013091962,Office Management,fallback,Office Management,0.0
+7110013091961,Office Management,fallback,Office Management,0.0
+7110013091960,Office Management,fallback,Office Management,0.0
+7110013091959,Office Management,fallback,Office Management,0.0
+7110013091958,Office Management,fallback,Office Management,0.0
+7110013091957,Office Management,fallback,Office Management,0.0
+7110013091956,Office Management,fallback,Office Management,0.0
+7110012648483,Office Management,fallback,Office Management,0.0
+7110010506060,Office Management,fallback,Office Management,0.0
+7110010309009,Office Management,fallback,Office Management,0.0
+7110010298059,Office Management,fallback,Office Management,0.0
+7110010298058,Office Management,fallback,Office Management,0.0
+7110010298055,Office Management,fallback,Office Management,0.0
+7110010295767,Office Management,fallback,Office Management,0.0
+7110010290389,Office Management,fallback,Office Management,0.0
+7110010245958,Office Management,fallback,Office Management,0.0
+7110010190408,Office Management,fallback,Office Management,0.0
+7110010184301,Office Management,fallback,Office Management,0.0
+7110010173547,Office Management,fallback,Office Management,0.0
+7110010173546,Office Management,fallback,Office Management,0.0
+7110010165802,Office Management,fallback,Office Management,0.0
+7110010156101,Office Management,fallback,Office Management,0.0
+7110010156100,Office Management,fallback,Office Management,0.0
+7110010156099,Office Management,fallback,Office Management,0.0
+7110010154639,Office Management,fallback,Office Management,0.0
+7110010154638,Office Management,fallback,Office Management,0.0
+7110010154266,Office Management,fallback,Office Management,0.0
+7110010153196,Office Management,fallback,Office Management,0.0
+7110010152856,Office Management,fallback,Office Management,0.0
+7110010152855,Office Management,fallback,Office Management,0.0
+7110010152852,Office Management,fallback,Office Management,0.0
+7110010152851,Office Management,fallback,Office Management,0.0
+7110010152850,Office Management,fallback,Office Management,0.0
+7110010128741,Office Management,fallback,Office Management,0.0
+7110010128740,Office Management,fallback,Office Management,0.0
+7110010128739,Office Management,fallback,Office Management,0.0
+7110009310771,Office Management,fallback,Office Management,0.0
+7110009310770,Office Management,fallback,Office Management,0.0
+7110009288689,Office Management,fallback,Office Management,0.0
+7110009209343,Office Management,fallback,Office Management,0.0
+7110009209342,Office Management,fallback,Office Management,0.0
+7110009199306,Office Management,fallback,Office Management,0.0
+7110009199214,Office Management,fallback,Office Management,0.0
+7110009199213,Office Management,fallback,Office Management,0.0
+7110009199193,Office Management,fallback,Office Management,0.0
+7110001492004,Office Management,fallback,Office Management,0.0
+7110000826112,Office Management,fallback,Office Management,0.0
+7110000826111,Office Management,fallback,Office Management,0.0
+7119,Office Management,fallback,Office Management,0.0
+71199,Office Management,fallback,Office Management,0.0
+71198,Office Management,fallback,Office Management,0.0
+71197,Office Management,fallback,Office Management,0.0
+71196,Office Management,fallback,Office Management,0.0
+71194,Office Management,fallback,Office Management,0.0
+71193,Office Management,fallback,Office Management,0.0
+71191,Office Management,fallback,Office Management,0.0
+7118,Office Management,fallback,Office Management,0.0
+7117,Office Management,fallback,Office Management,0.0
+7113,Office Management,fallback,Office Management,0.0
+7112,Office Management,fallback,Office Management,0.0
+71120,Office Management,fallback,Office Management,0.0
+7111,Office Management,fallback,Office Management,0.0
+71119,Office Management,fallback,Office Management,0.0
+71118,Office Management,fallback,Office Management,0.0
+71115,Office Management,fallback,Office Management,0.0
+71113,Office Management,fallback,Office Management,0.0
+71112,Office Management,fallback,Office Management,0.0
+71110,Office Management,fallback,Office Management,0.0
+71IIK500,Office Management,fallback,Office Management,0.0
+7198,Office Management,fallback,Office Management,0.0
+71500,Office Management,fallback,Office Management,0.0
+71399,Office Management,fallback,Office Management,0.0
+71398,Office Management,fallback,Office Management,0.0
+71395,Office Management,fallback,Office Management,0.0
+71318,Office Management,fallback,Office Management,0.0
+71317,Office Management,fallback,Office Management,0.0
+71316,Office Management,fallback,Office Management,0.0
+71315,Office Management,fallback,Office Management,0.0
+71314,Office Management,fallback,Office Management,0.0
+71313,Office Management,fallback,Office Management,0.0
+71310,Office Management,fallback,Office Management,0.0
+71309,Office Management,fallback,Office Management,0.0
+71308,Office Management,fallback,Office Management,0.0
+71306,Office Management,fallback,Office Management,0.0
+71305,Office Management,fallback,Office Management,0.0
+71304,Office Management,fallback,Office Management,0.0
+71302,Office Management,fallback,Office Management,0.0
+71301,Office Management,fallback,Office Management,0.0
+71298,Office Management,fallback,Office Management,0.0
+71295,Office Management,fallback,Office Management,0.0
+71207,Office Management,fallback,Office Management,0.0
+71206,Office Management,fallback,Office Management,0.0
+71201,Office Management,fallback,Office Management,0.0
+71200,Office Management,fallback,Office Management,0.0
+71103,Office Management,fallback,Office Management,0.0
+71102,Office Management,fallback,Office Management,0.0
+71101,Office Management,fallback,Office Management,0.0
+71100,Office Management,fallback,Office Management,0.0
+6814,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+6811,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+66621,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66619,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66618,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66617,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66616,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66614,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66613,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66612,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66611,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66608,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66607,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66606,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66603,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66508,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66507,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66503,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66502,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66501,Security and Protection,fallback,Security and Protection,0.0
+66231,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66148,Facilities,fallback,Facilities & Construction,0.0
+66147,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66141,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66139,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66136,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66122,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66118,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66117,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66113,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66107,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66102,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+66100,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+661002,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+661000,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6581,Miscellaneous,fallback,Sustainment S&E,0.0
+65501,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6538,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6537,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6535,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6533,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6531,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6419,Facilities,fallback,Facilities & Construction,0.0
+6416,Facilities,fallback,Facilities & Construction,0.0
+6412,Facilities,fallback,Facilities & Construction,0.0
+6411,Facilities,fallback,Facilities & Construction,0.0
+639001,Facilities,fallback,Facilities & Construction,0.0
+6385,Office Management,fallback,Office Management,0.0
+6384,Office Management,fallback,Office Management,0.0
+6382C,Office Management,fallback,Office Management,0.0
+6382B,Office Management,fallback,Office Management,0.0
+6382A,Office Management,fallback,Office Management,0.0
+6381C,Office Management,fallback,Office Management,0.0
+6381B,Office Management,fallback,Office Management,0.0
+6381A,Office Management,fallback,Office Management,0.0
+63399,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63370,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+6336A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63361,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63360,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63352,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+63351,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63350,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+6334,Scientific Management and Solutions,fallback,Medical,0.0
+63348,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+63347,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63340,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63339,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63338,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63335,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63333,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63332,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63330,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63330A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63327,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63325,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63323,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63322,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63321A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+6331,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63319,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63318,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63316,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+63315,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+6331000,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+6329,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6327,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6326,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6325,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6322,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+63210,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62904B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62903B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62903A,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62902B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62902A,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62901D,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62901C,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62901B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+62901A,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6279,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6278,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6277,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+6276,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6275,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62750,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6275001,Miscellaneous,fallback,Sustainment S&E,0.0
+6274000,Human Capital,fallback,Human Capital,0.0
+6273,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62733,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62732,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62731,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6272,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62729,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62723,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62722,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6272006,Miscellaneous,fallback,Sustainment S&E,0.0
+6272005,Human Capital,fallback,Human Capital,0.0
+6272004,Miscellaneous,fallback,Sustainment S&E,0.0
+6272003,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6272001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6272000,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+6271,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62718,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62715,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62713,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62712,Miscellaneous,fallback,Sustainment S&E,0.0
+62711,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+62710,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+61804,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+61803,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+61802,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+61801,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6178,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6175,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6174,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6173,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6172,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+6171,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+61713,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+616001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6159,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6154,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6153,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6152,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6151,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+61519,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+61518,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6151010,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+614001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613025A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613025,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613024A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613022,Facilities,fallback,Facilities & Construction,0.0
+613021A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613020A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613019A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613018A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613017A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613016A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613010,Facilities,fallback,Facilities & Construction,0.0
+613007,Facilities,fallback,Facilities & Construction,0.0
+613005A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613005,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613002A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+613001A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+612209,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+612099,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6039,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6038,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6037,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6035,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6034,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6033,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6032,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6031,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60310,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6028,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6027,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6026,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60241,Miscellaneous,fallback,Sustainment S&E,0.0
+60240,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6023,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60235,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60232,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60226,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60223,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+6021,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+60217,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+60214,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+600001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+59999,Travel,fallback,Travel & Lodging,0.0
+5995,Travel,fallback,Travel & Lodging,0.0
+5994,Travel,fallback,Travel & Lodging,0.0
+5993,Travel,fallback,Travel & Lodging,0.0
+5992,Travel,fallback,Travel & Lodging,0.0
+5991000,Travel,fallback,Travel & Lodging,0.0
+5959,Professional Services,fallback,Professional Services,0.0
+5958,Professional Services,fallback,Professional Services,0.0
+5957,Professional Services,fallback,Professional Services,0.0
+5956,Professional Services,fallback,Professional Services,0.0
+5955,Professional Services,fallback,Professional Services,0.0
+5954,Professional Services,fallback,Professional Services,0.0
+5953,Professional Services,fallback,Professional Services,0.0
+5952,Professional Services,fallback,Professional Services,0.0
+59526,Professional Services,fallback,Professional Services,0.0
+59524,Professional Services,fallback,Professional Services,0.0
+59523,Professional Services,fallback,Professional Services,0.0
+59516,Professional Services,fallback,Professional Services,0.0
+59513,Professional Services,fallback,Professional Services,0.0
+59511,Professional Services,fallback,Professional Services,0.0
+59510,Professional Services,fallback,Professional Services,0.0
+5951,Professional Services,fallback,Professional Services,0.0
+5811,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+589,Information Technology,fallback,IT,0.0
+586,Information Technology,fallback,IT,0.0
+58500,Information Technology,fallback,IT,0.0
+584,Information Technology,fallback,IT,0.0
+583,Information Technology,fallback,IT,0.0
+582,Information Technology,fallback,IT,0.0
+581,Information Technology,fallback,IT,0.0
+5810,Information Technology,fallback,IT,0.0
+577005,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+577003,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+577002,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+577001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+56799,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+5678,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5676,Miscellaneous,fallback,Miscellaneous S&E,0.0
+5674,Miscellaneous,fallback,Sustainment S&E,0.0
+56715,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5663,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5662,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5661,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+56399,Facilities,fallback,Facilities & Construction,0.0
+56398,Facilities,fallback,Facilities & Construction,0.0
+56397,Facilities,fallback,Facilities & Construction,0.0
+5638,Facilities,fallback,Facilities & Construction,0.0
+5637,Facilities,fallback,Facilities & Construction,0.0
+5636,Facilities,fallback,Facilities & Construction,0.0
+5634,Facilities,fallback,Facilities & Construction,0.0
+56327,Facilities,fallback,Facilities & Construction,0.0
+56326,Facilities,fallback,Facilities & Construction,0.0
+56325,Facilities,fallback,Facilities & Construction,0.0
+56324,Facilities,fallback,Facilities & Construction,0.0
+56323,Facilities,fallback,Facilities & Construction,0.0
+56322,Facilities,fallback,Facilities & Construction,0.0
+56321,Facilities,fallback,Facilities & Construction,0.0
+56319,Facilities,fallback,Facilities & Construction,0.0
+56316,Facilities,fallback,Facilities & Construction,0.0
+561499N,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+561450BP,Professional Services,inferred,Professional Services,0.0
+56500,Facilities,fallback,Facilities & Construction,0.0
+5508A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5508,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+55021A,Facilities,fallback,Facilities & Construction,0.0
+55017A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+55015A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+55015,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+550001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+541990TAD,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+541990RISKBP,Professional Services,inferred,(no category in SSQ+),0.0
+541715APM,Professional Services,site,Professional Services,0.0
+541715AIR,Professional Services,site,Research and Development,0.0
+541714,Professional Services,fallback,Professional Services,0.0
+541713,Professional Services,fallback,Professional Services,0.0
+541614SVCBP,Professional Services,inferred,Professional Services,0.0
+541612PSSC,Professional Services,fallback,Professional Services,0.0
+541612OPM,Professional Services,fallback,Professional Services,0.0
+541611C,Information Technology,fallback,IT,0.0
+541611BP,Professional Services,inferred,Professional Services,0.0
+541519CDM,Information Technology,fallback,IT,0.0
+5414D,Professional Services,fallback,Professional Services,0.0
+5414C,Professional Services,fallback,Professional Services,0.0
+5412000,Professional Services,fallback,Professional Services,0.0
+5411000,Human Capital,fallback,Human Capital,0.0
+541001,Industrial Products and Services,fallback,Equipment Related Services,0.0
+5407,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5403,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5402,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+54021,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+54016,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+54012,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+54011,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+532420R,Information Technology,fallback,IT,0.0
+532412,Miscellaneous,fallback,Sustainment S&E,0.0
+5242,Miscellaneous,fallback,Sustainment S&E,0.0
+5241,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+52099,Professional Services,fallback,Professional Services,0.0
+5206,Professional Services,fallback,Professional Services,0.0
+5204,Professional Services,fallback,Professional Services,0.0
+5203,Professional Services,fallback,Professional Services,0.0
+52022,Professional Services,fallback,Professional Services,0.0
+52020,Professional Services,fallback,Professional Services,0.0
+52020BP,Professional Services,fallback,Professional Services,0.0
+52019,Professional Services,fallback,Professional Services,0.0
+52019BP,Professional Services,fallback,Professional Services,0.0
+52018,Professional Services,fallback,Professional Services,0.0
+52018BP,Professional Services,fallback,Professional Services,0.0
+52017,Professional Services,fallback,Professional Services,0.0
+52016BPA,Professional Services,fallback,Professional Services,0.0
+52016BP,Professional Services,fallback,Professional Services,0.0
+52014,Professional Services,fallback,Professional Services,0.0
+52010,Information Technology,fallback,IT,0.0
+518210CBP,Information Technology,inferred,Professional Services,0.0
+51600,Information Technology,fallback,IT,0.0
+5158,Information Technology,fallback,IT,0.0
+5158A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5157,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5156,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+5155,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51509,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51508,Information Technology,fallback,IT,0.0
+51505,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51504,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51503,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51501,Information Technology,fallback,IT,0.0
+51500,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51409,Information Technology,fallback,IT,0.0
+51402,Information Technology,fallback,IT,0.0
+51400,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51212,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51208,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+511012,Information Technology,fallback,IT,0.0
+51100,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51100F,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+51100C,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+511001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+511000,Information Technology,fallback,IT,0.0
+5079,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+50799,Miscellaneous,fallback,Sustainment S&E,0.0
+5078,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+5074,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+5072,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+5003,Office Management,fallback,Office Management,0.0
+5001,Office Management,fallback,Office Management,0.0
+50205,Information Technology,fallback,IT,0.0
+50163,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+50156,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4972,Office Management,fallback,Office Management,0.0
+49698,Office Management,fallback,Office Management,0.0
+48999,Office Management,fallback,Office Management,0.0
+48998,Office Management,fallback,Office Management,0.0
+489190,Office Management,fallback,Office Management,0.0
+489171,Office Management,fallback,Office Management,0.0
+489168,Office Management,fallback,Office Management,0.0
+489167,Office Management,fallback,Office Management,0.0
+489161,Office Management,fallback,Office Management,0.0
+489160,Office Management,fallback,Office Management,0.0
+489159,Office Management,fallback,Office Management,0.0
+489158,Office Management,fallback,Office Management,0.0
+489157,Office Management,fallback,Office Management,0.0
+489154,Office Management,fallback,Office Management,0.0
+489103,Office Management,fallback,Office Management,0.0
+4875,Office Management,fallback,Office Management,0.0
+4874,Office Management,fallback,Office Management,0.0
+4872,Office Management,fallback,Office Management,0.0
+4871,Office Management,fallback,Office Management,0.0
+47613,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+47612,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4659,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+46522,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+46519,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+46517,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+46511,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+46510,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4651000,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+45199,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+4512,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+4511,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+4267,Professional Services,fallback,Professional Services,0.0
+4265B,Professional Services,fallback,Professional Services,0.0
+4265A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4264S,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4264R,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4264Q,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4264N,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4264M,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4264L,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4264J,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4264E,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4264D,Scientific Management and Solutions,fallback,Medical,0.0
+4264C,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4263B,Miscellaneous,fallback,Sustainment S&E,0.0
+4263A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4262A,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4261G,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4261D,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4261C,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4261B,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+4261000,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4128,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4127,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4126,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+4125,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+41252,Facilities,fallback,Facilities & Construction,0.0
+41250,Facilities,fallback,Facilities & Construction,0.0
+4123,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+41221,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+4121B,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+41219,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+41217,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+41216,Facilities,fallback,Facilities & Construction,0.0
+41215,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+41214,Facilities,fallback,Facilities & Construction,0.0
+41213,Facilities,fallback,Facilities & Construction,0.0
+41210,Facilities,fallback,Facilities & Construction,0.0
+4113,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+4027,Miscellaneous,fallback,Miscellaneous S&E,0.0
+4025,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+38499,Office Management,fallback,Office Management,0.0
+3844,Facilities,fallback,Facilities & Construction,0.0
+3842,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+3837,Facilities,fallback,Facilities & Construction,0.0
+3834,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+3832,Facilities,fallback,Facilities & Construction,0.0
+3831,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+38310,Miscellaneous,fallback,Electronic & Communication Equipment,0.0
+38299,Professional Services,fallback,Professional Services,0.0
+3824,Human Capital,fallback,Human Capital,0.0
+3823,Human Capital,fallback,Human Capital,0.0
+375393,Facilities,fallback,Facilities & Construction,0.0
+375391,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375372,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375371,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375368,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+375364,Facilities,fallback,Facilities & Construction,0.0
+375362,Miscellaneous,fallback,Sustainment S&E,0.0
+375361,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375355,Facilities,fallback,Facilities & Construction,0.0
+375353,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375352,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375351,Facilities,fallback,Facilities & Construction,0.0
+375341,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375323,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375321,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375200,Facilities,fallback,Facilities & Construction,0.0
+375139,Facilities,fallback,Facilities & Construction,0.0
+375135,Facilities,fallback,Facilities & Construction,0.0
+375129,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375125,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375117,Facilities,fallback,Facilities & Construction,0.0
+375107,Facilities,fallback,Facilities & Construction,0.0
+375103,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+375100,Facilities,fallback,Facilities & Construction,0.0
+371004,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+371002,Facilities,fallback,Facilities & Construction,0.0
+371001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+36690,Miscellaneous,fallback,Miscellaneous S&E,0.0
+3669,Professional Services,fallback,Professional Services,0.0
+3668,Professional Services,fallback,Professional Services,0.0
+3666,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+36623,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+36622,Miscellaneous,fallback,Miscellaneous S&E,0.0
+36612,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+36611,Miscellaneous,fallback,Miscellaneous S&E,0.0
+36610,Professional Services,fallback,Professional Services,0.0
+36199A,Facilities,fallback,Facilities & Construction,0.0
+36197,Facilities,fallback,Facilities & Construction,0.0
+36151,Facilities,fallback,Facilities & Construction,0.0
+36150,Facilities,fallback,Facilities & Construction,0.0
+36132,Facilities,fallback,Facilities & Construction,0.0
+36130,Facilities,fallback,Facilities & Construction,0.0
+36129,Facilities,fallback,Facilities & Construction,0.0
+36128,Facilities,fallback,Facilities & Construction,0.0
+36127,Facilities,fallback,Facilities & Construction,0.0
+36125,Facilities,fallback,Facilities & Construction,0.0
+36124,Facilities,fallback,Facilities & Construction,0.0
+36120A,Facilities,fallback,Facilities & Construction,0.0
+36110H,Facilities,fallback,Facilities & Construction,0.0
+36110G,Facilities,fallback,Facilities & Construction,0.0
+36110D,Facilities,fallback,Facilities & Construction,0.0
+36110B,Facilities,fallback,Facilities & Construction,0.0
+36105,Facilities,fallback,Facilities & Construction,0.0
+36104,Facilities,fallback,Facilities & Construction,0.0
+35798,Professional Services,fallback,Professional Services,0.0
+35797,Facilities,fallback,Facilities & Construction,0.0
+35711C,Facilities,fallback,Facilities & Construction,0.0
+35710C,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+35710B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+35709C,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+35709B,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+35703,Professional Services,fallback,Professional Services,0.0
+35702,Professional Services,fallback,Professional Services,0.0
+3419,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+3413,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34125,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34124,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34123,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34114,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34113,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34111,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+341100,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+34110,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+337215M,Office Management,fallback,Office Management,0.0
+337127P,Furniture and Furnishings,site,"Clothing, Textiles & Subsistence S&E",0.0
+337127CSB,Office Management,fallback,Office Management,0.0
+33411REF,Information Technology,fallback,IT,0.0
+333318SBSA,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+333316OS,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+333316CBP,Office Management,inferred,(no category in SSQ+),0.0
+332999BP,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+332439MLB,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+332216BP,Security and Protection,inferred,Industrial Products & Services,0.0
+321918PF,Facilities,fallback,Facilities & Construction,0.0
+31999,Office Management,fallback,Office Management,0.0
+31998,Office Management,fallback,Office Management,0.0
+31604,Office Management,fallback,Office Management,0.0
+31603,Office Management,fallback,Office Management,0.0
+31602,Office Management,fallback,Office Management,0.0
+31601,Office Management,fallback,Office Management,0.0
+31502,Office Management,fallback,Office Management,0.0
+31501,Office Management,fallback,Office Management,0.0
+31402,Office Management,fallback,Office Management,0.0
+31401,Office Management,fallback,Office Management,0.0
+31304,Office Management,fallback,Office Management,0.0
+31303,Office Management,fallback,Office Management,0.0
+31301,Office Management,fallback,Office Management,0.0
+30299,Office Management,fallback,Office Management,0.0
+3029,Security and Protection,fallback,Security and Protection,0.0
+3028,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+30274,Facilities,fallback,Facilities & Construction,0.0
+30272,Office Management,fallback,Office Management,0.0
+30261,Security and Protection,fallback,Security and Protection,0.0
+3026,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+30259,Miscellaneous,fallback,Sustainment S&E,0.0
+30257,Facilities,fallback,Facilities & Construction,0.0
+30256,Office Management,fallback,Office Management,0.0
+30254,Facilities,fallback,Facilities & Construction,0.0
+30251,Miscellaneous,fallback,Sustainment S&E,0.0
+30250,Facilities,fallback,Facilities & Construction,0.0
+3025,Security and Protection,fallback,Security and Protection,0.0
+30249,Office Management,fallback,Office Management,0.0
+30242,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+30240,Facilities,fallback,Facilities & Construction,0.0
+3023,Office Management,fallback,Office Management,0.0
+30239,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+30238,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+30237,Professional Services,fallback,Professional Services,0.0
+30236,Office Management,fallback,Office Management,0.0
+30234,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+30232,Professional Services,fallback,Professional Services,0.0
+30230,Office Management,fallback,Office Management,0.0
+3022,Facilities,fallback,Facilities & Construction,0.0
+30229,Office Management,fallback,Office Management,0.0
+30228,Facilities,fallback,Facilities & Construction,0.0
+30225,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+30221,Professional Services,fallback,Professional Services,0.0
+30220,Office Management,fallback,Office Management,0.0
+30213,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+30212,Security and Protection,fallback,Security and Protection,0.0
+30211,Security and Protection,fallback,Security and Protection,0.0
+3021,Security and Protection,fallback,Security and Protection,0.0
+30018,Professional Services,fallback,Professional Services,0.0
+30017,Professional Services,fallback,Professional Services,0.0
+30015,Professional Services,fallback,Professional Services,0.0
+30014,Professional Services,fallback,Professional Services,0.0
+30013,Professional Services,fallback,Professional Services,0.0
+272106,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+272105,Miscellaneous,fallback,Sustainment S&E,0.0
+272101,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+271114,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+271112,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+271108,Miscellaneous,fallback,Sustainment S&E,0.0
+271104,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+271103,Miscellaneous,fallback,Sustainment S&E,0.0
+271101,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+27600,Human Capital,fallback,Human Capital,0.0
+27500,Miscellaneous,fallback,Sustainment S&E,0.0
+27400,Human Capital,fallback,Human Capital,0.0
+27300,Miscellaneous,fallback,Sustainment S&E,0.0
+27200,Miscellaneous,fallback,Sustainment S&E,0.0
+27100,Miscellaneous,fallback,Sustainment S&E,0.0
+26253,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+26099,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+26098,Miscellaneous,fallback,Sustainment S&E,0.0
+26014,Miscellaneous,fallback,Sustainment S&E,0.0
+26013,Miscellaneous,fallback,Sustainment S&E,0.0
+26012,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+26011,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+2601000,Miscellaneous,fallback,Sustainment S&E,0.0
+26006,Miscellaneous,fallback,Sustainment S&E,0.0
+26003,Miscellaneous,fallback,Sustainment S&E,0.0
+25399,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25390,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25352,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25349,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25348C,Facilities,fallback,Facilities & Construction,0.0
+25348A,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25346,Facilities,fallback,Facilities & Construction,0.0
+2532,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25324,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25320,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+25319,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+2516,Miscellaneous,fallback,Sustainment S&E,0.0
+25122,Miscellaneous,fallback,Sustainment S&E,0.0
+25113,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+24699,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+246605,Professional Services,fallback,Professional Services,0.0
+246604,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+246603,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+246602,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+246601,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+24653,Professional Services,fallback,Professional Services,0.0
+24650,Security and Protection,fallback,Security and Protection,0.0
+24643,Security and Protection,fallback,Security and Protection,0.0
+246423,Security and Protection,fallback,Security and Protection,0.0
+246422,Security and Protection,fallback,Security and Protection,0.0
+24640,Professional Services,fallback,Professional Services,0.0
+246357,Security and Protection,fallback,Security and Protection,0.0
+246355,Security and Protection,fallback,Security and Protection,0.0
+246354,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+246353,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+246352,Professional Services,fallback,Professional Services,0.0
+246351,Information Technology,fallback,IT,0.0
+24625,Security and Protection,fallback,Security and Protection,0.0
+24623,Security and Protection,fallback,Security and Protection,0.0
+246204,Security and Protection,fallback,Security and Protection,0.0
+246202,Security and Protection,fallback,Security and Protection,0.0
+246201,Security and Protection,fallback,Security and Protection,0.0
+24601,Professional Services,fallback,Professional Services,0.0
+23917B,Security and Protection,fallback,Security and Protection,0.0
+2194,Miscellaneous,fallback,Miscellaneous S&E,0.0
+2193,Information Technology,fallback,IT,0.0
+21912,Miscellaneous,fallback,Miscellaneous S&E,0.0
+2064,Facilities,fallback,Facilities & Construction,0.0
+2063,Facilities,fallback,Facilities & Construction,0.0
+20612,Facilities,fallback,Facilities & Construction,0.0
+20B67,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+20320,Security and Protection,fallback,Security and Protection,0.0
+20300,Information Technology,fallback,IT,0.0
+19299,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+19248,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19247,Professional Services,fallback,Professional Services,0.0
+19245,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+19243,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19242,Miscellaneous,fallback,"Clothing, Textiles & Subsistence S&E",0.0
+19241,Miscellaneous,fallback,Miscellaneous S&E,0.0
+19237B,Miscellaneous,fallback,Miscellaneous S&E,0.0
+19234,Miscellaneous,fallback,Sustainment S&E,0.0
+19230,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19226,Security and Protection,fallback,Security and Protection,0.0
+19223,Miscellaneous,fallback,Sustainment S&E,0.0
+19222,Security and Protection,fallback,Security and Protection,0.0
+19221,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19220,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19219,Miscellaneous,fallback,Miscellaneous S&E,0.0
+19216,Miscellaneous,fallback,Sustainment S&E,0.0
+19213,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19212,Security and Protection,fallback,Security and Protection,0.0
+19211,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19210,Facilities,fallback,Facilities & Construction,0.0
+19209,Miscellaneous,fallback,Miscellaneous S&E,0.0
+19205,Office Management,fallback,Office Management,0.0
+19204,Professional Services,fallback,Professional Services,0.0
+19203,Professional Services,fallback,Professional Services,0.0
+19007,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19005,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+19003,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+19100,Security and Protection,fallback,Security and Protection,0.0
+1329,Information Technology,fallback,IT,0.0
+13299,Information Technology,fallback,IT,0.0
+1327,Information Technology,fallback,IT,0.0
+1326R,Information Technology,fallback,IT,0.0
+13262,Information Technology,fallback,IT,0.0
+13260F,Information Technology,fallback,IT,0.0
+1326,Information Technology,fallback,IT,0.0
+13256,Information Technology,fallback,IT,0.0
+13251IRABPA,Information Technology,fallback,IT,0.0
+1324,Information Technology,fallback,IT,0.0
+13245,Information Technology,fallback,IT,0.0
+13245C,Information Technology,fallback,IT,0.0
+13245B,Information Technology,fallback,IT,0.0
+13245A,Information Technology,fallback,IT,0.0
+13244,Information Technology,fallback,IT,0.0
+13243,Information Technology,fallback,IT,0.0
+13242,Information Technology,fallback,IT,0.0
+13240,Information Technology,fallback,IT,0.0
+1323,Information Technology,fallback,IT,0.0
+13231,Information Technology,fallback,IT,0.0
+13220,Information Technology,fallback,IT,0.0
+1322,Information Technology,fallback,IT,0.0
+13217,Information Technology,fallback,IT,0.0
+13216,Information Technology,fallback,IT,0.0
+13211,Information Technology,fallback,IT,0.0
+1321,Information Technology,fallback,IT,0.0
+125104,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+125102,Miscellaneous,fallback,Sustainment S&E,0.0
+105003,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+105001,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+0964N,Miscellaneous,fallback,Sustainment S&E,0.0
+05199,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+051400,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+051200,Facilities,fallback,Facilities & Construction,0.0
+051100,Industrial Products and Services,fallback,Industrial Products & Services,0.0
+025101,Miscellaneous,fallback,Sustainment S&E,0.0
+023LSV,Transportation and Logistics Services,fallback,Transportation and Logistics Services,0.0
+00301,Industrial Products and Services,fallback,Industrial Products & Services,0.0

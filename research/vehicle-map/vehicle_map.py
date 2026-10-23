@@ -77,7 +77,9 @@ SL_SUFFIX = re.compile(r"(STLOCRC|STLOCR|STLOC|RC|PHE)$")
 
 def base_sin(raw):
     s = re.sub(r"\s+", "", str(raw or "")).upper()
-    s = SL_SUFFIX.sub("", s)
+    prev = None
+    while prev != s:  # suffixes can stack, e.g. 611430STSTLOCRC
+        prev, s = s, SL_SUFFIX.sub("", s)
     return s
 
 
@@ -225,7 +227,7 @@ def load_sin_categories(path):
     if path.exists():
         for r in csv.DictReader(open(path, encoding="utf-8-sig")):
             if r.get("sin") and r.get("category"):
-                m[base_sin(r["sin"])] = r["category"].strip()
+                m.setdefault(base_sin(r["sin"]), r["category"].strip())
     return m
 
 
@@ -279,7 +281,12 @@ def rank_detail(args, rows, overrides):
     write_csv(WORK / "sin_profile.csv", profile)
     out, skipped = [], []
     by_cat = defaultdict(list)
+    valid = set(cats.values()) - {"", "Unassigned"} if cats else None
     for r in profile:
+        if valid is not None and r["category"] not in valid:
+            skipped.append({"category": r["category"], "sin": r["sin"], "total_sales": r["total_sales"],
+                            "note": "no MAS large category assigned"})
+            continue
         by_cat[r["category"]].append(r)
     for cat, items in sorted(by_cat.items()):
         rank = 0

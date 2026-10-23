@@ -1,0 +1,14 @@
+category,sin,total_sales,note
+Unassigned,334220BP,1888.0,no MAS large category assigned
+Unassigned,CP,0.0,no MAS large category assigned
+Facilities,ANCILLARY,468871164.0,no NAICS equivalent (order-level or ancillary)
+Facilities,ANCRA,180554105.0,no NAICS equivalent (order-level or ancillary)
+Facilities,OLMBP,25730459.0,no NAICS equivalent (order-level or ancillary)
+Industrial Products and Services,NEW,32098977.0,no NAICS equivalent (order-level or ancillary)
+Information Technology,OLM,898667105.0,no NAICS equivalent (order-level or ancillary)
+Travel,59999,0.0,unmapped (59999); add to naics_overrides.csv
+Travel,5995,0.0,unmapped (5995); add to naics_overrides.csv
+Travel,5994,0.0,unmapped (5994); add to naics_overrides.csv
+Travel,5993,0.0,unmapped (5993); add to naics_overrides.csv
+Travel,5992,0.0,unmapped (5992); add to naics_overrides.csv
+Travel,5991000,0.0,unmapped (5991000); add to naics_overrides.csv

@@ -10,8 +10,9 @@ coming up for recompete.
 pip3 install requests openpyxl
 cd research/vehicle-map
 
-# 1. Rank SINs from your SSQ+ export (see below). Writes top_sins.csv.
-python3 vehicle_map.py rank --ssq ~/Downloads/<ssq export>.csv --top 10
+# 1. Already done from the Oct 2026 SSQ+ export: top_sins.csv (115 SINs, 76 NAICS),
+#    sin_categories.csv (SIN -> MAS large category), sin_profile.csv. Skip to step 2.
+#    To redo: python3 make_sin_categories.py && python3 vehicle_map.py rank --ssq <export>.csv --top 10
 
 # 2. Pull FY2024-FY2026 transactions for every NAICS in top_sins.csv.
 #    Long: expect several hours for ~120 NAICS. Resumable; rerun the same command after any failure.
