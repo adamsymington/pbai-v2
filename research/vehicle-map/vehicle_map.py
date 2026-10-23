@@ -72,7 +72,7 @@ SIN_EXPANSIONS = {
 }
 NO_NAICS = {"OLM", "ANCILLARY", "ANCILLARYREPAIR", "NEW", "INTRO"}
 
-SL_SUFFIX = re.compile(r"(STLOC|RC|PHE)$")
+SL_SUFFIX = re.compile(r"(STLOCRC|STLOCR|STLOC|RC|PHE)$")
 
 
 def base_sin(raw):
@@ -174,8 +174,137 @@ def read_ssq(path):
     return out
 
 
+NON_PRODUCT = re.compile(r"^(OLM|ANCILLARY|ANC|TEMPSIN|NEW|INTRO)", re.I)
+
+
+def read_ssq_detail(path):
+    """SSQ+ export with label columns Program, SIN, NAICS, Governmentwide Category, Subcategory, AAC.
+
+    Returns None if the file is not in that layout.
+    """
+    raw = open(path, "rb").read()
+    text = raw.decode("utf-16") if raw[:2] in (b"\xff\xfe", b"\xfe\xff") else raw.decode("utf-8-sig")
+    lines = text.splitlines()
+    rows = [l.split("\t") for l in lines]
+    fy_row = rows[0]
+    first_val = next((j for j, c in enumerate(fy_row) if re.search(r"FY\s*\d{4}", c)), None)
+    if first_val is None or first_val < 5:
+        return None
+    body = [r for r in rows[1:] if r and r[0].strip() and not r[0].startswith("Grand")]
+    body = [r for r in body if len(r) > first_val and re.match(r"^\$|^\(\$", r[first_val].strip() or "$")]
+    if not body or sum(bool(re.match(r"^\d{6}$", r[2].strip())) for r in body) < 0.5 * len(body):
+        return None
+    fy_of = {}
+    for j in range(first_val, len(fy_row)):
+        m = re.search(r"FY\s*(\d{4})", fy_row[j])
+        if m:
+            fy_of[j] = int(m.group(1))
+
+    def money(x):
+        x = (x or "").replace("$", "").replace(",", "").strip()
+        if x.startswith("(") and x.endswith(")"):
+            x = "-" + x[1:-1]
+        try:
+            return float(x)
+        except ValueError:
+            return 0.0
+
+    out = []
+    for r in body:
+        sales = defaultdict(float)
+        for j, fy in fy_of.items():
+            if j < len(r):
+                sales[fy] += money(r[j])
+        out.append({"sin_raw": r[1].strip(), "naics": r[2].strip(), "gwcat": r[3].strip(), "gwsub": r[4].strip(),
+                    "aac": r[5].strip(), "sales": dict(sales)})
+    return out
+
+
+def load_sin_categories(path):
+    m = {}
+    if path.exists():
+        for r in csv.DictReader(open(path, encoding="utf-8-sig")):
+            if r.get("sin") and r.get("category"):
+                m[base_sin(r["sin"])] = r["category"].strip()
+    return m
+
+
+def rank_detail(args, rows, overrides):
+    cats = load_sin_categories(WORK / "sin_categories.csv")
+    prof = defaultdict(lambda: {"sales": defaultdict(float), "sl": 0.0, "naics": defaultdict(float),
+                                "gwcat": defaultdict(float), "gwsub": defaultdict(float), "aac": defaultdict(float)})
+    for r in rows:
+        if not r["sin_raw"]:
+            continue
+        b = base_sin(r["sin_raw"])
+        p = prof[b]
+        v = sum(r["sales"].values())
+        for fy, x in r["sales"].items():
+            p["sales"][fy] += x
+        if r["sin_raw"].upper().endswith("STLOC"):
+            p["sl"] += v
+        p["naics"][r["naics"]] += v
+        p["gwcat"][r["gwcat"] or "(blank)"] += v
+        p["gwsub"][r["gwsub"] or "(blank)"] += v
+        p["aac"][r["aac"]] += v
+    fys = sorted({fy for p in prof.values() for fy in p["sales"]})
+    profile = []
+    for sin, p in prof.items():
+        tot = sum(p["sales"].values())
+        named = {k: v for k, v in p["gwcat"].items() if k != "(blank)"}
+        gw = max(named.items(), key=lambda x: x[1])[0] if named else "(no category in SSQ+)"
+        ns = sorted(p["naics"].items(), key=lambda x: -x[1])
+        rule, note = sin_to_naics(sin, overrides)
+        rule_share = sum(v for n, v in p["naics"].items() if NAICS_2017_TO_2022.get(n, n) in rule) / tot if tot else 0
+        if NON_PRODUCT.match(sin):
+            naics, note = [], "no NAICS equivalent (order-level or ancillary)"
+        elif rule and (rule_share >= 0.2 or not ns or tot <= 0 or ns[0][1] / tot < 0.5):
+            naics = rule
+        elif ns and tot > 0:
+            top = [NAICS_2017_TO_2022.get(n, n) for n, v in ns if v / tot >= 0.25][:3] or [NAICS_2017_TO_2022.get(ns[0][0], ns[0][0])]
+            naics = top
+            note = f"SSQ+ NAICS (SIN-number rule covered {rule_share:.0%})" if rule else "SSQ+ NAICS"
+        else:
+            naics = []
+        profile.append({
+            "sin": sin, "category": cats.get(sin, gw), "category_source": "sin_categories.csv" if sin in cats else "SSQ+ governmentwide category",
+            "gw_category": gw, "gw_subcategory": max(p["gwsub"].items(), key=lambda x: x[1])[0],
+            "gsa_office": max(p["aac"].items(), key=lambda x: x[1])[0], "total_sales": round(tot, 2),
+            **{f"sales_fy{fy}": round(p["sales"].get(fy, 0.0), 2) for fy in fys},
+            "state_local_share": round(p["sl"] / tot, 4) if tot else 0,
+            "ssq_naics_mix": "; ".join(f"{n} {v / tot:.0%}" for n, v in ns[:5] if tot > 0),
+            "naics": ";".join(naics), "mapping": note,
+        })
+    profile.sort(key=lambda r: -r["total_sales"])
+    write_csv(WORK / "sin_profile.csv", profile)
+    out, skipped = [], []
+    by_cat = defaultdict(list)
+    for r in profile:
+        by_cat[r["category"]].append(r)
+    for cat, items in sorted(by_cat.items()):
+        rank = 0
+        for r in items:
+            if not r["naics"]:
+                skipped.append({"category": cat, "sin": r["sin"], "total_sales": r["total_sales"], "note": r["mapping"]})
+                continue
+            rank += 1
+            if rank > args.top:
+                break
+            out.append({"category": cat, "rank": rank, **{k: r[k] for k in r if k not in ("category",)}})
+    return out, skipped, by_cat
+
+
 def cmd_rank(args):
     overrides = load_overrides(WORK / "naics_overrides.csv")
+    detail = read_ssq_detail(args.ssq)
+    if detail is not None:
+        out, skipped, by_cat = rank_detail(args, detail, overrides)
+        write_csv(WORK / "top_sins.csv", out)
+        write_csv(WORK / "skipped_sins.csv", skipped)
+        naics = sorted({n for r in out for n in r["naics"].split(";")})
+        print(f"{len(by_cat)} categories, {len(out)} SINs kept, {len(naics)} unique NAICS to pull. "
+              f"Full SIN profile -> sin_profile.csv")
+        return
     rows = read_ssq(args.ssq)
     agg = defaultdict(lambda: defaultdict(float))
     for cat, sin, sales in rows:
