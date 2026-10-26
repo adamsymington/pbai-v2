@@ -476,9 +476,26 @@ class Client:
                 raise TimeoutError(f"[{tag}] still running after {max_wait}s")
             time.sleep(poll)
             waited += poll
-        z = self.s.get(st["file_url"], timeout=1200)
-        z.raise_for_status()
-        return z.content, int(st.get("total_rows") or 0)
+        return self.fetch(st["file_url"], tag), int(st.get("total_rows") or 0)
+
+    def fetch(self, url, tag, tries=8):
+        """Download a finished file. files.usaspending.gov often returns 504 for large files right
+        after they are generated, so retry with growing waits and stream to keep memory flat."""
+        for k in range(tries):
+            try:
+                with self.s.get(url, timeout=(30, 600), stream=True) as resp:
+                    resp.raise_for_status()
+                    buf = io.BytesIO()
+                    for chunk in resp.iter_content(chunk_size=1 << 20):
+                        buf.write(chunk)
+                    return buf.getvalue()
+            except Exception as e:
+                if k == tries - 1:
+                    raise
+                wait = min(300, 30 * (k + 1))
+                with _print_lock:
+                    print(f"  [{tag}] file fetch failed ({str(e)[:80]}); retrying in {wait}s", file=sys.stderr)
+                time.sleep(wait)
 
 
 def fy_window(fy):
