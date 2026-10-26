@@ -15,6 +15,7 @@ import argparse
 import csv
 import os
 import json
+import re
 from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
@@ -295,12 +296,10 @@ def tab_sin(wb, top, rng, S, fys):
 
 def tab_category(wb, top, rng, S):
     ws = wb.create_sheet("Category Map")
-    title(ws, "Market by MAS large category (top SINs' NAICS, each NAICS counted once per category)")
+    title(ws, "Market by MAS large category (each NAICS counted once, in its home category)")
     cats = defaultdict(list)
-    for r in top:
-        for n in r["naics"].split(";"):
-            if n not in cats[r["category"]]:
-                cats[r["category"]].append(n)
+    for n, (c, _, _) in sorted(home_categories(top).items()):
+        cats[c].append(n)
     hdr(ws, 4, ["Large category", "SINs", "NAICS codes"] + MARKET_HEADERS,
         widths=[30, 7, 40] + [13] * len(MARKET_HEADERS))
     cols = None
@@ -344,12 +343,32 @@ def tab_category(wb, top, rng, S):
     return {"last": last, "total": tr, "cols": cols, "cats": cats}
 
 
-def category_of(top):
-    m = defaultdict(list)
+def home_categories(top):
+    """One home category per NAICS, so shared codes are not counted in two categories.
+
+    A SIN whose number is the NAICS code outranks one mapped by expansion, which outranks one mapped
+    from SSQ+ sales mix; ties go to the SIN with more MAS sales. 541611 goes to Professional Services
+    (SIN 541611), not to Office Management (541611LIT) or Human Capital (541612LOB).
+    """
+    best = {}
     for r in top:
+        sales = float(r.get("total_sales") or 0)
+        how = (r.get("mapping") or "")
         for n in r["naics"].split(";"):
-            m[n].append((r["category"], int(r["rank"]), r["sin"]))
-    return m
+            if r["sin"] == n:
+                pri = 0
+            elif how.startswith(("SIN number", "expansion", "override")):
+                pri = 1
+            else:
+                pri = 2
+            key = (pri, -sales)
+            if n not in best or key < best[n][0]:
+                best[n] = (key, r["category"], int(r["rank"]), r["sin"])
+    return {n: (v[1], v[2], v[3]) for n, v in best.items()}
+
+
+def category_of(top):
+    return {n: [v] for n, v in home_categories(top).items()}
 
 
 def tab_funders(wb, top, agg, fys):
@@ -553,6 +572,14 @@ def lane_for(cat, args):
     return args.floor, args.ceiling
 
 
+RD_DESC = re.compile(r"\b(SBIR|STTR|BROAD AGENCY ANNOUNCEMENT|BAA)\b", re.I)
+
+
+def is_rd(a):
+    """Research awards (PSC A-series, SBIR/STTR, BAA) cannot move to MAS; kept out of the lane and targets."""
+    return (a.get("psc") or "").upper().startswith("A") or bool(RD_DESC.search(a.get("description") or ""))
+
+
 def window_obl(a, fys):
     vals = [float(a.get(f"obl_fy{y}") or 0) for y in fys]
     active = sum(1 for v in vals if v > 0) or 1
@@ -589,6 +616,9 @@ def tab_lane(wb, top, agg, awards, fys, args):
         for c in award_categories(a, cmap):
             _, ceiling = lane_for(c, args)
             s = lane[(c, a["segment"])]
+            if is_rd(a):
+                s["rd"] += tot
+                continue
             if tot <= ceiling:
                 s["in"] += tot
                 s["in_n"] += 1
@@ -598,32 +628,33 @@ def tab_lane(wb, top, agg, awards, fys, args):
                 s["above_n"] += 1
     heads = ["Category", "Segment", "Lane ceiling", "GSA MAS", "In-lane addressable", "In-lane awards",
              "  of which open market", "  of which agency vehicles", "MAS share of lane market",
-             "Above-lane addressable", "Above-lane awards", "Other GSA vehicles (GWAC, OASIS+)"]
-    hdr(ws, 4, heads, widths=[30, 10, 11, 13, 14, 10, 14, 14, 12, 14, 10, 15])
+             "Above-lane addressable", "Above-lane awards", "Other GSA vehicles (GWAC, OASIS+)",
+             "R&D, SBIR/STTR, BAA (excluded)"]
+    hdr(ws, 4, heads, widths=[30, 10, 11, 13, 14, 10, 14, 14, 12, 14, 10, 15, 14])
     r = 5
     for c in cats:
         for seg in ("Civilian", "DoD"):
             s = lane[(c, seg)]
             vals = [c, seg, lane_for(c, args)[1], mas[(c, seg)], s["in"], int(s["in_n"]), s["in_open"], s["in_idv"],
-                    None, s["above"], int(s["above_n"]), gsa_other[(c, seg)]]
+                    None, s["above"], int(s["above_n"]), gsa_other[(c, seg)], s["rd"]]
             for j, v in enumerate(vals, start=1):
                 ws.cell(row=r, column=j, value=v)
             ws.cell(row=r, column=9, value=f'=IF((D{r}+E{r})>0,D{r}/(D{r}+E{r}),"")')
             r += 1
     last = r - 1
     ws.cell(row=r, column=1, value="All categories")
-    for col in "DEFGHJKL":
+    for col in "DEFGHJKLM":
         ws[f"{col}{r}"] = f"=SUM({col}5:{col}{last})"
     ws[f"I{r}"] = f'=IF((D{r}+E{r})>0,D{r}/(D{r}+E{r}),"")'
-    box(ws, f"A5:L{r}")
+    box(ws, f"A5:M{r}")
     for i in range(5, r + 1):
-        for col in "CDEGHJL":
+        for col in "CDEGHJLM":
             ws[f"{col}{i}"].number_format = M
         ws[f"I{i}"].number_format = P
-    for col in range(1, 13):
+    for col in range(1, 14):
         ws.cell(row=r, column=col).font = f(bold=True)
     note(ws, f"A{r + 2}", "MAS dollars are all MAS orders in the category's NAICS (MAS orders are rarely above the lane). "
-                          "A NAICS mapped to two categories counts in both; the All row can overstate.")
+                          "Each NAICS counts once, in its home category (see Category Map).")
     ws.freeze_panes = "C5"
     return {"first": 5, "last": last, "total": r}
 
@@ -638,7 +669,7 @@ def build_targets(top, awards, mas_vendors, fys, as_of, horizon_end, args):
             end_d = datetime.strptime((a.get("pop_current_end") or "")[:10], "%Y-%m-%d").date()
         except ValueError:
             continue
-        if not (as_of <= end_d <= horizon_end):
+        if not (as_of <= end_d <= horizon_end) or is_rd(a):
             continue
         cats = cmap.get(a["naics"], [])
         if not cats:
@@ -710,7 +741,7 @@ def tab_lane_funders(wb, top, agg, awards, targets, fys, args):
         if a["bucket"] not in DEFAULT_ADDRESSABLE:
             continue
         tot, _ = window_obl(a, fys)
-        if tot <= 0:
+        if tot <= 0 or is_rd(a):
             continue
         for c in award_categories(a, cmap):
             if tot > lane_for(c, args)[1]:
@@ -896,6 +927,10 @@ def tab_method(wb, fys, as_of):
         f"Targets: in-lane addressable awards whose current period of performance ends between {as_of:%b %d, %Y} and 18 "
         "months later. Tier 1 = vendor already receives MAS orders in that NAICS; tier 2 = open market; tier 3 = agency "
         "vehicle. Current end dates move with option exercises; verify each in FPDS before outreach.",
+        "Excluded from the lane and targets: research awards (PSC A-series) and SBIR/STTR or BAA awards, which cannot "
+        "move to MAS. Shown separately on the MAS Lane tab.",
+        "Each NAICS counts in one home category: the category of the SIN whose number is that NAICS, else the SIN with "
+        "the most MAS sales mapped to it.",
         "Award size is total obligations in the window, not contract ceiling. USAspending's base-and-all-options field is "
         "reported per modification, so it is not used.",
         "Incumbent on MAS: the vendor's UEI received GSA MAS orders in the same NAICS in the window. It is a pointer to "
