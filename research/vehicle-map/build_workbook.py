@@ -538,7 +538,279 @@ def tab_agency(wb, top, agg):
     ws.freeze_panes = "B5"
 
 
-def tab_summary(wb, cm, top, n_targets, fys, as_of, S, bpa):
+
+# ---------------------------------------------------------------------------
+# MAS lane: award-size bands where MAS competes (OASIS+ and agency vehicles take larger work)
+# ---------------------------------------------------------------------------
+
+SERVICE_CATS = {"Professional Services", "Information Technology"}
+TIER_TEXT = {1: "1 - Incumbent already on MAS", 2: "2 - Open market (no vehicle)", 3: "3 - Agency vehicle"}
+
+
+def lane_for(cat, args):
+    if cat in SERVICE_CATS:
+        return args.svc_floor, args.svc_ceiling
+    return args.floor, args.ceiling
+
+
+def window_obl(a, fys):
+    vals = [float(a.get(f"obl_fy{y}") or 0) for y in fys]
+    active = sum(1 for v in vals if v > 0) or 1
+    return sum(vals), sum(vals) / active
+
+
+def award_categories(a, cmap):
+    return sorted({c for c, _, _ in cmap.get(a["naics"], [])})
+
+
+def tab_lane(wb, top, agg, awards, fys, args):
+    ws = wb.create_sheet("MAS Lane")
+    title(ws, "The market MAS can realistically win: awards inside the MAS size lane",
+          f"Lane = awards with FY{fys[0]}-FY{fys[-1]} obligations up to ${args.svc_ceiling / 1e6:,.0f}M for Professional "
+          f"Services and IT (larger work goes to OASIS+ and agency IDIQs) and up to ${args.ceiling / 1e6:,.0f}M for other "
+          "categories. Excludes M&O contracts, weapon programs, and enterprise deals. Default addressable vehicles.")
+    cmap = category_of(top)
+    cats = sorted({r["category"] for r in top})
+    mas = defaultdict(float)
+    gsa_other = defaultdict(float)
+    for r in agg:
+        for c in {c for c, _, _ in cmap.get(r["naics"], [])}:
+            if r["bucket"] == "GSA MAS":
+                mas[(c, r["segment"])] += r["obligations"]
+            elif r["bucket"] == "GSA non-MAS (GWAC, OASIS+, other)":
+                gsa_other[(c, r["segment"])] += r["obligations"]
+    lane = defaultdict(lambda: defaultdict(float))
+    for a in awards:
+        if a["bucket"] not in DEFAULT_ADDRESSABLE:
+            continue
+        tot, _ = window_obl(a, fys)
+        if tot <= 0:
+            continue
+        for c in award_categories(a, cmap):
+            _, ceiling = lane_for(c, args)
+            s = lane[(c, a["segment"])]
+            if tot <= ceiling:
+                s["in"] += tot
+                s["in_n"] += 1
+                s["in_open" if a["bucket"] == "Open market" else "in_idv"] += tot
+            else:
+                s["above"] += tot
+                s["above_n"] += 1
+    heads = ["Category", "Segment", "Lane ceiling", "GSA MAS", "In-lane addressable", "In-lane awards",
+             "  of which open market", "  of which agency vehicles", "MAS share of lane market",
+             "Above-lane addressable", "Above-lane awards", "Other GSA vehicles (GWAC, OASIS+)"]
+    hdr(ws, 4, heads, widths=[30, 10, 11, 13, 14, 10, 14, 14, 12, 14, 10, 15])
+    r = 5
+    for c in cats:
+        for seg in ("Civilian", "DoD"):
+            s = lane[(c, seg)]
+            vals = [c, seg, lane_for(c, args)[1], mas[(c, seg)], s["in"], int(s["in_n"]), s["in_open"], s["in_idv"],
+                    None, s["above"], int(s["above_n"]), gsa_other[(c, seg)]]
+            for j, v in enumerate(vals, start=1):
+                ws.cell(row=r, column=j, value=v)
+            ws.cell(row=r, column=9, value=f'=IF((D{r}+E{r})>0,D{r}/(D{r}+E{r}),"")')
+            r += 1
+    last = r - 1
+    ws.cell(row=r, column=1, value="All categories")
+    for col in "DEFGHJKL":
+        ws[f"{col}{r}"] = f"=SUM({col}5:{col}{last})"
+    ws[f"I{r}"] = f'=IF((D{r}+E{r})>0,D{r}/(D{r}+E{r}),"")'
+    box(ws, f"A5:L{r}")
+    for i in range(5, r + 1):
+        for col in "CDEGHJL":
+            ws[f"{col}{i}"].number_format = M
+        ws[f"I{i}"].number_format = P
+    for col in range(1, 13):
+        ws.cell(row=r, column=col).font = f(bold=True)
+    note(ws, f"A{r + 2}", "MAS dollars are all MAS orders in the category's NAICS (MAS orders are rarely above the lane). "
+                          "A NAICS mapped to two categories counts in both; the All row can overstate.")
+    ws.freeze_panes = "C5"
+    return {"first": 5, "last": last, "total": r}
+
+
+def build_targets(top, awards, mas_vendors, fys, as_of, horizon_end, args):
+    cmap = category_of(top)
+    out = []
+    for a in awards:
+        if a["bucket"] not in DEFAULT_ADDRESSABLE:
+            continue
+        try:
+            end_d = datetime.strptime((a.get("pop_current_end") or "")[:10], "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if not (as_of <= end_d <= horizon_end):
+            continue
+        cats = cmap.get(a["naics"], [])
+        if not cats:
+            continue
+        cat, rank, sin = sorted(cats, key=lambda x: x[1])[0]
+        tot, per_year = window_obl(a, fys)
+        floor, ceiling = lane_for(cat, args)
+        if not (floor <= tot <= ceiling):
+            continue
+        inc = a.get("recipient_uei") in mas_vendors.get(a["naics"], set())
+        tier = 1 if inc else (2 if a["bucket"] == "Open market" else 3)
+        out.append({"cat": cat, "sin": sin, "end": end_d, "tot": tot, "per_year": per_year, "tier": tier,
+                    "inc": inc, "a": a})
+    out.sort(key=lambda x: (x["cat"], x["tier"], -x["tot"]))
+    return out
+
+
+TARGET_HEADS = ["Category", "SIN", "Priority tier", "Current end", "Months to end", "Obligated FY24-26",
+                "Average per active year", "Vehicle", "PIID", "Parent IDV", "NAICS", "PSC", "Funding agency",
+                "Funding sub-agency", "Funding office (AAC)", "Funding office", "Contracting office (AAC)",
+                "Contracting office", "Vendor", "Vendor UEI", "Incumbent on MAS", "Set-aside", "Extent competed",
+                "Offers", "Single offer", "Potential end", "Description"]
+TARGET_WIDTHS = [22, 10, 22, 11, 8, 14, 13, 18, 20, 18, 8, 7, 22, 24, 11, 28, 11, 28, 28, 14, 9, 9, 8, 7, 7, 11, 60]
+
+
+def write_targets(wb, name, subtitle, rows, S):
+    ws = wb.create_sheet(name)
+    title(ws, name, subtitle)
+    hdr(ws, 4, TARGET_HEADS, widths=TARGET_WIDTHS)
+    r = 5
+    for t in rows:
+        a = t["a"]
+        offers = a.get("offers") or ""
+        vals = [t["cat"], t["sin"], TIER_TEXT[t["tier"]], t["end"], None, t["tot"], t["per_year"], a["bucket"],
+                a["piid"], a.get("parent_piid", ""), a["naics"], a.get("psc"), a.get("funding_agency"),
+                a.get("funding_sub_agency"), a.get("funding_office_code"), a.get("funding_office_name"),
+                a.get("awarding_office_code"), a.get("awarding_office_name"), a.get("recipient"), a.get("recipient_uei"),
+                "Yes" if t["inc"] else "No", a.get("set_aside"), a.get("extent_competed"), offers,
+                "Yes" if str(offers).strip() in ("1", "1.0") else "", (a.get("pop_potential_end") or "")[:10],
+                a.get("description")]
+        for j, v in enumerate(vals, start=1):
+            ws.cell(row=r, column=j, value=v)
+        ws.cell(row=r, column=5, value=f'=ROUND((D{r}-{S["asof"]})/30.4,0)')
+        r += 1
+    last = r - 1
+    if last >= 5:
+        for i in range(5, last + 1):
+            ws[f"D{i}"].number_format = "yyyy-mm-dd"
+            ws[f"F{i}"].number_format = D
+            ws[f"G{i}"].number_format = D
+    ws.freeze_panes = "D5"
+    ws.auto_filter.ref = f"A4:{L(len(TARGET_HEADS))}{max(last, 5)}"
+    return last - 4
+
+
+def tab_lane_funders(wb, top, agg, awards, targets, fys, args):
+    ws = wb.create_sheet("Top Funders")
+    title(ws, "Top funding offices (AAC) by in-lane addressable spend, by category and segment",
+          "In-lane = awards inside the MAS size lane (see MAS Lane). Top 25 offices per category for Civilian and for DoD.")
+    cmap = category_of(top)
+    mas = defaultdict(float)
+    for r in agg:
+        if r["bucket"] == "GSA MAS":
+            for c in {c for c, _, _ in cmap.get(r["naics"], [])}:
+                mas[(c, r["segment"], r["funding_office_code"] or "(none)")] += r["obligations"]
+    st = defaultdict(lambda: defaultdict(float))
+    meta = {}
+    for a in awards:
+        if a["bucket"] not in DEFAULT_ADDRESSABLE:
+            continue
+        tot, _ = window_obl(a, fys)
+        if tot <= 0:
+            continue
+        for c in award_categories(a, cmap):
+            if tot > lane_for(c, args)[1]:
+                continue
+            k = (c, a["segment"], a.get("funding_office_code") or "(none)")
+            meta.setdefault(k, (a.get("funding_agency"), a.get("funding_sub_agency"), a.get("funding_office_name")))
+            s = st[k]
+            s["lane"] += tot
+            s["n"] += 1
+            s["open" if a["bucket"] == "Open market" else "idv"] += tot
+            for y in fys:
+                s[f"y{y}"] += float(a.get(f"obl_fy{y}") or 0)
+            s["ko:" + (a.get("awarding_office_code") or "")] += tot
+    tcount = defaultdict(lambda: [0, 0])
+    for t in targets:
+        k = (t["cat"], t["a"]["segment"], t["a"].get("funding_office_code") or "(none)")
+        tcount[k][0] += 1
+        tcount[k][1] += 1 if t["tier"] == 1 else 0
+    heads = ["Category", "Segment", "Rank", "Funding office (AAC)", "Office name", "Agency", "Sub-agency",
+             "In-lane addressable", "In-lane awards", "Open market", "Agency vehicles", "GSA MAS", "MAS share",
+             "Targets ending in 18 months", "  of which incumbent on MAS"] + [f"In-lane FY{y}" for y in fys] +             ["Main contracting office (AAC)"]
+    hdr(ws, 4, heads, widths=[24, 9, 6, 12, 32, 24, 26, 13, 9, 12, 12, 12, 9, 10, 10] + [12] * len(fys) + [14])
+    r = 5
+    for c in sorted({k[0] for k in st}):
+        for seg in ("Civilian", "DoD"):
+            keys = sorted([k for k in st if k[0] == c and k[1] == seg], key=lambda k: -st[k]["lane"])[:args.top_offices]
+            for rank, k in enumerate(keys, start=1):
+                s, m = st[k], meta[k]
+                ko = max(((kk.split(":", 1)[1], v) for kk, v in s.items() if kk.startswith("ko:")),
+                         key=lambda x: x[1], default=("", 0))[0]
+                vals = [c, seg, rank, k[2], m[2], m[0], m[1], s["lane"], int(s["n"]), s["open"], s["idv"],
+                        mas.get(k, 0.0), None, tcount[k][0], tcount[k][1]] + [s[f"y{y}"] for y in fys] + [ko]
+                for j, v in enumerate(vals, start=1):
+                    ws.cell(row=r, column=j, value=v)
+                ws.cell(row=r, column=13, value=f'=IF((H{r}+L{r})>0,L{r}/(H{r}+L{r}),"")')
+                r += 1
+    last = r - 1
+    if last >= 5:
+        for i in range(5, last + 1):
+            for col in ["H", "J", "K", "L"] + [L(16 + j) for j in range(len(fys))]:
+                ws[f"{col}{i}"].number_format = M
+            ws[f"M{i}"].number_format = P
+    ws.freeze_panes = "E5"
+    ws.auto_filter.ref = f"A4:{L(len(heads))}{max(last, 5)}"
+
+
+def tab_priority(wb, targets, S, n):
+    picked = []
+    seen = defaultdict(int)
+    for t in targets:  # already sorted by category, tier, size
+        k = (t["cat"], t["a"]["segment"])
+        if seen[k] < n:
+            picked.append(t)
+            seen[k] += 1
+    picked.sort(key=lambda t: (t["a"]["segment"], t["cat"], t["tier"], -t["tot"]))
+    return write_targets(wb, "Priority Targets",
+                         f"Top {n} per category for Civilian and for DoD: incumbents already on MAS first, then open "
+                         "market, then agency vehicles; largest first within each tier.", picked, S)
+
+
+def summary_lane(ws, row, lane_info, targets, cats):
+    ws.cell(row=row, column=1, value="The MAS lane: awards sized for MAS (see MAS Lane tab)").font = f(bold=True, size=11, color="1F3864")
+    heads = ["Large category", "Civilian lane market", "Civilian MAS share", "DoD lane market", "DoD MAS share",
+             "Civilian targets", "  incumbent on MAS", "DoD targets", "  incumbent on MAS"]
+    hdr(ws, row + 1, heads)
+    cnt = defaultdict(lambda: [0, 0])
+    for t in targets:
+        k = (t["cat"], t["a"]["segment"])
+        cnt[k][0] += 1
+        cnt[k][1] += 1 if t["tier"] == 1 else 0
+    r = row + 2
+    for n, cat in enumerate(cats):
+        i = lane_info["first"] + 2 * n  # Civilian row; DoD is the next row
+        ws.cell(row=r, column=1, value=f"='MAS Lane'!A{i}")
+        ws.cell(row=r, column=2, value=f"='MAS Lane'!D{i}+'MAS Lane'!E{i}").number_format = M
+        ws.cell(row=r, column=3, value=f"='MAS Lane'!I{i}").number_format = P
+        ws.cell(row=r, column=4, value=f"='MAS Lane'!D{i + 1}+'MAS Lane'!E{i + 1}").number_format = M
+        ws.cell(row=r, column=5, value=f"='MAS Lane'!I{i + 1}").number_format = P
+        for j, v in enumerate([cnt[(cat, "Civilian")][0], cnt[(cat, "Civilian")][1], cnt[(cat, "DoD")][0],
+                               cnt[(cat, "DoD")][1]], start=6):
+            ws.cell(row=r, column=j, value=v).number_format = "#,##0"
+        r += 1
+    t = lane_info["total"]
+    ws.cell(row=r, column=1, value="All categories")
+    for j, col in ((2, "B"), (4, "D"), (6, "F"), (7, "G"), (8, "H"), (9, "I")):
+        ws.cell(row=r, column=j, value=f"=SUM({col}{row + 2}:{col}{r - 1})").number_format = "#,##0" if j > 5 else M
+    box(ws, f"A{row + 2}:I{r}")
+    for rr in range(row + 2, r + 1):
+        for j, fmt in ((2, M), (3, P), (4, M), (5, P)):
+            ws.cell(row=rr, column=j).number_format = fmt
+        for j in range(6, 10):
+            ws.cell(row=rr, column=j).number_format = "#,##0"
+        for j in (1, 2, 3, 4, 5):
+            ws.cell(row=rr, column=j).font = f(color=GREEN, bold=(rr == r))
+    for j in range(1, 10):
+        ws.cell(row=r, column=j).font = f(bold=True, color=GREEN if j <= 5 else "000000")
+    return r
+
+
+def tab_summary(wb, cm, top, n_targets, fys, as_of, S, bpa, lane_info=None, targets=(), cats=()):
     ws = wb["Summary"]
     title(ws, "MAS Market Map: open market vs MAS vs other vehicles",
           f"Top {max(int(r['rank']) for r in top)} SINs by MAS sales in each large category; FPDS obligations "
@@ -565,11 +837,14 @@ def tab_summary(wb, cm, top, n_targets, fys, as_of, S, bpa):
             ws.cell(row=i, column=j).number_format = P if "share" in key else M
             ws.cell(row=i, column=j).font = f(color=GREEN, bold=(i == end))
         ws.cell(row=i, column=1).font = f(color=GREEN, bold=(i == end))
+    ws.cell(row=end + 1, column=1, value="Total market includes management-and-operating contracts, weapon programs, and "
+            "enterprise deals that MAS will not compete for. The MAS lane below is the realistic view.").font = f(italic=True, size=9, color="595959")
+    end = summary_lane(ws, end + 3, lane_info, targets, cats) if lane_info else end
     r0 = end + 2
     ws.cell(row=r0, column=1, value="Findings").font = f(bold=True, size=11, color="1F3864")
     ws.cell(row=r0 + 1, column=1, value="To be written after reviewing the data. See Top Funders and Targets for the opportunity lists.")
     ws.cell(row=r0 + 1, column=1).font = f(italic=True)
-    ws.cell(row=r0 + 3, column=1, value="Conversion targets listed").font = f(bold=True)
+    ws.cell(row=r0 + 3, column=1, value="Conversion targets listed (Civilian / DoD)").font = f(bold=True)
     ws.cell(row=r0 + 3, column=2, value=n_targets)
     resolved = sum(1 for v in bpa.values() if v.get("found"))
     ws.cell(row=r0 + 4, column=1, value="BPAs traced to a parent vehicle").font = f(bold=True)
@@ -579,8 +854,11 @@ def tab_summary(wb, cm, top, n_targets, fys, as_of, S, bpa):
             ("Category Map", "Market by large category (NAICS counted once per category), with chart"),
             ("SIN Map", "Each top SIN: MAS sales (SSQ+) next to its FPDS market by vehicle"),
             ("NAICS Market", "Each NAICS once, by vehicle"),
-            ("Top Funders", "Top 25 funding offices (AAC) per category by addressable spend"),
-            ("Targets", "Non-MAS awards ending in the next 18 months, with offices and vendors"),
+            ("MAS Lane", "Market inside the MAS size lane, by category and segment, vs above-lane work"),
+            ("Top Funders", "Top 25 funding offices (AAC) per category and segment by in-lane spend"),
+            ("Priority Targets", "Top 25 targets per category and segment, incumbents on MAS first"),
+            ("Targets Civilian", "Every in-lane civilian non-MAS award ending in the next 18 months"),
+            ("Targets DoD", "Same for DoD"),
             ("Trends", "MAS share and addressable spend by year"),
             ("Agency View", "Addressable spend by funding agency and category"),
             ("Data", "Obligations by NAICS, FY, segment, vehicle"),
@@ -612,8 +890,14 @@ def tab_method(wb, fys, as_of):
         "Market totals by NAICS approximate, not equal, the SIN's market.",
         "SSQ+ sales (reported at invoicing) and FPDS obligations (recorded at award) measure different events; compare "
         "them as orders of magnitude, not to the dollar.",
-        f"Targets: addressable awards whose current period of performance ends between {as_of:%b %d, %Y} and 18 months "
-        "later. Current end dates move with option exercises; verify each in FPDS before outreach.",
+        "MAS lane: awards whose FY2024-FY2026 obligations fall at or under the lane ceiling ($10M for Professional "
+        "Services and IT, where larger work goes to OASIS+ and agency IDIQs; $25M otherwise). Floors for targets: $100K "
+        "PS/IT, $50K otherwise. All are command-line options on build_workbook.py.",
+        f"Targets: in-lane addressable awards whose current period of performance ends between {as_of:%b %d, %Y} and 18 "
+        "months later. Tier 1 = vendor already receives MAS orders in that NAICS; tier 2 = open market; tier 3 = agency "
+        "vehicle. Current end dates move with option exercises; verify each in FPDS before outreach.",
+        "Award size is total obligations in the window, not contract ceiling. USAspending's base-and-all-options field is "
+        "reported per modification, so it is not used.",
         "Incumbent on MAS: the vendor's UEI received GSA MAS orders in the same NAICS in the window. It is a pointer to "
         "check eLibrary, not proof the vendor's MAS contract covers the requirement.",
     ]
@@ -627,7 +911,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of", default=str(date.today()))
     ap.add_argument("--horizon-months", type=int, default=18)
-    ap.add_argument("--min-target", type=float, default=250000)
+    ap.add_argument("--svc-floor", type=float, default=100000, help="Professional Services and IT target floor")
+    ap.add_argument("--svc-ceiling", type=float, default=10000000, help="PS and IT lane ceiling (OASIS+ above)")
+    ap.add_argument("--floor", type=float, default=50000, help="Target floor, other categories")
+    ap.add_argument("--ceiling", type=float, default=25000000, help="Lane ceiling, other categories")
+    ap.add_argument("--top-offices", type=int, default=25)
+    ap.add_argument("--priority-n", type=int, default=25)
     ap.add_argument("--out", default=str(WORK / "MAS_Market_Map.xlsx"))
     args = ap.parse_args()
     as_of = datetime.strptime(args.as_of, "%Y-%m-%d").date()
@@ -651,14 +940,24 @@ def main():
     cm = tab_category(wb, top, rng, S)
     tab_sin(wb, top, rng, S, fys)
     tab_naics(wb, top, rng, S)
-    tab_funders(wb, top, agg, fys)
-    n_targets = tab_targets(wb, top, awards, mas_vendors, fys, as_of, horizon_end, args.min_target, S)
+    cats = sorted({r["category"] for r in top})
+    lane_info = tab_lane(wb, top, agg, awards, fys, args)
+    targets = build_targets(top, awards, mas_vendors, fys, as_of, horizon_end, args)
+    tab_lane_funders(wb, top, agg, awards, targets, fys, args)
+    tab_priority(wb, targets, S, args.priority_n)
+    sub = (f"In-lane, addressable awards ending {as_of:%b %d, %Y} to {horizon_end:%b %d, %Y}. Lane: "
+           f"${args.svc_floor / 1e3:,.0f}K-${args.svc_ceiling / 1e6:,.0f}M for PS and IT, "
+           f"${args.floor / 1e3:,.0f}K-${args.ceiling / 1e6:,.0f}M otherwise (FY{fys[0]}-FY{fys[-1]} obligations). "
+           "Sorted by category, tier, size.")
+    n_civ = write_targets(wb, "Targets Civilian", sub, [t for t in targets if t["a"]["segment"] == "Civilian"], S)
+    n_dod = write_targets(wb, "Targets DoD", sub, [t for t in targets if t["a"]["segment"] == "DoD"], S)
+    n_targets = f"{n_civ:,} / {n_dod:,}"
     tab_trends(wb, top, agg, fys)
     tab_agency(wb, top, agg)
     tab_method(wb, fys, as_of)
-    tab_summary(wb, cm, top, n_targets, fys, as_of, S, bpa)
-    order = ["Summary", "Settings", "Category Map", "SIN Map", "NAICS Market", "Top Funders", "Targets", "Trends",
-             "Agency View", "Data", "Method"]
+    tab_summary(wb, cm, top, n_targets, fys, as_of, S, bpa, lane_info, targets, cats)
+    order = ["Summary", "Settings", "Category Map", "MAS Lane", "SIN Map", "NAICS Market", "Top Funders",
+             "Priority Targets", "Targets Civilian", "Targets DoD", "Trends", "Agency View", "Data", "Method"]
     wb._sheets = [wb[n] for n in order]
     wb.save(args.out)
     print(args.out, f"{n_targets} targets")
