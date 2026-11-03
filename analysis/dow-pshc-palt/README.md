@@ -1,4 +1,4 @@
-# DoD/DoW Professional Services: Open Market (Tier 0) vs GSA MAS — Spend and PALT, FY2020–FY2025
+# DoD/DoW Professional Services: Open Market (Tier 0) vs GSA MAS — Spend and PALT, FY2020–FY2026 (through Jul. 2026)
 
 Every figure in this analysis is computed from public USASpending.gov contract data, which is sourced from FPDS.
 Anyone can rerun it end to end:
@@ -7,7 +7,13 @@ Anyone can rerun it end to end:
 bash scripts/01_pull.sh raw            # ~10 min; public API, no key
 python3 -I scripts/02_extract.py raw data
 python3 -I scripts/03_analyze.py data output
+python3 -I scripts/04_export_xlsx.py output DoD_PSHC_MAS_vs_OpenMarket_FY20-26.xlsx   # then recalc in Excel/LibreOffice
+python3 -I scripts/05_charts.py output docx_build                 # charts + table data for the Word build
+node scripts/06_build_docx.cjs docx_build DoD_PSHC_MAS_vs_OpenMarket_FY20-26.docx
 ```
+
+FY2026 is partial: DoD contract data posts to FPDS/USASpending with a 90-day delay, so the Nov. 3, 2026 pull runs
+through July 31, 2026. The SAT used for dollar bands is $250K through FY2025 and $350K from Oct. 1, 2025 (FAC 2025-06).
 
 `data/` holds the column-subset extracts actually analyzed, so the run reproduces without re-pulling.
 `output/r1_record_level_palt_mas_and_open_market.csv.gz` lists every MAS and open-market award used in the PALT
@@ -31,7 +37,7 @@ OMB's spend-under-management tiers are: Tier 3 = BIC, Tier 2 = multi-agency/gove
 agency-wide mandatory, Tier 0 = everything else. The official tier for each contract is assigned in GSA's
 category-management data, which is not public at the transaction level. Here, "open market" (stand-alone contracts and
 POs) is used as a **floor estimate of Tier 0**. The official Tier 0 is larger, because it also includes DoD single-award
-IDIQs and other vehicles that carry no SUM designation. Do not describe the $73.1B open-market figure as "DoD's Tier 0
+IDIQs and other vehicles that carry no SUM designation. Do not describe the $83.1B open-market figure as "DoD's Tier 0
 spend". Call it "open-market (stand-alone) spend, a subset of Tier 0".
 
 ## Like-for-like method
@@ -42,25 +48,25 @@ longer did the same kind of buy take on the open market? 95% CIs come from a wit
 A log-PALT fixed-effects regression with stratum-clustered SEs is reported as a check. Eight alternative specifications
 are reported in `output/t6_like_for_like_palt.csv`.
 
-Dollar bands use base-and-all-options value at award: ≤$250K (SAT for FY20–25), $250K–1M, $1M–7.5M, $7.5M–25M,
-$25M–100M, >$100M.
+Dollar bands use base-and-all-options value at award: ≤SAT, SAT–1M, $1M–7.5M, $7.5M–25M,
+$25M–100M, >$100M, with the first cut at the SAT in force for that fiscal year.
 
 ## Known limitations (stated up front so nobody else gets to state them first)
-1. **Solicitation-date coverage is partial**: about 41–63% of new awards, depending on group and year
+1. **Solicitation-date coverage is partial**: about 36–66% of new awards, depending on group and year
    (`output/t3_solicitation_date_coverage.csv`). PALT results describe the records that report a date. Coverage is
-   lower for MAS in FY2025 (40%).
+   lower for MAS in the partial FY2026 (36%).
 2. **PALT excludes pre-solicitation time.** That covers requirements definition, market research, acquisition strategy
    and draft RFPs, which is where much of the real time goes. Real acquisition lead time is longer than PALT for every
    group.
-3. PALT values over 3 years (738 records) are excluded as likely data errors. None were negative.
-4. 18% of DoD MAC orders and 7% of single-award orders report a solicitation date earlier than the parent IDV's award
+3. PALT values over 3 years (782 records) are excluded as likely data errors. None were negative.
+4. 17% of DoD MAC orders and 7% of single-award orders report a solicitation date earlier than the parent IDV's award
    date, probably the IDV's RFP date or a concurrent base and first order. These are excluded from the MAC-vs-MAS
    comparison.
 5. Vehicle stand-up time uses the IDV record's FPDS solicitation date, which is the RFP release, to first IDV award. It
    **understates** development time because draft RFPs, RFIs and industry days come earlier. Press-reported dates
    corroborate the FPDS dates for SeaPort-NxG, RS3 and LOGCAP V (see report).
-6. Scope is DoD-**awarded** actions. GSA-awarded, DoD-funded assisted acquisitions ($35.3B FY20–25, mostly OASIS-type
-   IDIQs; only $2.0B MAS) are reported separately in `t11`.
+6. Scope is DoD-**awarded** actions. GSA-awarded, DoD-funded assisted acquisitions ($44.0B FY20–26, mostly OASIS-type
+   IDIQs; only $2.2B MAS) are reported separately in `t11`.
 7. FPDS data is entered by contracting offices and has known error rates. Nothing here corrects source data. Every
    record is traceable to its public permalink.
 

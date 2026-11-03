@@ -13,8 +13,8 @@ DATA, OUT = sys.argv[1], sys.argv[2]
 os.makedirs(OUT, exist_ok=True)
 rng = np.random.default_rng(20261103)
 
-tx = pd.read_csv(os.path.join(DATA, "dod_pshc_award_transactions_fy20_fy25.csv.gz"), dtype=str)
-idv = pd.read_csv(os.path.join(DATA, "dod_pshc_idv_transactions_fy15_fy25.csv.gz"), dtype=str)
+tx = pd.read_csv(os.path.join(DATA, "dod_pshc_award_transactions_fy20_fy26.csv.gz"), dtype=str)
+idv = pd.read_csv(os.path.join(DATA, "dod_pshc_idv_transactions_fy15_fy26.csv.gz"), dtype=str)
 tx["obl"] = pd.to_numeric(tx.federal_action_obligation, errors="coerce").fillna(0.0)
 tx["fy"] = tx.action_date_fiscal_year.astype(int)
 
@@ -60,8 +60,8 @@ tx["group"] = tx.vehicle.map(GROUP).fillna("Other vehicles")
 
 # ---------- 2. Spend mix (all transactions, obligations) ----------
 spend = tx.pivot_table(index="vehicle", columns="fy", values="obl", aggfunc="sum").fillna(0)
-spend["FY20-25 total"] = spend.sum(axis=1)
-spend = spend.sort_values("FY20-25 total", ascending=False)
+spend["FY20-26 total"] = spend.sum(axis=1)
+spend = spend.sort_values("FY20-26 total", ascending=False)
 spend.loc["TOTAL"] = spend.sum()
 (spend / 1e6).round(1).to_csv(os.path.join(OUT, "t1_spend_by_vehicle_fy_usd_millions.csv"))
 share = tx.groupby(["fy", "group"]).obl.sum().unstack().fillna(0)
@@ -82,9 +82,13 @@ is_order = b.award_type_code.isin(["A", "C"])
 comp_sa = b.extent_competed_code.isin(["A", "D", "F"])
 comp_ord = b.fair_opportunity_limited_sources_code.isin(["FAIR", "CSA"])
 b["competed"] = np.where(is_order, comp_ord, comp_sa)
-bins = [-np.inf, 250e3, 1e6, 7.5e6, 25e6, 100e6, np.inf]
-labels = ["<=250K (SAT)", "250K-1M", "1M-7.5M", "7.5M-25M", "25M-100M", ">100M"]
-b["band"] = pd.cut(b.value, bins=bins, labels=labels).astype(str)
+# SAT was $250K through FY2025 and $350K from Oct 1, 2025 (FAC 2025-06, FAR Case 2024-001).
+b["sat"] = np.where(b.fy >= 2026, 350e3, 250e3)
+b["above_sat"] = b.value > b.sat
+labels = ["<=SAT", "SAT-1M", "1M-7.5M", "7.5M-25M", "25M-100M", ">100M"]
+b["band"] = np.select([b.value <= b.sat, b.value <= 1e6, b.value <= 7.5e6, b.value <= 25e6, b.value <= 100e6],
+                      labels[:5], labels[5])
+b.loc[b.value.isna(), "band"] = "nan"
 b["pricing"] = np.select([b.type_of_contract_pricing_code.isin(["J", "K", "L", "A", "B"]),
                           b.type_of_contract_pricing_code.isin(["Y", "Z"]),
                           b.type_of_contract_pricing_code.isin(["R", "S", "T", "U", "V"])],
@@ -96,7 +100,7 @@ cov = b.groupby(["fy", "group"]).apply(lambda d: pd.Series({
 cov.to_csv(os.path.join(OUT, "t3_solicitation_date_coverage.csv"))
 
 valid = b[b.palt.between(0, 1095)].copy()   # 0-3 years; out-of-range values reported, not used
-dq = {"new_awards_fy20_25": int(len(b)), "with_solicitation_date": int(b.sol.notna().sum()),
+dq = {"new_awards_fy20_26": int(len(b)), "with_solicitation_date": int(b.sol.notna().sum()),
       "palt_negative": int((b.palt < 0).sum()), "palt_over_3yrs_excluded": int((b.palt > 1095).sum()),
       "palt_valid": int(len(valid)),
       "palt_zero_day_share_by_group": valid.groupby("group").palt.apply(lambda s: round(float((s == 0).mean()), 3)).to_dict()}
@@ -156,8 +160,8 @@ specs = [
     (pair, base_keys, "A. All new awards, exact strata"),
     (pair[pair.competed], base_keys, "B. Competed only"),
     (pair[pair.competed & (pair.offers >= 2)], base_keys, "C. Competed, >=2 offers"),
-    (pair[pair.value > 250e3], base_keys, "D. Above SAT ($250K) only"),
-    (pair[(pair.value > 250e3) & pair.competed], base_keys, "E. Above SAT, competed"),
+    (pair[pair.above_sat], base_keys, "D. Above SAT only"),
+    (pair[pair.above_sat & pair.competed], base_keys, "E. Above SAT, competed"),
     (pair[pair.palt > 0], base_keys, "F. Excluding zero-day PALT records"),
     (pair, ["psc2", "band", "fy", "pricing", "competed"], "G. Coarser PSC (2-char)"),
     (pair, base_keys + ["awarding_sub_agency_name"], "H. Adds DoD component"),
@@ -178,7 +182,7 @@ t6b.to_csv(os.path.join(OUT, "t6b_like_for_like_palt_by_band.csv"), index=False)
 # Composition: why raw medians look similar - mix of competition and pricing in each group
 mix = pair.groupby("group").agg(n=("palt", "size"), competed_share=("competed", "mean"),
                                 fixed_price_share=("pricing", lambda s: (s == "Fixed-price").mean()),
-                                above_sat_share=("value", lambda s: (s > 250e3).mean()),
+                                above_sat_share=("above_sat", "mean"),
                                 median_value=("value", "median")).round(3)
 mix.to_csv(os.path.join(OUT, "t6c_population_mix.csv"))
 t6.to_csv(os.path.join(OUT, "t6_like_for_like_palt.csv"), index=False)
@@ -199,7 +203,7 @@ def fe_reg(df, keys):
     return {"beta_log": round(beta, 4), "se": round(se, 4), "pct_effect_MAS_vs_OM": round(100 * (np.exp(beta) - 1), 1),
             "ci95_pct": [round(100 * (np.exp(beta - 1.96 * se) - 1), 1), round(100 * (np.exp(beta + 1.96 * se) - 1), 1)],
             "n": int(len(df))}
-reg = {"all": fe_reg(pair, base_keys), "competed_above_SAT": fe_reg(pair[pair.competed & (pair.value > 250e3)], base_keys)}
+reg = {"all": fe_reg(pair, base_keys), "competed_above_SAT": fe_reg(pair[pair.competed & pair.above_sat], base_keys)}
 
 # Like-for-like spend: within PSC4 x band, what share of DoD obligations went open market vs MAS
 lfl_psc = (tx.assign(psc4=tx.product_or_service_code.str[:4])
@@ -230,7 +234,7 @@ ivb["sol_id"] = ivb.solicitation_identifier.fillna("UNKNOWN:" + ivb.award_id_pii
 fam = ivb.groupby("sol_id").agg(
     idv_count=("award_id_piid", "nunique"), first_idv_award=("awd", "min"), last_idv_award=("awd", "max"),
     solicitation_date=("sol", "min"), base_records_in_window=("base_present", "sum"),
-    order_obligations_fy20_25_usd_m=("order_obl", lambda s: round(s.sum() / 1e6, 1)),
+    order_obligations_fy20_26_usd_m=("order_obl", lambda s: round(s.sum() / 1e6, 1)),
     awarding_component=("awarding_sub_agency_name", lambda s: s.mode().iat[0]),
     example_piid=("award_id_piid", "first"))
 fam["vehicle_palt_days_fpds"] = (fam.first_idv_award - fam.solicitation_date).dt.days
@@ -238,7 +242,7 @@ fam["vehicle_palt_days_fpds"] = (fam.first_idv_award - fam.solicitation_date).dt
 fam["vehicle_palt_flag"] = np.where(fam.vehicle_palt_days_fpds < 0, "excluded: sol date after first award (on-ramp/amendment)",
                                     np.where(fam.base_records_in_window == 0, "no base record in FY15-25 window", ""))
 fam.loc[fam.vehicle_palt_days_fpds < 0, "vehicle_palt_days_fpds"] = np.nan
-fam = fam.sort_values("order_obligations_fy20_25_usd_m", ascending=False)
+fam = fam.sort_values("order_obligations_fy20_26_usd_m", ascending=False)
 # order-level PALT on each family (vs MAS)
 op = valid[valid.parent_award_id_piid.isin(ivb.award_id_piid)].copy()
 op["sol_id"] = op.parent_award_id_piid.map(ivb.set_index("award_id_piid").sol_id)
@@ -262,7 +266,7 @@ pair2 = pd.concat([mac.assign(mas=0), valid[valid.group == "GSA MAS"].assign(mas
 t9 = pd.DataFrame([
     cem(pair2, base_keys, "MAC-A. DoD MAC orders vs MAS, exact strata"),
     cem(pair2[pair2.competed], base_keys, "MAC-B. Competed only"),
-    cem(pair2[pair2.competed & (pair2.value > 250e3)], base_keys, "MAC-C. Competed, above SAT"),
+    cem(pair2[pair2.competed & pair2.above_sat], base_keys, "MAC-C. Competed, above SAT"),
 ]).rename(columns={"open_market_n_matched": "dod_mac_n_matched", "open_market_n_total": "dod_mac_n_total",
                    "weighted_median_OM_days": "weighted_median_DoD_MAC_days",
                    "OM_minus_MAS_median_days": "MAC_minus_MAS_median_days", "OM_minus_MAS_mean_days": "MAC_minus_MAS_mean_days"})
@@ -276,7 +280,7 @@ fam_ok["excess_days_vs_mas"] = fam_ok.time_to_first_order_days - mas_order_palt
 fam_ok.to_csv(os.path.join(OUT, "t10_vehicle_standup_vs_mas.csv"))
 print(t9.to_string()); print(fam_ok.to_string())
 # Sensitivity: DoD-funded actions that GSA awarded (assisted acquisition) - not in the DoD-awarded population above
-ga_path = os.path.join(DATA, "gsa_awarded_dod_funded_pshc_fy20_fy25.csv.gz")
+ga_path = os.path.join(DATA, "gsa_awarded_dod_funded_pshc_fy20_fy26.csv.gz")
 assisted = {}
 if os.path.exists(ga_path):
     ga = pd.read_csv(ga_path, dtype=str)
@@ -287,9 +291,12 @@ if os.path.exists(ga_path):
     (ga.pivot_table(index="vehicle", columns=ga.action_date_fiscal_year, values="obl", aggfunc="sum").fillna(0) / 1e6) \
         .round(1).to_csv(os.path.join(OUT, "t11_gsa_assisted_dod_funded_usd_millions.csv"))
 
-summary = {"gsa_assisted_dod_funded_usd_b": assisted, "data_quality": dq, "regression_fe": reg, "order_sol_date_before_parent_idv_award_share": integrity, "mas_median_order_palt_days": mas_order_palt,
-           "spend_total_usd_b_fy20_25": round(tx.obl.sum() / 1e9, 2),
-           "spend_by_group_usd_b_fy20_25": (tx.groupby("group").obl.sum() / 1e9).round(2).to_dict()}
+mc = tx[tx.fy == 2026].action_date.str[:7].value_counts()
+latest = pd.to_datetime(tx[tx.action_date.str[:7].isin(mc[mc >= 500].index)].action_date).max().strftime("%Y-%m-%d")  # last date in a month with >=500 actions
+fy26_months = tx[tx.fy == 2026].action_date.str[:7].value_counts().sort_index().to_dict()
+summary = {"latest_action_date_published": latest, "fy26_transactions_by_month": fy26_months, "gsa_assisted_dod_funded_usd_b": assisted, "data_quality": dq, "regression_fe": reg, "order_sol_date_before_parent_idv_award_share": integrity, "mas_median_order_palt_days": mas_order_palt,
+           "spend_total_usd_b_fy20_26": round(tx.obl.sum() / 1e9, 2),
+           "spend_by_group_usd_b_fy20_26": (tx.groupby("group").obl.sum() / 1e9).round(2).to_dict()}
 json.dump(summary, open(os.path.join(OUT, "summary.json"), "w"), indent=2, default=str)
 print(json.dumps(summary, indent=2, default=str))
 print(t4.to_string()); print(t6.to_string()); print(fam.head(15).to_string())

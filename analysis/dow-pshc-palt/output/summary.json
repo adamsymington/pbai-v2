@@ -1,54 +1,69 @@
 {
+  "latest_action_date_published": "2026-07-31",
+  "fy26_transactions_by_month": {
+    "2025-10": 2284,
+    "2025-11": 3118,
+    "2025-12": 5536,
+    "2026-01": 5805,
+    "2026-02": 4630,
+    "2026-03": 6895,
+    "2026-04": 6287,
+    "2026-05": 5890,
+    "2026-06": 6414,
+    "2026-07": 5446,
+    "2026-08": 2,
+    "2026-09": 3
+  },
   "gsa_assisted_dod_funded_usd_b": {
-    "BPA call": 0.58,
-    "GSA MAS (order)": 2.04,
-    "GWAC": 4.45,
-    "IDIQ (e.g., OASIS)": 27.54,
-    "Stand-alone / open market": 0.73
+    "BPA call": 0.66,
+    "GSA MAS (order)": 2.21,
+    "GWAC": 5.96,
+    "IDIQ (e.g., OASIS)": 34.35,
+    "Stand-alone / open market": 0.81
   },
   "data_quality": {
-    "new_awards_fy20_25": 93582,
-    "with_solicitation_date": 51982,
+    "new_awards_fy20_26": 102628,
+    "with_solicitation_date": 57167,
     "palt_negative": 0,
-    "palt_over_3yrs_excluded": 738,
-    "palt_valid": 51244,
+    "palt_over_3yrs_excluded": 782,
+    "palt_valid": 56385,
     "palt_zero_day_share_by_group": {
-      "GSA MAS": 0.04,
+      "GSA MAS": 0.038,
       "Open market (Tier 0 proxy)": 0.014,
       "Other vehicles": 0.101
     }
   },
   "regression_fe": {
     "all": {
-      "beta_log": -0.2371,
-      "se": 0.0389,
-      "pct_effect_MAS_vs_OM": -21.1,
+      "beta_log": -0.2204,
+      "se": 0.0371,
+      "pct_effect_MAS_vs_OM": -19.8,
       "ci95_pct": [
-        -26.9,
-        -14.9
+        -25.4,
+        -13.7
       ],
-      "n": 9269
+      "n": 10106
     },
     "competed_above_SAT": {
-      "beta_log": -0.3808,
-      "se": 0.0587,
-      "pct_effect_MAS_vs_OM": -31.7,
+      "beta_log": -0.3692,
+      "se": 0.056,
+      "pct_effect_MAS_vs_OM": -30.9,
       "ci95_pct": [
-        -39.1,
-        -23.3
+        -38.1,
+        -22.8
       ],
-      "n": 2107
+      "n": 2251
     }
   },
   "order_sol_date_before_parent_idv_award_share": {
-    "DoD-owned IDIQ (MAC)": 0.18,
-    "DoD-owned IDIQ (single award)": 0.071
+    "DoD-owned IDIQ (MAC)": 0.168,
+    "DoD-owned IDIQ (single award)": 0.068
   },
   "mas_median_order_palt_days": 28.0,
-  "spend_total_usd_b_fy20_25": 311.37,
-  "spend_by_group_usd_b_fy20_25": {
-    "GSA MAS": 16.66,
-    "Open market (Tier 0 proxy)": 73.07,
-    "Other vehicles": 221.64
+  "spend_total_usd_b_fy20_26": 354.0,
+  "spend_by_group_usd_b_fy20_26": {
+    "GSA MAS": 18.75,
+    "Open market (Tier 0 proxy)": 83.06,
+    "Other vehicles": 252.19
   }
 }

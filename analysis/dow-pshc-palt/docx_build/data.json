@@ -1,0 +1,282 @@
+{
+ "t6": [
+  [
+   "A. All new awards, exact strata",
+   "2,482",
+   "7,624",
+   "36.1",
+   "50.4",
+   "+14.4",
+   "+10.8 to +17.1"
+  ],
+  [
+   "B. Competed only",
+   "1,891",
+   "3,321",
+   "39.9",
+   "58.7",
+   "+18.8",
+   "+14.8 to +23.4"
+  ],
+  [
+   "C. Competed, >=2 offers",
+   "1,091",
+   "2,160",
+   "48.6",
+   "61.5",
+   "+12.9",
+   "+9.5 to +19.7"
+  ],
+  [
+   "D. Above SAT only",
+   "1,585",
+   "3,448",
+   "43.4",
+   "65.4",
+   "+22.0",
+   "+17.3 to +27.4"
+  ],
+  [
+   "E. Above SAT, competed",
+   "1,208",
+   "1,043",
+   "48.4",
+   "76.7",
+   "+28.4",
+   "+22.4 to +35.3"
+  ],
+  [
+   "F. Excluding zero-day PALT records",
+   "2,385",
+   "7,478",
+   "37.8",
+   "51.4",
+   "+13.5",
+   "+10.1 to +16.7"
+  ],
+  [
+   "G. Coarser PSC (2-char)",
+   "3,066",
+   "11,184",
+   "35.2",
+   "49.0",
+   "+13.7",
+   "+11.4 to +17.0"
+  ],
+  [
+   "H. Adds DoD component",
+   "1,625",
+   "4,294",
+   "38.4",
+   "47.6",
+   "+9.3",
+   "+5.5 to +13.5"
+  ]
+ ],
+ "veh": [
+  [
+   "SeaPort-NxG",
+   "N0017818R7000",
+   "2018-06-01",
+   "2018-12-03",
+   "185",
+   "139.5",
+   "26.64"
+  ],
+  [
+   "LOGCAP V*",
+   "W52P1J16R0001",
+   "2017-11-20",
+   "2019-04-12",
+   "508",
+   "48.5",
+   "12.50"
+  ],
+  [
+   "RS3",
+   "W15P7T15R0008",
+   "2015-03-15",
+   "2017-05-15",
+   "792",
+   "125.5",
+   "9.39"
+  ],
+  [
+   "Department of the Air Force",
+   "FA701420R0015",
+   "2020-03-11",
+   "2020-06-17",
+   "98",
+   "28",
+   "1.64"
+  ],
+  [
+   "Department of the Army",
+   "W15QKN16R0002",
+   "2016-10-21",
+   "2018-12-21",
+   "791",
+   "88",
+   "1.18"
+  ],
+  [
+   "Department of the Navy",
+   "N0018921RZ050",
+   "2021-09-20",
+   "2022-04-22",
+   "214",
+   "42.5",
+   "1.05"
+  ],
+  [
+   "Department of the Army",
+   "W52P1J15R0096",
+   "2016-02-12",
+   "2018-09-25",
+   "956",
+   "45",
+   "1.00"
+  ],
+  [
+   "Defense Advanced Research Projects Agency",
+   "HR001118R0001",
+   "2018-01-02",
+   "2018-08-13",
+   "223",
+   "134",
+   "0.79"
+  ],
+  [
+   "Defense Health Agency",
+   "HT003821R0001",
+   "2021-04-21",
+   "2022-01-27",
+   "281",
+   "18",
+   "0.75"
+  ],
+  [
+   "Department of the Army",
+   "W15P7T18R0003",
+   "2018-06-25",
+   "2020-01-06",
+   "560",
+   "147",
+   "0.68"
+  ],
+  [
+   "SOF Core Support",
+   "H9240019R0003",
+   "2019-06-14",
+   "2020-05-01",
+   "322",
+   "17.5",
+   "0.66"
+  ],
+  [
+   "Probable WEXMAC 2.0*",
+   "N0002324R0001",
+   "2020-07-31",
+   "2024-12-19",
+   "1602",
+   "16",
+   "0.61"
+  ],
+  [
+   "Department of the Air Force",
+   "FA714619R0001",
+   "2019-01-28",
+   "2019-09-18",
+   "233",
+   "50",
+   "0.58"
+  ],
+  [
+   "Department of the Air Force",
+   "FA860421RB007",
+   "2022-02-11",
+   "2022-08-19",
+   "189",
+   "67.5",
+   "0.54"
+  ],
+  [
+   "SeaPort-NxG rolling admission",
+   "N0017821R7000",
+   "2021-01-11",
+   "2021-07-14",
+   "184",
+   "184",
+   "0.49"
+  ]
+ ],
+ "summary": {
+  "latest_action_date_published": "2026-07-31",
+  "fy26_transactions_by_month": {
+   "2025-10": 2284,
+   "2025-11": 3118,
+   "2025-12": 5536,
+   "2026-01": 5805,
+   "2026-02": 4630,
+   "2026-03": 6895,
+   "2026-04": 6287,
+   "2026-05": 5890,
+   "2026-06": 6414,
+   "2026-07": 5446,
+   "2026-08": 2,
+   "2026-09": 3
+  },
+  "gsa_assisted_dod_funded_usd_b": {
+   "BPA call": 0.66,
+   "GSA MAS (order)": 2.21,
+   "GWAC": 5.96,
+   "IDIQ (e.g., OASIS)": 34.35,
+   "Stand-alone / open market": 0.81
+  },
+  "data_quality": {
+   "new_awards_fy20_26": 102628,
+   "with_solicitation_date": 57167,
+   "palt_negative": 0,
+   "palt_over_3yrs_excluded": 782,
+   "palt_valid": 56385,
+   "palt_zero_day_share_by_group": {
+    "GSA MAS": 0.038,
+    "Open market (Tier 0 proxy)": 0.014,
+    "Other vehicles": 0.101
+   }
+  },
+  "regression_fe": {
+   "all": {
+    "beta_log": -0.2204,
+    "se": 0.0371,
+    "pct_effect_MAS_vs_OM": -19.8,
+    "ci95_pct": [
+     -25.4,
+     -13.7
+    ],
+    "n": 10106
+   },
+   "competed_above_SAT": {
+    "beta_log": -0.3692,
+    "se": 0.056,
+    "pct_effect_MAS_vs_OM": -30.9,
+    "ci95_pct": [
+     -38.1,
+     -22.8
+    ],
+    "n": 2251
+   }
+  },
+  "order_sol_date_before_parent_idv_award_share": {
+   "DoD-owned IDIQ (MAC)": 0.168,
+   "DoD-owned IDIQ (single award)": 0.068
+  },
+  "mas_median_order_palt_days": 28.0,
+  "spend_total_usd_b_fy20_26": 354.0,
+  "spend_by_group_usd_b_fy20_26": {
+   "GSA MAS": 18.75,
+   "Open market (Tier 0 proxy)": 83.06,
+   "Other vehicles": 252.19
+  }
+ }
+}

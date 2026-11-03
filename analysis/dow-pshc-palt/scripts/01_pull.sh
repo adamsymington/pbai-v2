@@ -19,13 +19,13 @@ fetch () { # $1=label
   unzip -o -q "z_$1.zip" -d "fy$1"; rm -f fy$1/Contracts_Subawards*
 }
 
-# 1) DoD-awarded award transactions (POs, definitive contracts, delivery/task orders, BPA calls), FY2020-FY2025
-for fy in 2020 2021 2022 2023 2024 2025; do
+# 1) DoD-awarded award transactions (POs, definitive contracts, delivery/task orders, BPA calls), FY2020-FY2026 (FY2026 = whatever USASpending has published; DoD data posts with a 90-day delay)
+for fy in 2020 2021 2022 2023 2024 2025 2026; do
   request $fy "{\"filters\":{\"award_type_codes\":[\"A\",\"B\",\"C\",\"D\"],\"agencies\":[$DOD_AWARD],\"time_period\":[{\"start_date\":\"$((fy-1))-10-01\",\"end_date\":\"$fy-09-30\"}],\"psc_codes\":{\"require\":$PSC}},\"file_format\":\"csv\"}"
 done
-# 2) DoD-awarded IDVs (IDCs and BPAs), FY2015-FY2025: used to classify BPA calls and to date internal vehicles
-request idv "{\"filters\":{\"award_type_codes\":[\"IDV_B\",\"IDV_B_A\",\"IDV_B_B\",\"IDV_B_C\",\"IDV_E\"],\"agencies\":[$DOD_AWARD],\"time_period\":[{\"start_date\":\"2014-10-01\",\"end_date\":\"2025-09-30\"}],\"psc_codes\":{\"require\":$PSC}},\"file_format\":\"csv\"}"
-# 3) GSA-awarded, DoD-funded actions (assisted acquisitions), FY2020-FY2025 (sensitivity check)
-request gsaassist "{\"filters\":{\"award_type_codes\":[\"A\",\"B\",\"C\",\"D\"],\"agencies\":[{\"type\":\"funding\",\"tier\":\"toptier\",\"name\":\"Department of Defense\"},{\"type\":\"awarding\",\"tier\":\"toptier\",\"name\":\"General Services Administration\"}],\"time_period\":[{\"start_date\":\"2019-10-01\",\"end_date\":\"2025-09-30\"}],\"psc_codes\":{\"require\":$PSC}},\"file_format\":\"csv\"}"
+# 2) DoD-awarded IDVs (IDCs and BPAs), FY2015-FY2026: used to classify BPA calls and to date internal vehicles
+request idv "{\"filters\":{\"award_type_codes\":[\"IDV_B\",\"IDV_B_A\",\"IDV_B_B\",\"IDV_B_C\",\"IDV_E\"],\"agencies\":[$DOD_AWARD],\"time_period\":[{\"start_date\":\"2014-10-01\",\"end_date\":\"2026-09-30\"}],\"psc_codes\":{\"require\":$PSC}},\"file_format\":\"csv\"}"
+# 3) GSA-awarded, DoD-funded actions (assisted acquisitions), FY2020-FY2026 (sensitivity check)
+request gsaassist "{\"filters\":{\"award_type_codes\":[\"A\",\"B\",\"C\",\"D\"],\"agencies\":[{\"type\":\"funding\",\"tier\":\"toptier\",\"name\":\"Department of Defense\"},{\"type\":\"awarding\",\"tier\":\"toptier\",\"name\":\"General Services Administration\"}],\"time_period\":[{\"start_date\":\"2019-10-01\",\"end_date\":\"2026-09-30\"}],\"psc_codes\":{\"require\":$PSC}},\"file_format\":\"csv\"}"
 
-for k in 2020 2021 2022 2023 2024 2025 idv gsaassist; do fetch $k; done
+for k in 2020 2021 2022 2023 2024 2025 2026 idv gsaassist; do fetch $k; done

@@ -1,6 +1,6 @@
 """Reduce raw USASpending transaction CSVs to the columns this analysis uses.
 Usage: python3 02_extract.py <raw_dir> <out_dir>
-raw_dir holds fy2020..fy2025/ and fyidv/ subfolders produced by 01_pull.sh.
+raw_dir holds fy2020..fy2026/, fyidv*/ and fygsa*/ subfolders produced by 01_pull.sh.
 """
 import sys, glob, os
 import pandas as pd
@@ -25,18 +25,18 @@ for d in sorted(glob.glob(os.path.join(raw, "fy20[0-9][0-9]"))):
         df = pd.read_csv(f, usecols=lambda c: c in COLS, dtype=str, low_memory=False)
         frames.append(df); print(f, len(df))
 tx = pd.concat(frames, ignore_index=True).drop_duplicates("contract_transaction_unique_key")
-tx.to_csv(os.path.join(out, "dod_pshc_award_transactions_fy20_fy25.csv.gz"), index=False)
+tx.to_csv(os.path.join(out, "dod_pshc_award_transactions_fy20_fy26.csv.gz"), index=False)
 print("award transactions", len(tx))
 idv = []
-for f in glob.glob(os.path.join(raw, "fyidv", "Contracts_PrimeTransactions*.csv")):
+for f in glob.glob(os.path.join(raw, "fyidv*", "**", "Contracts_PrimeTransactions*.csv"), recursive=True):
     idv.append(pd.read_csv(f, usecols=lambda c: c in COLS, dtype=str, low_memory=False))
 idv = pd.concat(idv, ignore_index=True).drop_duplicates("contract_transaction_unique_key")
-idv.to_csv(os.path.join(out, "dod_pshc_idv_transactions_fy15_fy25.csv.gz"), index=False)
+idv.to_csv(os.path.join(out, "dod_pshc_idv_transactions_fy15_fy26.csv.gz"), index=False)
 print("idv transactions", len(idv))
 gsa = []
-for f in glob.glob(os.path.join(raw, "fygsaassist", "Contracts_PrimeTransactions*.csv")):
+for f in glob.glob(os.path.join(raw, "fygsa*", "Contracts_PrimeTransactions*.csv")):
     gsa.append(pd.read_csv(f, usecols=lambda c: c in COLS, dtype=str, low_memory=False))
 if gsa:
     gsa = pd.concat(gsa, ignore_index=True).drop_duplicates("contract_transaction_unique_key")
-    gsa.to_csv(os.path.join(out, "gsa_awarded_dod_funded_pshc_fy20_fy25.csv.gz"), index=False)
+    gsa.to_csv(os.path.join(out, "gsa_awarded_dod_funded_pshc_fy20_fy26.csv.gz"), index=False)
     print("gsa-assisted transactions", len(gsa))

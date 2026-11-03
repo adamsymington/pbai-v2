@@ -1,9 +1,9 @@
 spec,strata_keys,matched_strata,mas_n_matched,open_market_n_matched,mas_n_total,open_market_n_total,weighted_median_MAS_days,weighted_median_OM_days,OM_minus_MAS_median_days,ci95_low,ci95_high,OM_minus_MAS_mean_days
-"A. All new awards, exact strata",psc4 x band x fy x pricing x competed,648,2313,6956,2942,11183,35.6,50.8,15.2,11.4,18.8,18.2
-B. Competed only,psc4 x band x fy x pricing x competed,402,1770,3015,2270,4211,39.6,59.0,19.4,15.5,23.7,22.1
-"C. Competed, >=2 offers",psc4 x band x fy x pricing x competed,316,1019,1983,1397,3108,48.4,61.0,12.6,8.9,19.7,15.5
-D. Above SAT ($250K) only,psc4 x band x fy x pricing x competed,400,1486,3239,2017,5887,42.7,65.9,23.2,18.0,28.2,26.0
-"E. Above SAT, competed",psc4 x band x fy x pricing x competed,244,1135,972,1560,1593,48.0,77.1,29.1,23.3,35.6,31.5
-F. Excluding zero-day PALT records,psc4 x band x fy x pricing x competed,637,2222,6827,2824,11032,37.4,51.7,14.3,10.3,17.7,17.4
-G. Coarser PSC (2-char),psc2 x band x fy x pricing x competed,257,2843,10161,2942,11183,34.7,48.7,14.0,11.4,17.3,20.4
-H. Adds DoD component,psc4 x band x fy x pricing x competed x awarding_sub_agency_name,749,1525,3985,2942,11183,38.1,48.3,10.1,6.6,14.5,12.3
+"A. All new awards, exact strata",psc4 x band x fy x pricing x competed,721,2482,7624,3171,12377,36.1,50.4,14.4,10.8,17.1,17.3
+B. Competed only,psc4 x band x fy x pricing x competed,450,1891,3321,2438,4680,39.9,58.7,18.8,14.8,23.4,21.4
+"C. Competed, >=2 offers",psc4 x band x fy x pricing x competed,355,1091,2160,1502,3461,48.6,61.5,12.9,9.5,19.7,15.6
+D. Above SAT only,psc4 x band x fy x pricing x competed,441,1585,3448,2158,6357,43.4,65.4,22.0,17.3,27.4,24.8
+"E. Above SAT, competed",psc4 x band x fy x pricing x competed,271,1208,1043,1669,1742,48.4,76.7,28.4,22.4,35.3,30.5
+F. Excluding zero-day PALT records,psc4 x band x fy x pricing x competed,708,2385,7478,3049,12208,37.8,51.4,13.5,10.1,16.7,16.6
+G. Coarser PSC (2-char),psc2 x band x fy x pricing x competed,291,3066,11184,3171,12377,35.2,49.0,13.7,11.4,17.0,19.6
+H. Adds DoD component,psc4 x band x fy x pricing x competed x awarding_sub_agency_name,816,1625,4294,3171,12377,38.4,47.6,9.3,5.5,13.5,11.5
