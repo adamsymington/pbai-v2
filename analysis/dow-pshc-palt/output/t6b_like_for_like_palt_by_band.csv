@@ -1,0 +1,11 @@
+spec,strata_keys,matched_strata,mas_n_matched,open_market_n_matched,mas_n_total,open_market_n_total,weighted_median_MAS_days,weighted_median_OM_days,OM_minus_MAS_median_days,ci95_low,ci95_high,OM_minus_MAS_mean_days
+<=250K (SAT) | competed,psc4 x band x fy x pricing x competed,158,635,2043,710,2618,24.6,26.6,2.0,-1.0,4.6,5.3
+<=250K (SAT) | not competed,psc4 x band x fy x pricing x competed,90,192,1674,215,2678,17.4,14.7,-2.8,-7.8,-1.0,0.6
+250K-1M | competed,psc4 x band x fy x pricing x competed,95,483,459,637,726,32.8,47.3,14.5,8.7,21.1,17.8
+250K-1M | not competed,psc4 x band x fy x pricing x competed,77,195,911,246,1396,25.9,25.6,-0.3,-6.4,3.2,2.9
+1M-7.5M | competed,psc4 x band x fy x pricing x competed,89,476,388,593,547,47.1,82.5,35.4,23.9,46.3,37.9
+1M-7.5M | not competed,psc4 x band x fy x pricing x competed,58,127,1187,167,2085,22.9,30.6,7.7,-1.1,12.5,14.1
+7.5M-25M | competed,psc4 x band x fy x pricing x competed,36,134,86,201,173,70.0,124.3,54.4,33.6,101.9,51.2
+7.5M-25M | not competed,psc4 x band x fy x pricing x competed,16,24,143,33,548,30.9,45.4,14.5,-27.1,28.4,14.3
+25M-100M | competed,psc4 x band x fy x pricing x competed,22,39,37,103,108,169.6,211.4,41.8,6.4,99.6,50.3
+>100M | competed,psc4 x band x fy x pricing x competed,2,3,2,26,39,55.0,157.7,102.7,96.7,108.7,102.7

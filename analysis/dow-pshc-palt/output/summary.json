@@ -1,0 +1,54 @@
+{
+  "gsa_assisted_dod_funded_usd_b": {
+    "BPA call": 0.58,
+    "GSA MAS (order)": 2.04,
+    "GWAC": 4.45,
+    "IDIQ (e.g., OASIS)": 27.54,
+    "Stand-alone / open market": 0.73
+  },
+  "data_quality": {
+    "new_awards_fy20_25": 93582,
+    "with_solicitation_date": 51982,
+    "palt_negative": 0,
+    "palt_over_3yrs_excluded": 738,
+    "palt_valid": 51244,
+    "palt_zero_day_share_by_group": {
+      "GSA MAS": 0.04,
+      "Open market (Tier 0 proxy)": 0.014,
+      "Other vehicles": 0.101
+    }
+  },
+  "regression_fe": {
+    "all": {
+      "beta_log": -0.2371,
+      "se": 0.0389,
+      "pct_effect_MAS_vs_OM": -21.1,
+      "ci95_pct": [
+        -26.9,
+        -14.9
+      ],
+      "n": 9269
+    },
+    "competed_above_SAT": {
+      "beta_log": -0.3808,
+      "se": 0.0587,
+      "pct_effect_MAS_vs_OM": -31.7,
+      "ci95_pct": [
+        -39.1,
+        -23.3
+      ],
+      "n": 2107
+    }
+  },
+  "order_sol_date_before_parent_idv_award_share": {
+    "DoD-owned IDIQ (MAC)": 0.18,
+    "DoD-owned IDIQ (single award)": 0.071
+  },
+  "mas_median_order_palt_days": 28.0,
+  "spend_total_usd_b_fy20_25": 311.37,
+  "spend_by_group_usd_b_fy20_25": {
+    "GSA MAS": 16.66,
+    "Open market (Tier 0 proxy)": 73.07,
+    "Other vehicles": 221.64
+  }
+}

@@ -1,0 +1,4 @@
+spec,strata_keys,matched_strata,mas_n_matched,dod_mac_n_matched,mas_n_total,dod_mac_n_total,weighted_median_MAS_days,weighted_median_DoD_MAC_days,MAC_minus_MAS_median_days,ci95_low,ci95_high,MAC_minus_MAS_mean_days
+"MAC-A. DoD MAC orders vs MAS, exact strata",psc4 x band x fy x pricing x competed,364,1709,4387,2942,8167,41.3,42.8,1.5,-2.3,4.0,0.5
+MAC-B. Competed only,psc4 x band x fy x pricing x competed,296,1501,4150,2270,7592,44.3,43.8,-0.5,-5.2,2.9,-0.8
+"MAC-C. Competed, above SAT",psc4 x band x fy x pricing x competed,217,1098,2600,1560,5524,51.8,51.0,-0.9,-7.0,2.3,-1.8
