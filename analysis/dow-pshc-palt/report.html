@@ -1,0 +1,209 @@
+<title>DoD PSHC: MAS vs Open Market</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (~72ch) with full-bleed figure panels; finding-first, evidence second, method last. */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#111827; --ink2:#4b5563; --muted:#6b7280; --rule:#dde1e7;
+  --mas:#2a78d6; --om:#eb6834; --neutral:#9aa3af; --accent:#1c5cab; --warnbg:#fff7e6; --warnink:#7a4b00;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif; --f-body:"Source Sans 3","Segoe UI",Arial,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14161a; --panel:#1c1f24; --ink:#eef0f3; --ink2:#c4c9d1; --muted:#9aa1ab; --rule:#30353d;
+  --mas:#3987e5; --om:#d95926; --neutral:#6b7380; --accent:#86b6ef; --warnbg:#2a2214; --warnink:#f0c46a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161a; --panel:#1c1f24; --ink:#eef0f3; --ink2:#c4c9d1; --muted:#9aa1ab; --rule:#30353d;
+  --mas:#3987e5; --om:#d95926; --neutral:#6b7380; --accent:#86b6ef; --warnbg:#2a2214; --warnink:#f0c46a; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:24px;font-weight:700;padding-top:8px;border-top:2px solid var(--ink)}
+h3{font-size:17px;font-weight:700}
+p{margin:0;max-width:70ch} section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:19px;color:var(--ink2)}
+.meta{font:13px/1.5 var(--f-mono);color:var(--muted)}
+.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.finding{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.finding .num{font:700 30px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.finding .lbl{font-size:15px;color:var(--ink2)}
+.finding .src{font:12px/1.4 var(--f-mono);color:var(--muted)}
+figure{margin:0;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+figcaption{font-size:14px;color:var(--ink2)}
+.chart{position:relative;overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto;min-width:520px}
+.chart text{fill:var(--ink2);font:12px var(--f-body)} .chart .val{font:500 12px var(--f-mono);fill:var(--ink)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--ink2)} .legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:50%;display:inline-block}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font:12px/1.4 var(--f-mono);padding:6px 8px;border-radius:4px;white-space:nowrap;opacity:0;transition:opacity .1s}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:180px}
+th{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+tr.hl td{font-weight:600}
+.note{background:var(--warnbg);color:var(--warnink);border-radius:6px;padding:14px 16px;font-size:15px}
+.note strong{color:inherit}
+ul,ol{margin:0;padding-left:22px;max-width:72ch} li+li{margin-top:6px}
+code{font:13px var(--f-mono)} a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sources li{font-size:14px}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:12px">
+  <div class="eyebrow">Acquisition analysis · DoD / Department of War · FY2020–FY2025</div>
+  <h1>Professional services: GSA MAS vs the open market</h1>
+  <p class="lede">For comparable professional-services buys, DoD's open-market awards took longer to award than MAS orders, and the gap grows with dollar value. DoD's own multiple-award vehicles award orders about as fast as MAS, but each one took a median of about 10 months just to get from RFP release to first award.</p>
+  <p class="meta">Source: USASpending.gov (FPDS-sourced), pulled 2026-11-03 · DoD-awarded actions, PSC families R, B, U · 473,199 transactions; 93,582 new awards · Code, data and record-level file: <code>analysis/dow-pshc-palt/</code> on branch <code>claude/jolly-hopper-y9e8mo</code></p>
+</header>
+
+<section>
+  <h2>Bottom line</h2>
+  <div class="findings">
+    <div class="finding"><div class="eyebrow">Spend mix</div><div class="num">5.4%</div><div class="lbl">of DoD PSHC obligations went through MAS ($16.7B of $311.4B). Open-market stand-alone awards took 23.5% ($73.1B).</div><div class="src">t1, t2</div></div>
+    <div class="finding"><div class="eyebrow">Like-for-like PALT</div><div class="num">+29 days</div><div class="lbl">longer on the open market for competed buys above the SAT (77 vs 48 days, weighted medians; 95% CI +23 to +36).</div><div class="src">t6 spec E</div></div>
+    <div class="finding"><div class="eyebrow">DoD vehicles vs MAS</div><div class="num">≈ 0 days</div><div class="lbl">difference in order PALT between DoD-owned MACs and MAS for matched buys (−0.9 days; CI −7 to +3).</div><div class="src">t9 spec MAC-C</div></div>
+    <div class="finding"><div class="eyebrow">Vehicle stand-up</div><div class="num">~302 days</div><div class="lbl">median from RFP release to first IDV award across DoD's 14 largest identifiable PSHC MAC families (range 98–1,602); 257 days excluding the two logistics vehicles.</div><div class="src">t10</div></div>
+  </div>
+  <div class="note"><strong>Wording discipline.</strong> "Open market" here means stand-alone contracts and POs with no parent vehicle. That is a <em>subset</em> of OMB Tier 0, a floor rather than the whole thing. Official Tier 0 also includes DoD single-award IDIQs and other vehicles without a spend-under-management designation, and the contract-level tier assignment is not public. Say "open-market (Tier 0) spend of at least $73.1B". Do not say "DoD's Tier 0 spend was $73.1B."</div>
+</section>
+
+<section>
+  <h2>1. Where the money went</h2>
+  <p>DoD awarded $311.4B in professional, administrative, management, studies and training services from FY2020 through FY2025. More than half went through DoD's own IDIQs. MAS's share fell from 6.3% in FY2020 to 4.7% in FY2025. The open-market share held at 22–26%.</p>
+  <figure>
+    <h3>Obligations by vehicle type, FY2020–FY2025 ($B)</h3>
+    <div class="chart" id="c-spend"></div>
+    <figcaption>DoD-awarded actions only. Separately, GSA awarded another $35.3B of DoD-funded PSHC work as assisted acquisitions. Of that, $27.5B went on non-MAS IDIQs (OASIS-type) and $2.0B on MAS (t11). Table t1 has the year-by-year figures.</figcaption>
+  </figure>
+  <p>Open-market dollars concentrate in PSCs that MAS covers. R425 (engineering/technical) has $34.4B open market against $4.5B on MAS. R499 (other professional) has $9.3B against $4.2B. R408 (program management) has $5.3B against $2.6B (t7). Some of this is not realistically MAS-able: classified work, contingency logistics, and requirements that need cost-type contracts. The PSC overlap is still large.</p>
+</section>
+
+<section>
+  <h2>2. PALT: raw numbers mislead, matched numbers don't</h2>
+  <p>Raw median PALT is nearly identical: 28 days for MAS (orders and BPA calls) and 26 days for open market. That comparison is apples to oranges. 62% of open-market awards were not competed, against 23% of MAS awards, and non-competed buys award fast. Once each MAS buy is compared only with open-market buys of the same 4-digit PSC, dollar band, fiscal year, pricing type and competition status, a consistent gap appears. It is concentrated in competed buys above the SAT.</p>
+  <figure>
+    <h3>Median PALT, competed buys, matched strata (days from solicitation to award)</h3>
+    <div class="legend"><span><i class="sw" style="background:var(--mas)"></i>GSA MAS</span><span><i class="sw" style="background:var(--om)"></i>Open market</span></div>
+    <div class="chart" id="c-palt"></div>
+    <figcaption>Weighted medians within matched strata (t6b). Under the SAT the two are statistically indistinguishable, since simplified acquisition is fast either way. The gap opens above $250K and grows to about 54 days at $7.5M–25M. The >$100M band has too few matched MAS awards (3) to report.</figcaption>
+  </figure>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Specification (open market minus MAS)</th><th>MAS n</th><th>OM n</th><th>MAS days</th><th>OM days</th><th>Gap</th><th>95% CI</th></tr></thead>
+    <tbody>
+      <tr><td>A. All new awards</td><td>2,313</td><td>6,956</td><td>35.6</td><td>50.8</td><td>+15.2</td><td>+11.4 to +18.8</td></tr>
+      <tr><td>B. Competed only</td><td>1,770</td><td>3,015</td><td>39.6</td><td>59.0</td><td>+19.4</td><td>+15.5 to +23.7</td></tr>
+      <tr><td>C. Competed, ≥2 offers</td><td>1,019</td><td>1,983</td><td>48.4</td><td>61.0</td><td>+12.6</td><td>+8.9 to +19.7</td></tr>
+      <tr><td>D. Above SAT</td><td>1,486</td><td>3,239</td><td>42.7</td><td>65.9</td><td>+23.2</td><td>+18.0 to +28.2</td></tr>
+      <tr class="hl"><td>E. Above SAT, competed</td><td>1,135</td><td>972</td><td>48.0</td><td>77.1</td><td>+29.1</td><td>+23.3 to +35.6</td></tr>
+      <tr><td>F. Excluding zero-day PALT</td><td>2,222</td><td>6,827</td><td>37.4</td><td>51.7</td><td>+14.3</td><td>+10.3 to +17.7</td></tr>
+      <tr><td>G. Coarser PSC (2-character)</td><td>2,843</td><td>10,161</td><td>34.7</td><td>48.7</td><td>+14.0</td><td>+11.4 to +17.3</td></tr>
+      <tr><td>H. Adds DoD component to strata</td><td>1,525</td><td>3,985</td><td>38.1</td><td>48.3</td><td>+10.1</td><td>+6.6 to +14.5</td></tr>
+    </tbody></table></div>
+  <p>All eight specifications point the same way. A log-PALT fixed-effects regression gives the same answer: MAS PALT runs 21% shorter overall (95% CI 15–27%) and 32% shorter for competed buys above the SAT (CI 23–39%). The smallest estimate comes from matching within the same DoD component (spec H, +10 days). That suggests part of the gap reflects which commands use MAS, not only the vehicle itself.</p>
+</section>
+
+<section>
+  <h2>3. DoD's own vehicles: fast orders, slow to build</h2>
+  <p>DoD-owned MAC orders look slow in raw terms (median 66 days against MAS's 28). That gap disappears under matching: for the same kind of buy, DoD MAC orders and MAS orders award within a day of each other (t9). So once an internal vehicle exists, it buys about as fast as MAS. The cost is building it, and DoD keeps building them.</p>
+  <figure>
+    <h3>Stand-up PALT: RFP release to first IDV award (days), largest DoD PSHC MAC families</h3>
+    <div class="legend"><span><i class="sw" style="background:var(--neutral)"></i>Vehicle stand-up (FPDS)</span><span><i class="sw" style="background:var(--mas)"></i>MAS median order PALT, 28 days</span></div>
+    <div class="chart" id="c-veh"></div>
+    <figcaption>Ranked by FY20–25 DoD order obligations through the family. The solicitation date and first award date come from the IDV records in FPDS (t8, t10). Draft RFPs, RFIs and industry days happen before this window, so real development time is longer than shown.</figcaption>
+  </figure>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Vehicle (solicitation)</th><th>RFP (FPDS)</th><th>First award</th><th>Stand-up days</th><th>Order PALT med.</th><th>FY20–25 orders $B</th></tr></thead>
+    <tbody id="t-veh"></tbody></table></div>
+  <p><strong>Corroboration.</strong> The FPDS dates match the public record for the three biggest families. SeaPort-NxG: NAVSEA announced the solicitation on June 1, 2018 and awards are dated January 2019; FPDS shows 2018-06-01 to 2018-12-03. RS3: the draft RFP came out in December 2014 and the first 55–56 awards in May 2017; FPDS shows 2015-03-15 to 2017-05-15. LOGCAP V: the final RFP was released in November 2017 and awards came in April 2019; FPDS shows 2017-11-20 to 2019-04-12. LOGCAP V and the probable WEXMAC 2.0 family are contingency and expeditionary logistics, which MAS would not realistically replace. They stay in the table for completeness but should be left out of any "should have used MAS" argument.</p>
+  <p><strong>The counterfactual.</strong> A DoD office that needed engineering or program-management support could place a competed MAS order with a median PALT of 28 days (about 48 days for competed buys above the SAT). Building a new MAC first added a median of about 302 days before the first order could even be solicited. Order PALT on the new vehicle then ran the same as MAS. The time difference is the stand-up time, and it was not offset later by faster ordering.</p>
+</section>
+
+<section>
+  <h2>4. Will this hold up under scrutiny</h2>
+  <ol>
+    <li><strong>Every number is reproducible.</strong> The public API calls are scripted (<code>01_pull.sh</code>), the analysis is deterministic (seeded bootstrap), and a record-level file gives the PIID, dates and USASpending permalink for each of the 14,125 MAS and open-market awards behind the PALT figures.</li>
+    <li><strong>Solicitation-date coverage is 41–63%.</strong> PALT describes the records that report a date. Unreported dates are not imputed. MAS coverage dropped to 40% in FY2025.</li>
+    <li><strong>PALT is the statutory window only</strong>: solicitation to award, per Section 878 of the FY2019 NDAA and the OFPP memo of Jan. 14, 2021. It leaves out requirements development and market research. If anyone argues MAS saves front-end time too, that claim is not measured here.</li>
+    <li><strong>The PSHC scope is a proxy</strong> (PSC R, B and U), not GSA's official category crosswalk. It includes some work MAS cannot host, such as contingency logistics and some training.</li>
+    <li><strong>"Tier 0" is a floor</strong> (see the note above). The contract-level tier designations are not public.</li>
+    <li><strong>Data integrity checks.</strong> 738 PALT values over 3 years are excluded and none are negative. DoD MAC orders whose solicitation date precedes the parent IDV's award (18%) are excluded from the MAC-vs-MAS comparison. Vehicle families whose earliest IDV carries a later on-ramp solicitation date are flagged and dropped.</li>
+    <li><strong>Selection.</strong> Matching controls for PSC, size, year, pricing and competition. It cannot control for requirement complexity inside a PSC or for workforce differences between commands. Spec H, matched within component, shrinks the gap to 10 days without eliminating it.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li>USASpending.gov API v2, <code>/download/transactions/</code> and <code>/search/</code> endpoints (data sourced from FPDS): <a href="https://api.usaspending.gov/docs/endpoints">api.usaspending.gov/docs/endpoints</a></li>
+    <li>OFPP, "Reducing Procurement Administrative Lead Time Using Modern Business Practices," Jan. 14, 2021: <a href="https://trumpwhitehouse.archives.gov/wp-content/uploads/2021/01/OFPPPALTMemorandum-01-14-2021.pdf">archived memo</a></li>
+    <li>FY2019 NDAA §878 (PALT definition), text: <a href="https://wifcon.com/dodauth19/dod19_878.htm">wifcon.com</a></li>
+    <li>OMB spend-under-management tier definitions (Tier 0–3), as restated in agency CAP-goal reports: <a href="https://trumpadministration.archives.performance.gov/state/FY2021_january_Category_Management_USAID.pdf">performance.gov archive</a>; CRS IF12374: <a href="https://sgp.fas.org/crs/misc/IF12374.pdf">sgp.fas.org</a></li>
+    <li>SeaPort-NxG solicitation announcement (NAVSEA): <a href="https://www.navsea.navy.mil/Media/News/Article/1537907/seaport-next-generation-now-accepting-vendor-proposals/">navsea.navy.mil</a>; award timing: <a href="https://www.aviationpros.com/aircraft-maintenance-technology/aircraft-technology/maintenance-providers/press-release/12440478/southeast-aerospace-southeast-aerospace-wins-opportunity-on-50b-seaport-next-generation-contract">Southeast Aerospace release, Jan. 14, 2019</a></li>
+    <li>RS3 draft RFP: <a href="https://www.washingtontechnology.com/2014/12/army-releases-draft-rfp-for-37b-idiq/346268/">Washington Technology, Dec. 2014</a>; first awards: <a href="https://washingtonexec.com/2017/06/nci-earns-prime-position-37b-army-multiple-award-contract/">WashingtonExec, 2017</a>; on-ramp: <a href="https://washingtontechnology.com/2018/10/army-makes-second-round-of-awards-for-374b-rs3-vehicle/348792/">Washington Technology, Oct. 2018</a></li>
+    <li>LOGCAP V RFP: <a href="https://govconwire.com/2017/12/army-opens-solicitation-for-82b-logcap-v-contract/">GovConWire, Dec. 2017</a>; protest docket: <a href="https://www.gao.gov/docket/b-417506.5">GAO B-417506.5</a></li>
+    <li>SOF Core Support (H92400-19-R-0003): <a href="https://highergov.com/contract-opportunity/sof-core-support-h9240019r0003-s-b86dd">HigherGov notice record</a></li>
+  </ul>
+</section>
+</div>
+
+<script>
+(function(){
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS="http://www.w3.org/2000/svg";
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function tipFor(box){const t=document.createElement("div");t.className="tip";box.appendChild(t);
+  return {show(ev,txt){t.textContent=txt;const r=box.getBoundingClientRect();t.style.left=Math.min(ev.clientX-r.left+box.scrollLeft+12,box.scrollWidth-t.offsetWidth-4)+"px";t.style.top=(ev.clientY-r.top-34)+"px";t.style.opacity=1},hide(){t.style.opacity=0}}}
+
+// ---- Spend bars
+const spend=[["DoD-owned IDIQ, single award",94.32,"o"],["DoD-owned IDIQ, multiple award",84.18,"o"],["Open market (stand-alone)",73.07,"om"],["GSA non-MAS IDIQ (OASIS-type)",24.88,"o"],["GSA MAS (orders + BPA calls)",16.66,"mas"],["BOA orders",12.92,"o"],["Other agency IDIQ/GWAC",4.05,"o"],["Open-market BPA calls",1.09,"o"]];
+(function(){const box=document.getElementById("c-spend"),W=760,rowH=34,L=230,R=70,H=spend.length*rowH+30;
+  const s=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Obligations by vehicle type"},box);const tip=tipFor(box);
+  const x=v=>L+(W-L-R)*v/100;
+  [0,25,50,75,100].forEach(v=>{el("line",{x1:x(v),x2:x(v),y1:0,y2:H-24,stroke:css("--rule"),"stroke-width":1},s);const t=el("text",{x:x(v),y:H-6,"text-anchor":"middle"},s);t.textContent="$"+v+"B"});
+  spend.forEach((d,i)=>{const y=i*rowH+6,c=d[2]==="mas"?css("--mas"):d[2]==="om"?css("--om"):css("--neutral");
+    const lab=el("text",{x:L-10,y:y+15,"text-anchor":"end"},s);lab.textContent=d[0];
+    const r=el("rect",{x:L,y:y+2,width:Math.max(2,x(d[1])-L),height:18,rx:3,fill:c},s);
+    const v=el("text",{x:x(d[1])+6,y:y+15,class:"val"},s);v.textContent="$"+d[1].toFixed(1)+"B";
+    const hit=el("rect",{x:0,y:y-4,width:W,height:rowH,fill:"transparent"},s);
+    hit.addEventListener("mousemove",ev=>tip.show(ev,`${d[0]}: $${d[1].toFixed(2)}B (${(100*d[1]/311.37).toFixed(1)}%)`));hit.addEventListener("mouseleave",tip.hide)});
+})();
+
+// ---- PALT dumbbell
+const palt=[["≤$250K (SAT)",24.6,26.6,2.0,-1.0,4.6,635,2043],["$250K–1M",32.8,47.3,14.5,8.7,21.1,483,459],["$1M–7.5M",47.1,82.5,35.4,23.9,46.3,476,388],["$7.5M–25M",70.0,124.3,54.4,33.6,101.9,134,86],["$25M–100M",169.6,211.4,41.8,6.4,99.6,39,37]];
+(function(){const box=document.getElementById("c-palt"),W=760,rowH=46,L=130,R=150,H=palt.length*rowH+34;
+  const s=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Median PALT by dollar band"},box);const tip=tipFor(box);
+  const x=v=>L+(W-L-R)*v/225;
+  [0,50,100,150,200].forEach(v=>{el("line",{x1:x(v),x2:x(v),y1:0,y2:H-26,stroke:css("--rule")},s);const t=el("text",{x:x(v),y:H-8,"text-anchor":"middle"},s);t.textContent=v+" d"});
+  palt.forEach((d,i)=>{const y=i*rowH+22;
+    const lab=el("text",{x:L-12,y:y+4,"text-anchor":"end"},s);lab.textContent=d[0];
+    el("line",{x1:x(d[1]),x2:x(d[2]),y1:y,y2:y,stroke:css("--neutral"),"stroke-width":2},s);
+    el("circle",{cx:x(d[1]),cy:y,r:6,fill:css("--mas"),stroke:css("--panel"),"stroke-width":2},s);
+    el("circle",{cx:x(d[2]),cy:y,r:6,fill:css("--om"),stroke:css("--panel"),"stroke-width":2},s);
+    const g=el("text",{x:W-R+14,y:y+4,class:"val"},s);g.textContent=(d[3]>0?"+":"")+d[3].toFixed(1)+" d";
+    const ci=el("text",{x:W-R+70,y:y+4},s);ci.textContent=`[${d[4]}, ${d[5]}]`;
+    const hit=el("rect",{x:0,y:y-rowH/2,width:W,height:rowH,fill:"transparent"},s);
+    hit.addEventListener("mousemove",ev=>tip.show(ev,`${d[0]} · MAS ${d[1]} d (n=${d[6]}) · OM ${d[2]} d (n=${d[7]}) · gap ${d[3]} d, 95% CI ${d[4]} to ${d[5]}`));hit.addEventListener("mouseleave",tip.hide)});
+  const h=el("text",{x:W-R+14,y:12,class:"val"},s);h.textContent="Gap  [95% CI]";
+})();
+
+// ---- Vehicles
+const veh=[["SeaPort-NxG","N00178-18-R-7000","2018-06-01","2018-12-03",185,133,21.42,1],["LOGCAP V*","W52P1J-16-R-0001","2017-11-20","2019-04-12",508,48.5,11.56,0],["RS3","W15P7T-15-R-0008","2015-03-15","2017-05-15",792,128,8.23,1],["Air Force MAC","FA7014-20-R-0015","2020-03-11","2020-06-17",98,28,1.57,1],["Army MAC","W15QKN-16-R-0002","2016-10-21","2018-12-21",791,88,1.11,1],["Army MAC (135 awards)","W52P1J-15-R-0096","2016-02-12","2018-09-25",956,45,0.88,1],["Navy MAC","N00189-21-R-Z050","2021-09-20","2022-04-22",214,55,0.82,1],["DARPA MAC","HR0011-18-R-0001","2018-01-02","2018-08-13",223,134,0.71,1],["DHA MAC","HT0038-21-R-0001","2021-04-21","2022-01-27",281,15.5,0.66,1],["Army MAC","W15P7T-18-R-0003","2018-06-25","2020-01-06",560,147,0.57,1],["SOF Core Support","H92400-19-R-0003","2019-06-14","2020-05-01",322,17,0.51,1],["Air Force MAC","FA7146-19-R-0001","2019-01-28","2019-09-18",233,50,0.50,1],["Probable WEXMAC 2.0*","N00023-24-R-0001","2020-07-31","2024-12-19",1602,15,0.42,0],["SeaPort-NxG rolling admission","N00178-21-R-7000","2021-01-11","2021-07-14",184,184,0.37,1]];
+(function(){const tb=document.getElementById("t-veh");veh.forEach(d=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${d[0]} <span class="meta">${d[1]}</span></td><td>${d[2]}</td><td>${d[3]}</td><td>${d[4]}</td><td>${d[5]}</td><td>${d[6].toFixed(2)}</td>`;tb.appendChild(tr)});
+  const r=document.createElement("tr");r.innerHTML=`<td colspan="6" class="meta" style="text-align:left">* Contingency or expeditionary logistics; not a realistic MAS substitute. Names without a program title are left as solicitation numbers, which can be verified on SAM.gov.</td>`;tb.appendChild(r);
+  const box=document.getElementById("c-veh"),W=760,rowH=26,L=230,R=60,H=veh.length*rowH+30;
+  const s=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Vehicle stand-up days"},box);const tip=tipFor(box);
+  const x=v=>L+(W-L-R)*v/1700;
+  [0,365,730,1095,1460].forEach(v=>{el("line",{x1:x(v),x2:x(v),y1:0,y2:H-24,stroke:css("--rule")},s);const t=el("text",{x:x(v),y:H-6,"text-anchor":"middle"},s);t.textContent=v?(v/365)+" yr":"0"});
+  veh.forEach((d,i)=>{const y=i*rowH+4;
+    const lab=el("text",{x:L-10,y:y+13,"text-anchor":"end"},s);lab.textContent=d[0];
+    el("rect",{x:L,y:y+2,width:x(d[4])-L,height:14,rx:3,fill:css("--neutral"),opacity:d[7]?1:.55},s);
+    const v=el("text",{x:x(d[4])+6,y:y+13,class:"val"},s);v.textContent=d[4];
+    const hit=el("rect",{x:0,y:y-2,width:W,height:rowH,fill:"transparent"},s);
+    hit.addEventListener("mousemove",ev=>tip.show(ev,`${d[1]}: RFP ${d[2]} → first award ${d[3]} = ${d[4]} days`));hit.addEventListener("mouseleave",tip.hide)});
+  el("line",{x1:x(28),x2:x(28),y1:0,y2:H-24,stroke:css("--mas"),"stroke-width":2},s);
+})();
+})();
+</script>
