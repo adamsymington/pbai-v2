@@ -1,16 +1,16 @@
-sol_id,program,awardees_idv_count,standup_days,order_obligations_fy20_26_usd,mas_substitutable,awardee_ueis,ueis_with_dod_mas_pshc_order,mas_overlap_share_lower_bound
-N0017818R7000,SeaPort-NxG,1873,185.0,26641700000.0,Assumed yes,1904,435,0.228
-W52P1J16R0001,LOGCAP V,4,508.0,12497400000.0,No (contingency logistics),4,0,0.0
-W15P7T15R0008,RS3,261,792.0,9393900000.0,Assumed yes,284,90,0.317
-FA701420R0015,Department of the Air Force,8,98.0,1637000000.0,Assumed yes,9,6,0.667
-W15QKN16R0002,Department of the Army,17,791.0,1182400000.0,Assumed yes,18,9,0.5
-N0018921RZ050,Department of the Navy,5,214.0,1049300000.0,Assumed yes,5,5,1.0
-W52P1J15R0096,Department of the Army,135,956.0,998300000.0,Assumed yes,166,47,0.283
-HR001118R0001,Defense Advanced Research Projects Agency,7,223.0,786900000.0,Assumed yes,8,5,0.625
-HT003821R0001,Defense Health Agency,5,281.0,754500000.0,Assumed yes,6,0,0.0
-W15P7T18R0003,Department of the Army,22,560.0,679800000.0,Assumed yes,24,7,0.292
-H9240019R0003,SOF Core Support,47,322.0,658300000.0,Assumed yes,48,11,0.229
-N0002324R0001,Probable WEXMAC 2.0,87,1602.0,607100000.0,No (contingency logistics),88,6,0.068
-FA714619R0001,Department of the Air Force,8,233.0,579300000.0,Assumed yes,10,9,0.9
-FA860421RB007,Department of the Air Force,5,189.0,540800000.0,Assumed yes,5,2,0.4
-N0017821R7000,SeaPort-NxG rolling admission,601,184.0,491400000.0,Assumed yes,605,107,0.177
+sol_id,program,awardees_idv_count,standup_days,order_obligations_fy20_26_usd,mas_substitutable,awardee_ueis,ueis_with_dod_mas_pshc_order,mas_overlap_share_lower_bound,predecessor_status,predecessor_basis,daily_order_value_usd
+N0017818R7000,SeaPort-NxG,1873,185.0,26641700000.0,Assumed yes,1904,435,0.228,Replacement,Replaced SeaPort-e (NAVSEA 2020 industry brief),10681603.742064819
+W52P1J16R0001,LOGCAP V,4,508.0,12497400000.0,No (contingency logistics),4,0,0.0,Replacement,Successor to LOGCAP IV,5010651.520213832
+W15P7T15R0008,RS3,261,792.0,9393900000.0,Assumed yes,284,90,0.317,Replacement,Consolidated five existing or expiring Army IDIQs incl. S3 (GovConWire / Washington Technology),3766348.1456732377
+FA701420R0015,Department of the Air Force,8,98.0,1637000000.0,Assumed yes,9,6,0.667,Unknown (treated as new),No predecessor identified; verify on SAM.gov,656331.440026729
+W15QKN16R0002,Department of the Army,17,791.0,1182400000.0,Assumed yes,18,9,0.5,Unknown (treated as new),No predecessor identified; verify on SAM.gov,474066.1543601738
+N0018921RZ050,Department of the Navy,5,214.0,1049300000.0,Assumed yes,5,5,1.0,Unknown (treated as new),No predecessor identified; verify on SAM.gov,420701.63715335785
+W52P1J15R0096,Department of the Army,135,956.0,998300000.0,Assumed yes,166,47,0.283,Unknown (treated as new),No predecessor identified; verify on SAM.gov,400253.9258269295
+HR001118R0001,Defense Advanced Research Projects Agency,7,223.0,786900000.0,Assumed yes,8,5,0.625,Unknown (treated as new),No predecessor identified; verify on SAM.gov,315496.1577013031
+HT003821R0001,Defense Health Agency,5,281.0,754500000.0,Assumed yes,6,0,0.0,Unknown (treated as new),No predecessor identified; verify on SAM.gov,302505.846976278
+W15P7T18R0003,Department of the Army,22,560.0,679800000.0,Assumed yes,24,7,0.292,Unknown (treated as new),No predecessor identified; verify on SAM.gov,272555.9639158036
+H9240019R0003,SOF Core Support,47,322.0,658300000.0,Assumed yes,48,11,0.229,Replacement,Recompete of SOCOM Wide Mission Support (SWMS) suite (SAM notice via HigherGov),263935.8503174073
+N0002324R0001,Probable WEXMAC 2.0,87,1602.0,607100000.0,No (contingency logistics),88,6,0.068,Unknown (treated as new),No predecessor identified; verify on SAM.gov,243407.95188773808
+FA714619R0001,Department of the Air Force,8,233.0,579300000.0,Assumed yes,10,9,0.9,Unknown (treated as new),No predecessor identified; verify on SAM.gov,232261.9445372536
+FA860421RB007,Department of the Air Force,5,189.0,540800000.0,Assumed yes,5,2,0.4,Unknown (treated as new),No predecessor identified; verify on SAM.gov,216825.92716338125
+N0017821R7000,SeaPort-NxG rolling admission,601,184.0,491400000.0,Assumed yes,605,107,0.177,Replacement,On-ramp to existing SeaPort-NxG,197019.71266288008

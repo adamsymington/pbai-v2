@@ -1,0 +1,6 @@
+group,measure,awards,extended_rate,mean_ext_days,median_ext_days_if_extended
+GSA MAS,Raw,791.0,0.3729,107.6941,182.0
+Open market (Tier 0 proxy),Raw,955.0,0.4524,142.7707,182.0
+Other vehicles,Raw,3621.0,0.4902,204.9083,259.0
+GSA MAS,"Matched (PSC4 x band x FY x pricing, MAS-weighted)",529.0,0.3667,102.6238,
+Open market (Tier 0 proxy),"Matched (PSC4 x band x FY x pricing, MAS-weighted)",596.0,0.381,101.548,

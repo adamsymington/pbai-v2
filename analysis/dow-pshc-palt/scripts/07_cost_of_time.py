@@ -85,3 +85,85 @@ c4["ueis_with_dod_mas_pshc_order"] = c4.sol_id.map(lambda k: len(fam_ueis.get(k,
 c4["mas_overlap_share_lower_bound"] = (c4.ueis_with_dod_mas_pshc_order / c4.awardee_ueis.replace(0, np.nan)).round(3)
 c4.to_csv(os.path.join(OUT, "c4_vehicle_families.csv"), index=False)
 print("distinct DoD PSHC MAS vendors:", len(mas_ueis)); print(c1.to_string()); print(pd.read_csv(os.path.join(OUT, "c2_band_gaps.csv")).to_string()); print(yt.to_string()); print(c4.to_string())
+
+# ---------------- c5: extensions beyond the original potential end date (FAR 52.217-8 style) ----------------
+txf = pd.read_csv(os.path.join(DATA, "dod_pshc_award_transactions_fy20_fy26.csv.gz"), dtype=str)
+txf["pe"] = pd.to_datetime(txf.period_of_performance_potential_end_date, errors="coerce")
+txf["obl"] = pd.to_numeric(txf.federal_action_obligation, errors="coerce").fillna(0)
+mod0 = txf[txf.modification_number == "0"][["contract_award_unique_key", "pe", "period_of_performance_start_date"]] \
+    .rename(columns={"pe": "orig_end", "period_of_performance_start_date": "pop_start"})
+ext = mod0.merge(b[["contract_award_unique_key", "group", "vehicle", "psc4", "band", "fy", "pricing", "competed", "above_sat", "value"]],
+                 on="contract_award_unique_key")
+OBS_CUT = pd.Timestamp("2026-01-31")   # original end must be at least 6 months before the last published data
+ext = ext[(ext.orig_end <= OBS_CUT) & ext.competed & ext.above_sat].copy()
+final_end = txf[txf.contract_award_unique_key.isin(ext.contract_award_unique_key)].groupby("contract_award_unique_key").pe.max()
+ext["ext_days"] = (ext.contract_award_unique_key.map(final_end) - ext.orig_end).dt.days.clip(lower=0)
+ext["orig_pop"] = (ext.orig_end - pd.to_datetime(ext.pop_start, errors="coerce")).dt.days
+ext = ext[ext.orig_pop >= 30]
+ext["extended"] = (ext.ext_days > 0).astype(float)
+ext["ext_share_of_pop"] = ext.ext_days / ext.orig_pop
+raw = ext.groupby("group").agg(awards=("extended", "size"), extended_rate=("extended", "mean"),
+                               mean_ext_days=("ext_days", "mean"), median_ext_days_if_extended=("ext_days", lambda s: s[s > 0].median()))
+raw.insert(0, "measure", "Raw")
+pm = ext[ext.group.isin(["GSA MAS", "Open market (Tier 0 proxy)"])].copy()
+pm["mas"] = (pm.group == "GSA MAS").astype(int)
+pm["s"] = pm[["psc4", "band", "fy", "pricing"]].astype(str).agg("|".join, axis=1)
+g = pm.groupby(["s", "mas"]).agg(n=("extended", "size"), er=("extended", "mean"), ed=("ext_days", "mean")).unstack().dropna()
+w = g[("n", 1)] / g[("n", 1)].sum()
+matched = pd.DataFrame({"measure": "Matched (PSC4 x band x FY x pricing, MAS-weighted)",
+                        "awards": [g[("n", 1)].sum(), g[("n", 0)].sum()],
+                        "extended_rate": [(g[("er", 1)] * w).sum(), (g[("er", 0)] * w).sum()],
+                        "mean_ext_days": [(g[("ed", 1)] * w).sum(), (g[("ed", 0)] * w).sum()],
+                        "median_ext_days_if_extended": [np.nan, np.nan]}, index=["GSA MAS", "Open market (Tier 0 proxy)"])
+c5 = pd.concat([raw, matched]).round(4)
+c5.index.name = "group"
+c5.to_csv(os.path.join(OUT, "c5_extensions.csv"))
+
+# ---------------- c6: bridge-type awards (GAO-16-15 definition, applied to FPDS) ----------------
+# A new award (mod 0) that is (a) not competed, (b) <= 12 months potential PoP, and (c) to the incumbent: the same
+# recipient UEI, awarding office and 4-digit PSC held another award whose final potential end date fell within
+# 180 days before to 30 days after the new award's start.
+m0 = txf[txf.modification_number == "0"].copy()
+m0["start"] = pd.to_datetime(m0.period_of_performance_start_date, errors="coerce")
+m0["pop"] = (m0.pe - m0.start).dt.days
+m0["psc4"] = m0.product_or_service_code.str[:4]
+noncomp = (m0.award_type_code.isin(["B", "D"]) & m0.other_than_full_and_open_competition_code.isin(["ONE", "FOC", "URG", "UNQ"])) | \
+          (m0.award_type_code.isin(["A", "C"]) & m0.fair_opportunity_limited_sources_code.isin(["FOO", "URG", "ONE"]))
+cand = m0[noncomp & m0["pop"].between(1, 366)].copy()
+aw = txf.assign(psc4=txf.product_or_service_code.str[:4]).groupby("contract_award_unique_key").agg(
+    uei=("recipient_uei", "first"), office=("awarding_office_name", "first"), psc4=("psc4", "first"), end=("pe", "max"))
+aw = aw.dropna(subset=["uei", "office", "end"])
+key = aw.reset_index().groupby(["uei", "office", "psc4"])
+lookup = {k: v[["contract_award_unique_key", "end"]].values for k, v in key}
+def is_bridge(r):
+    arr = lookup.get((r.recipient_uei, r.awarding_office_name, r.psc4))
+    if arr is None or pd.isna(r.start): return False
+    for k, e in arr:
+        if k != r.contract_award_unique_key and (r.start - pd.Timedelta(days=180)) <= e <= (r.start + pd.Timedelta(days=30)):
+            return True
+    return False
+cand["bridge"] = cand.apply(is_bridge, axis=1)
+br = cand[cand.bridge].merge(b[["contract_award_unique_key", "group", "vehicle"]], on="contract_award_unique_key", how="left")
+br["value"] = pd.to_numeric(br.base_and_all_options_value, errors="coerce")
+br_obl = txf[txf.contract_award_unique_key.isin(br.contract_award_unique_key)].groupby("contract_award_unique_key").obl.sum()
+br["obligated_fy20_26"] = br.contract_award_unique_key.map(br_obl)
+c6 = br.groupby("group").agg(bridge_awards=("bridge", "size"), value_usd=("value", "sum"), obligated_usd=("obligated_fy20_26", "sum"),
+                              median_pop_days=("pop", "median"))
+c6.loc["All"] = [len(br), br.value.sum(), br.obligated_fy20_26.sum(), br["pop"].median()]
+c6["per_year_obligated_usd"] = c6.obligated_usd / YEARS
+c6.to_csv(os.path.join(OUT, "c6_bridge_type_awards.csv"))
+br[["contract_award_unique_key", "award_id_piid", "group", "vehicle", "recipient_name", "awarding_office_name", "psc4", "start", "pop",
+    "value", "obligated_fy20_26", "usaspending_permalink"]].to_csv(os.path.join(OUT, "r3_bridge_type_awards.csv.gz"), index=False)
+
+# ---------------- c4 additions: predecessor status and daily order value ----------------
+pred = {"N0017818R7000": ("Replacement", "Replaced SeaPort-e (NAVSEA 2020 industry brief)"),
+        "N0017821R7000": ("Replacement", "On-ramp to existing SeaPort-NxG"),
+        "W15P7T15R0008": ("Replacement", "Consolidated five existing or expiring Army IDIQs incl. S3 (GovConWire / Washington Technology)"),
+        "H9240019R0003": ("Replacement", "Recompete of SOCOM Wide Mission Support (SWMS) suite (SAM notice via HigherGov)"),
+        "W52P1J16R0001": ("Replacement", "Successor to LOGCAP IV")}
+c4 = pd.read_csv(os.path.join(OUT, "c4_vehicle_families.csv"))
+c4["predecessor_status"] = c4.sol_id.map(lambda k: pred.get(k, ("Unknown (treated as new)", ""))[0])
+c4["predecessor_basis"] = c4.sol_id.map(lambda k: pred.get(k, ("", "No predecessor identified; verify on SAM.gov"))[1])
+c4["daily_order_value_usd"] = c4.order_obligations_fy20_26_usd / (YEARS * 365)
+c4.to_csv(os.path.join(OUT, "c4_vehicle_families.csv"), index=False)
+print(c5.to_string()); print(c6.to_string()); print(c4[["program", "predecessor_status", "daily_order_value_usd"]].to_string())
