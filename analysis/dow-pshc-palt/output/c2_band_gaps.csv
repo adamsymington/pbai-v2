@@ -1,0 +1,6 @@
+band,gap_base_days,gap_low_days,gap_high_days,basis
+SAT-1M,13.0,7.4,18.6,"Band estimate, 505 MAS / 486 OM matched"
+1M-7.5M,35.3,23.9,44.7,"Band estimate, 510 MAS / 421 OM matched"
+7.5M-25M,51.3,31.1,90.0,"Band estimate, 148 MAS / 94 OM matched"
+25M-100M,43.0,1.1,97.0,"Band estimate, 42 MAS / 40 OM matched"
+>100M,28.4,22.4,35.3,Pooled spec E (band too thin)

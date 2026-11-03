@@ -94,6 +94,11 @@ b["pricing"] = np.select([b.type_of_contract_pricing_code.isin(["J", "K", "L", "
                           b.type_of_contract_pricing_code.isin(["R", "S", "T", "U", "V"])],
                          ["Fixed-price", "T&M/LH", "Cost-type"], "Other/combination")
 
+# All new awards (with or without a solicitation date), classified, for the cost-of-time model (07_cost_of_time.py)
+b[["contract_award_unique_key", "award_id_piid", "vehicle", "group", "fy", "action_date", "period_of_performance_start_date",
+   "period_of_performance_potential_end_date", "psc4", "band", "sat", "above_sat", "pricing", "competed", "value", "obl", "palt"]] \
+    .to_csv(os.path.join(OUT, "r2_new_awards_classified.csv.gz"), index=False)
+
 cov = b.groupby(["fy", "group"]).apply(lambda d: pd.Series({
     "new_awards": len(d), "with_solicitation_date": d.sol.notna().sum(),
     "coverage_pct": round(100 * d.sol.notna().mean(), 1)}), include_groups=False).unstack("group")

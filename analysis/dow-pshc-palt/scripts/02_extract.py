@@ -8,7 +8,7 @@ import pandas as pd
 COLS = ["contract_transaction_unique_key","contract_award_unique_key","award_id_piid","modification_number",
  "parent_award_agency_id","parent_award_agency_name","parent_award_id_piid","federal_action_obligation",
  "base_and_exercised_options_value","base_and_all_options_value","action_date","action_date_fiscal_year",
- "period_of_performance_start_date","solicitation_date","solicitation_identifier","awarding_sub_agency_name",
+ "period_of_performance_start_date","period_of_performance_potential_end_date","solicitation_date","solicitation_identifier","awarding_sub_agency_name",
  "awarding_office_name","recipient_uei","recipient_name","award_type_code","idv_type_code",
  "multiple_or_single_award_idv_code","type_of_contract_pricing_code","product_or_service_code",
  "product_or_service_code_description","naics_code","extent_competed_code","solicitation_procedures_code",

@@ -83,3 +83,13 @@ $25M–100M, >$100M, with the first cut at the SAT in force for that fiscal year
 | t9 | Like-for-like PALT: DoD MAC orders vs MAS |
 | t11 | GSA-assisted, DoD-funded actions |
 | summary.json | Data quality counts, regression results, totals |
+
+## Cost-of-time model (internal research)
+```bash
+python3 -I scripts/07_cost_of_time.py output data                                   # populations, gaps, year-end check, vehicle families
+python3 -I scripts/08_cost_workbook.py output DoD_PSHC_MAS_vs_OpenMarket_FY20-26.xlsx  # adds Cost Summary/Inputs/Population/Model/Vehicle Cost tabs
+node scripts/09_cost_memo.cjs DoD_PSHC_Cost_of_Time_Memo.docx
+```
+All assumptions sit in the workbook's **Cost Inputs** tab (blue = input, yellow = judgment call, each with source/logic);
+every result is a formula. `04_export_xlsx.py` rebuilds the workbook without the cost tabs, so run `08` after it.
+The memo's figures are copied from the Cost Summary tab at base inputs; regenerate it if inputs change.
